@@ -36,7 +36,25 @@ class GridWindow(QWidget):
 		vl.addLayout(gl)
 		vl.addLayout(hl)
 		
-		self.setLayout(vl)
+		#self.setLayout(vl)
+		
+		hl2 = QHBoxLayout()
+		hl2.addLayout(vl)
+		myToolbar = QToolBar() 
+		hl2.addWidget(myToolbar)
+		
+		extractAction = QAction(QIcon('photo.jpg'), 'hahahaha', self)
+		#extractAction.triggered.connect(exit())
+		myToolbar.addAction(extractAction)
+		
+		extractAction2 = QAction(QIcon('photo.jpg'), 'hahahaha', self)
+		#extractAction.triggered.connect(exit())
+		myToolbar.addAction(extractAction2)
+		
+		self.setLayout(hl2)
+		
+		#self.addWidget(myToolbar)
+		#QMainWindow.addToolBar( Qt.LeftToolBarArea , myToolbar )
 	
 	def btnConnection(self):
 		self.btn1.clicked.connect(self.btn1_changeGrid)
