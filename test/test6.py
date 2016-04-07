@@ -44,6 +44,8 @@ class GridWindow(QWidget):
 		line = QFrame()
 		line.setFrameShape(QFrame.VLine)
 		line.setFrameShadow(QFrame.Sunken)
+		#line.palette().setColor(line.backgroundRole(), Qt.red)
+		#line.setPalette(line.palette())
 		hl2.addWidget(line)
 		
 		myToolbar = QToolBar() 
