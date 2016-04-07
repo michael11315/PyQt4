@@ -56,6 +56,7 @@ class GridWindow(QWidget):
 		self.btn_hl = QHBoxLayout()
 		self.btn1 = QPushButton('black')
 		self.btn2 = QPushButton('red')
+		
 		self.btn_hl.addWidget(self.btn1)
 		self.btn_hl.addWidget(self.btn2)
 		
