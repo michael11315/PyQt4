@@ -17,41 +17,62 @@ class GridWindow(QWidget):
 	
 	def createWindows(self):
 		self.createGridLayout()
-		self.btnWidgetAndConnection()
+		self.createBarForGrid()
+		self.createbtnAndConnection()
 		
 		left_vl = QVBoxLayout()
-		left_vl.addLayout(self.form_gl[0])
-		left_vl.addLayout(self.form_gl[1])
-		left_vl.addLayout(self.form_gl[2])
-		left_vl.addLayout(self.form_gl[3])
+		for i in range(4):
+			left_vl.addLayout(self.bar_hl[i])
+			left_vl.addLayout(self.grid_gl[i])
+		
 		left_vl.addLayout(self.btn_hl)
 		
 		self.setLayout(left_vl)
 	
 	def createGridLayout(self):
 		# global data
-		self.QLabelList = []
-		self.form_gl = []
+		self.grid_qlabelList = []
+		self.grid_gl = []
 		
-		# grid layout for image
+		# grid layout
 		for i in range(4):
 			tmp = []
-			self.form_gl.append(QGridLayout())
-			self.form_gl[i].setSpacing(1)
-			self.form_gl[i].setMargin(1)
+			self.grid_gl.append(QGridLayout())
+			self.grid_gl[i].setSpacing(1)
+			self.grid_gl[i].setMargin(1)
 			
+			# initial each grid and put in layout
 			for y in range(6):
 				for x in range(30):
 					tmp.append(QLabel())
 					pixmap = QPixmap(imgCell)
 					tmp[len(tmp)-1].setPixmap(pixmap)
 					tmp[len(tmp)-1].setScaledContents(True)
-					self.form_gl[i].addWidget(tmp[len(tmp)-1], y, x)
+					self.grid_gl[i].addWidget(tmp[len(tmp)-1], y, x)
 			
-			self.QLabelList.append(tmp)
+			self.grid_qlabelList.append(tmp)
+	
+	def createBarForGrid(self):
+		# global data
+		self.bar_hl = []
+		self.bar_qlabel = []
+		self.bar_btn = []
+		self.bar_qlineedit = []
+		
+		for i in range(4):
+			self.bar_hl.append(QHBoxLayout())
+			#self.bar_hl[i].setSpacing(1)
+			#self.bar_hl[i].setMargin(1)
+			self.bar_qlabel.append(QLabel())
+			self.bar_btn.append(QPushButton())
+			self.bar_qlineedit.append(QLineEdit())
+			
+			self.bar_hl[i].addWidget(self.bar_qlabel[i])
+			self.bar_hl[i].addWidget(self.bar_btn[i])
+			self.bar_hl[i].addWidget(self.bar_qlineedit[i])
 	
 	# horizontal layout for button
-	def btnWidgetAndConnection(self):
+	def createbtnAndConnection(self):
 		# global data
 		self.btn_hl = QHBoxLayout()
 		self.btn1 = QPushButton('black')
@@ -65,15 +86,15 @@ class GridWindow(QWidget):
 		self.btn2.clicked.connect(self.btn2_changeGrid)
 	
 	def btn1_changeGrid(self, text):
-		if self.count < len(self.QLabelList[0]):
+		if self.count < len(self.grid_qlabelList[0]):
 			pixmap = QPixmap(imgBlack)
-			self.QLabelList[0][self.count].setPixmap(pixmap)
+			self.grid_qlabelList[0][self.count].setPixmap(pixmap)
 			self.count += 1
 	
 	def btn2_changeGrid(self, text):
-		if self.count < len(self.QLabelList[0]):
+		if self.count < len(self.grid_qlabelList[0]):
 			pixmap = QPixmap(imgRed)
-			self.QLabelList[0][self.count].setPixmap(pixmap)
+			self.grid_qlabelList[0][self.count].setPixmap(pixmap)
 			self.count += 1
 		
 if __name__ == "__main__":

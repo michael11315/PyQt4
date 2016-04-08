@@ -20,7 +20,7 @@ class GridWindow(QWidget):
 		for y in range(3):
 			for x in range(5):
 				self.QLabelList.append(QLabel())
-				pixmap = QPixmap('grey.jpg')
+				pixmap = QPixmap('../img/grey.jpg')
 				self.QLabelList[len(self.QLabelList)-1].setPixmap(pixmap)
 				self.QLabelList[len(self.QLabelList)-1].setScaledContents(True)
 				gl.addWidget(self.QLabelList[len(self.QLabelList)-1], y, x)
@@ -32,7 +32,13 @@ class GridWindow(QWidget):
 		hl.addWidget(self.btn1)
 		hl.addWidget(self.btn2)
 		
+		#Frame button linetext
+		tb = QFrame()
+		tb.setStyleSheet('background-color: blue;')
+		btn_tb = QPushButton(tb)
+		
 		vl = QVBoxLayout()
+		#vl.addWidget(tb)
 		vl.addLayout(gl)
 		vl.addLayout(hl)
 		
@@ -44,11 +50,10 @@ class GridWindow(QWidget):
 		line = QFrame()
 		line.setFrameShape(QFrame.VLine)
 		line.setFrameShadow(QFrame.Sunken)
-		#line.palette().setColor(line.backgroundRole(), Qt.red)
-		#line.setPalette(line.palette())
+		line.setStyleSheet('background-color: blue;')
 		hl2.addWidget(line)
 		
-		myToolbar = QToolBar() 
+		myToolbar = QToolBar()
 		hl2.addWidget(myToolbar)
 		
 		extractAction = QAction(QIcon('../img/photo.jpg'), 'hahahaha', self)
@@ -58,6 +63,8 @@ class GridWindow(QWidget):
 		extractAction2 = QAction(QIcon('photo.jpg'), 'hahahaha', self)
 		#extractAction.triggered.connect(exit())
 		myToolbar.addAction(extractAction2)
+		
+		
 		
 		self.setLayout(hl2)
 		
