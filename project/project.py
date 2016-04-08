@@ -8,6 +8,8 @@ imgCell = imgDir + 'cell.jpg'
 imgBlack = imgDir + 'black.jpg'
 imgRed = imgDir + 'red.jpg'
 
+QTextCodec.setCodecForTr(QTextCodec.codecForName("utf8"))
+
 class GridWindow(QWidget):
 	
 	def __init__(self, parent = None):
@@ -18,30 +20,28 @@ class GridWindow(QWidget):
 	def createWindows(self):
 		self.createGridLayout()
 		self.createBarForGrid()
-		self.createbtnAndConnection()
 		
 		left_vl = QVBoxLayout()
 		for i in range(4):
 			left_vl.addLayout(self.bar_hl[i])
-			left_vl.addLayout(self.grid_gl[i])
-		
-		left_vl.addLayout(self.btn_hl)
+			left_vl.addWidget(self.grid_qframe[i])
 		
 		self.setLayout(left_vl)
 	
 	def createGridLayout(self):
 		# global data
-		self.grid_qlabelList = []
+		self.grid_qframe = []
 		self.grid_gl = []
+		self.grid_qlabelList = []
 		
 		# grid layout
 		for i in range(4):
-			tmp = []
+			# initial grid form
+			self.grid_qframe.append(QFrame())
 			self.grid_gl.append(QGridLayout())
-			self.grid_gl[i].setSpacing(1)
-			self.grid_gl[i].setMargin(1)
 			
-			# initial each grid and put in layout
+			# initial each grid and set in gridlayout
+			tmp = []
 			for y in range(6):
 				for x in range(30):
 					tmp.append(QLabel())
@@ -51,51 +51,109 @@ class GridWindow(QWidget):
 					self.grid_gl[i].addWidget(tmp[len(tmp)-1], y, x)
 			
 			self.grid_qlabelList.append(tmp)
+			
+			# set relationship
+			self.grid_qframe[i].setLayout(self.grid_gl[i])
+			
+			# set attribute
+			self.grid_gl[i].setSpacing(1)
+			self.grid_gl[i].setMargin(1)
+			self.grid_qframe[i].setStyleSheet('background-color: gray;')
 	
 	def createBarForGrid(self):
-		# global data
+		# full bar global data
 		self.bar_hl = []
-		self.bar_qlabel = []
-		self.bar_btn = []
-		self.bar_qlineedit = []
-		
 		for i in range(4):
 			self.bar_hl.append(QHBoxLayout())
-			#self.bar_hl[i].setSpacing(1)
-			#self.bar_hl[i].setMargin(1)
-			self.bar_qlabel.append(QLabel())
-			self.bar_btn.append(QPushButton())
-			self.bar_qlineedit.append(QLineEdit())
+		
+		# bar's title
+		#----------------------------------------------------
+		self.tbar_qframe = []
+		self.tbar_hl = []
+		self.tbar_qlabel = []
+		
+		for i in range(4):
+			# initial title bar
+			self.tbar_qframe.append(QFrame())
+			self.tbar_hl.append(QHBoxLayout())
+			self.tbar_qlabel.append(QLabel())
 			
-			self.bar_hl[i].addWidget(self.bar_qlabel[i])
-			self.bar_hl[i].addWidget(self.bar_btn[i])
-			self.bar_hl[i].addWidget(self.bar_qlineedit[i])
-	
-	# horizontal layout for button
-	def createbtnAndConnection(self):
-		# global data
-		self.btn_hl = QHBoxLayout()
-		self.btn1 = QPushButton('black')
-		self.btn2 = QPushButton('red')
+			# set relationship
+			self.tbar_hl[i].addWidget(self.tbar_qlabel[i])
+			self.tbar_qframe[i].setLayout(self.tbar_hl[i])
+			self.bar_hl[i].addWidget(self.tbar_qframe[i])
+			self.bar_hl[i].addWidget(QFrame())
+			
+			# set attribute
+			#self.tbar_qframe[i].setStyleSheet('''.QFrame {border: 1px solid gray;}''')
+			self.tbar_hl[i].setSpacing(1)
+			self.tbar_hl[i].setMargin(1)
+			#self.tbar_qlabel[i].setAlignment(Qt.AlignCenter)
 		
-		self.btn_hl.addWidget(self.btn1)
-		self.btn_hl.addWidget(self.btn2)
+		self.tbar_qlabel[0].setText(self.tr('下局預測  大路'))
+		self.tbar_qlabel[1].setText(self.tr('下局預測  眼路'))
+		self.tbar_qlabel[2].setText(self.tr('下局預測  小路'))
+		self.tbar_qlabel[3].setText(self.tr('下局預測  筆路'))
 		
-		# button connection
-		self.btn1.clicked.connect(self.btn1_changeGrid)
-		self.btn2.clicked.connect(self.btn2_changeGrid)
-	
-	def btn1_changeGrid(self, text):
-		if self.count < len(self.grid_qlabelList[0]):
-			pixmap = QPixmap(imgBlack)
-			self.grid_qlabelList[0][self.count].setPixmap(pixmap)
-			self.count += 1
-	
-	def btn2_changeGrid(self, text):
-		if self.count < len(self.grid_qlabelList[0]):
-			pixmap = QPixmap(imgRed)
-			self.grid_qlabelList[0][self.count].setPixmap(pixmap)
-			self.count += 1
+		# left bar's global data
+		#----------------------------------------------------
+		self.lbar_qframe = []
+		self.lbar_hl = []
+		self.lbar_qlabel = []
+		self.lbar_btn = []
+		self.lbar_qspinbox = []
+		
+		for i in range(4):
+			# initial left bar
+			self.lbar_qframe.append(QFrame())
+			self.lbar_hl.append(QHBoxLayout())
+			self.lbar_qlabel.append(QLabel(self.tr('莊')))
+			self.lbar_btn.append(QPushButton(self.tr('手動')))
+			self.lbar_qspinbox.append(QSpinBox())
+			
+			# set relationship
+			self.lbar_hl[i].addWidget(self.lbar_qlabel[i])
+			self.lbar_hl[i].addWidget(self.lbar_btn[i])
+			self.lbar_hl[i].addWidget(self.lbar_qspinbox[i])
+			self.lbar_qframe[i].setLayout(self.lbar_hl[i])
+			self.bar_hl[i].addWidget(self.lbar_qframe[i])
+			
+			# set attribute
+			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: rgb(255, 0, 0); border: 1px solid gray;}''')
+			self.lbar_hl[i].setSpacing(1)
+			self.lbar_hl[i].setMargin(1)
+			self.lbar_qlabel[i].setStyleSheet('color: rgb(255, 255, 255);')
+			self.lbar_qlabel[i].setAlignment(Qt.AlignCenter)
+		
+		# right bar's global data
+		#----------------------------------------------------
+		self.rbar_qframe = []
+		self.rbar_hl = []
+		self.rbar_qlabel1 = []
+		self.rbar_btn = []
+		self.rbar_qlabel2 = []
+		
+		for i in range(4):
+			# initial right bar
+			self.rbar_qframe.append(QFrame())
+			self.rbar_hl.append(QHBoxLayout())
+			self.rbar_qlabel1.append(QLabel(self.tr('小計 : ')))
+			self.rbar_btn.append(QPushButton(self.tr('切停')))
+			self.rbar_qlabel2.append(QLabel(self.tr('合計 : ')))
+			
+			# set relationship
+			self.rbar_hl[i].addWidget(self.rbar_qlabel1[i])
+			self.rbar_hl[i].addWidget(self.rbar_btn[i])
+			self.rbar_hl[i].addWidget(self.rbar_qlabel2[i])
+			self.rbar_qframe[i].setLayout(self.rbar_hl[i])
+			self.bar_hl[i].addWidget(self.rbar_qframe[i])
+			
+			# set attribute
+			self.rbar_qframe[i].setStyleSheet('''.QFrame {border: 1px solid gray;}''')
+			self.rbar_hl[i].setSpacing(1)
+			self.rbar_hl[i].setMargin(1)
+			self.rbar_qlabel1[i].setAlignment(Qt.AlignCenter)
+			self.rbar_qlabel2[i].setAlignment(Qt.AlignCenter)
 		
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
