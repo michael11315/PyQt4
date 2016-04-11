@@ -17,14 +17,17 @@ class GridWindow(QWidget):
 		self.count = 0
 		self.sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
 		self.sizeWidth = 60
+		self.sizeHeight = 25
 		self.sizeWidth_btn = 70
-		self.sizeHeight_btn = 25
+		self.sizeHeight_btn = 20
+		self.sizeWidth_qlineedit = 60
 		
 		self.UIcreate()
 	
 	def UIcreate(self):
 		self.UIcreate_GridLayout()
 		self.UIcreate_BarForGrid()
+		self.UIcreate_BetStatus()
 		self.initialGlobalAttribute()
 		
 		left_vl = QVBoxLayout()
@@ -32,7 +35,12 @@ class GridWindow(QWidget):
 			left_vl.addLayout(self.bar_hl[i])
 			left_vl.addWidget(self.grid_qframe[i])
 		
-		self.setLayout(left_vl)
+		hl = QHBoxLayout()
+		hl.addLayout(left_vl)
+		hl.addLayout(self.bet_vl)
+		#self.setLayout(left_vl)
+		#self.setLayout(self.bet_vl)
+		self.setLayout(hl)
 	
 	def UIcreate_GridLayout(self):
 		# global data
@@ -136,14 +144,48 @@ class GridWindow(QWidget):
 		
 		# bet and print area
 		#----------------------------------------------------
-		self.bbet = QGridLayout()
+		# initial
+		self.bbet_qframe = QFrame()
+		self.bbet_gl = QGridLayout()
+		self.bbet_btn1 = QPushButton()
+		self.bbet_qlineedit = QLineEdit()
+		self.bbet_btn2 = QPushButton()
+		self.bbet_qlabel1 = QLabel()
+		self.bbet_qlabel2 = QLabel()
 		
+		# set relationship
+		self.bbet_qframe.setLayout(self.bbet_gl)
+		self.bbet_gl.addWidget(self.bbet_btn1, 0, 0)
+		self.bbet_gl.addWidget(self.bbet_qlineedit, 0, 1)
+		self.bbet_gl.addWidget(self.bbet_btn2, 0, 2)
+		self.bbet_gl.addWidget(self.bbet_qlabel1, 1, 0, 1, 2)
+		self.bbet_gl.addWidget(self.bbet_qlabel2, 1, 2)
+		self.bet_vl.addWidget(self.bbet_qframe)
+		
+		# next bet area
+		#----------------------------------------------------
+		self.nbet_qframe = QFrame()
+		self.nbet_gl = QGridLayout()
+		self.nbet_qlabel1 = QLabel()
+		self.nbet_qlabel2 = QLabel()
+		self.nbet_qlabel3 = QLabel()
+		self.nbet_qlabel4 = QLabel()
+		self.nbet_qlabel5 = QLabel()
+		
+		# set relationship
+		self.nbet_qframe.setLayout(self.nbet_gl)
+		self.nbet_gl.addWidget(self.nbet_qlabel1, 0, 0, 1, 3)
+		self.nbet_gl.addWidget(self.nbet_qlabel2, 0, 3)
+		self.nbet_gl.addWidget(self.nbet_qlabel3, 1, 0, 1, 2)
+		self.nbet_gl.addWidget(self.nbet_qlabel4, 1, 2)
+		self.nbet_gl.addWidget(self.nbet_qlabel5, 1, 3)
+		self.bet_vl.addWidget(self.nbet_qframe)
 	
 	def initialGlobalAttribute(self):
 		# initail global values of UIcreate_GridLayout
 		#----------------------------------------------------
 		for i in range(4):
-			self.grid_qframe[i].setStyleSheet('background-color: gray;')
+			self.grid_qframe[i].setStyleSheet('''.QFrame {background-color: gray;}''')
 			
 			self.grid_gl[i].setSpacing(1)
 			self.grid_gl[i].setMargin(1)
@@ -164,7 +206,7 @@ class GridWindow(QWidget):
 		# left bar
 		#--------------------------
 		for i in range(4):
-			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: rgb(255, 0, 0); border: 1px solid gray;}''')
+			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
 			self.lbar_qframe[i].setSizePolicy(self.sizePolicy)
 			
 			self.lbar_hl[i].setSpacing(1)
@@ -207,6 +249,58 @@ class GridWindow(QWidget):
 			self.rbar_qlabel2[i].setAlignment(Qt.AlignCenter)
 			self.rbar_qlabel2[i].setSizePolicy(self.sizePolicy)
 			self.rbar_qlabel2[i].setFixedWidth(self.sizeWidth)
+		
+		# initail global values of UIcreate_BetStatus
+		#----------------------------------------------------
+		# bet and print area
+		#--------------------------
+		self.bbet_qframe.setStyleSheet('''.QFrame {border: 1px solid gray;}''')
+		self.bbet_qframe.setSizePolicy(self.sizePolicy)
+		self.bbet_qframe.setFixedWidth(200)
+		self.bbet_qframe.setFixedHeight(50)
+		
+		self.bbet_gl.setSpacing(1)
+		self.bbet_gl.setMargin(1)
+		
+		self.bbet_btn1.setText(self.tr('本金'))
+		self.bbet_btn1.setSizePolicy(self.sizePolicy)
+		
+		self.bbet_qlineedit.setFixedWidth(self.sizeWidth_qlineedit)
+		
+		self.bbet_btn2.setText(self.tr('列印'))
+		self.bbet_btn2.setSizePolicy(self.sizePolicy)
+		
+		self.bbet_qlabel1.setText(self.tr('檯面數 : '))
+		self.bbet_qlabel1.setSizePolicy(self.sizePolicy)
+		
+		self.bbet_qlabel2.setText(self.tr('轉碼 : '))
+		self.bbet_qlabel2.setSizePolicy(self.sizePolicy)
+		
+		# next bet area
+		#--------------------------
+		self.nbet_qframe.setStyleSheet('''.QFrame {background-color: gray;} .QLabel {background-color: white;}''')
+		self.nbet_qframe.setSizePolicy(self.sizePolicy)
+		self.nbet_qframe.setFixedWidth(200)
+		self.nbet_qframe.setFixedHeight(50)
+		
+		self.nbet_gl.setSpacing(1)
+		self.nbet_gl.setMargin(1)
+		
+		self.nbet_qlabel1.setText(self.tr('下局注碼'))
+		self.nbet_qlabel1.setAlignment(Qt.AlignCenter)
+		
+		self.nbet_qlabel2.setText(self.tr('總計'))
+		self.nbet_qlabel2.setAlignment(Qt.AlignCenter)
+		
+		self.nbet_qlabel3.setText(self.tr('莊'))
+		self.nbet_qlabel3.setAlignment(Qt.AlignCenter)
+		self.nbet_qlabel3.setStyleSheet('''.QLabel {color: red;}''')
+		
+		self.nbet_qlabel4.setText('99')
+		self.nbet_qlabel4.setAlignment(Qt.AlignCenter)
+		
+		self.nbet_qlabel5.setText('108')
+		self.nbet_qlabel5.setAlignment(Qt.AlignCenter)
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
