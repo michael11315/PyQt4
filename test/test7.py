@@ -13,3 +13,6 @@ self.tbar_qlabel[i].setAlignment(Qt.AlignCenter)
 # set sizePolicy
 sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
 setSizePolicy(sizePolicy)
+
+# set item bottom border in list widget
+myListWidget->setStyleSheet( "QListWidget::item { border-bottom: 1px solid black; }" );

@@ -28,7 +28,20 @@ class GridWindow(QWidget):
 		# horizontal layout for button
 		hl = QHBoxLayout()
 		self.btn1 = QPushButton('black')
-		self.btn2 = QPushButton('red')
+		self.btn2 = QPushButton()
+		
+		self.btn2.setFixedWidth(200)
+		self.btn2.setFixedHeight(200)
+		region = QRegion(QRect(self.btn2.x()+5,self.btn2.y()+5,190,190), QRegion.Ellipse)
+		self.btn2.setMask(region)
+		
+		#pix = QPixmap('../img/photo.jpg')
+		#btnIcon = QIcon(pixmap)
+		#self.btn2.setIcon(btnIcon)
+		#self.btn2.setIconSize(pix.rect().size())
+		self.btn2.setIcon(QIcon("../img/photo.jpg"))
+		self.btn2.setIconSize(QSize(250,250))
+		
 		hl.addWidget(self.btn1)
 		hl.addWidget(self.btn2)
 		

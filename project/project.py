@@ -199,6 +199,23 @@ class GridWindow(QWidget):
 		self.ibet_gl.addWidget(self.ibet_qlabel4, 1, 2)
 		self.ibet_gl.addWidget(self.ibet_qlabel5, 2, 2)
 		self.bet_vl.addWidget(self.ibet_qframe)
+		
+		# bet push button area
+		#----------------------------------------------------
+		self.pbet_qframe = QFrame()
+		self.pbet_gl = QGridLayout()
+		self.pbet_qlabel1 = QLabel()
+		self.pbet_qlabel2 = QLabel()
+		self.pbet_qlabel3 = QLabel()
+		self.pbet_btn = QPushButton()
+		
+		# set relationship
+		self.pbet_qframe.setLayout(self.pbet_gl)
+		self.pbet_gl.addWidget(self.pbet_qlabel1, 0, 0, 2, 1)
+		self.pbet_gl.addWidget(self.pbet_qlabel2, 0, 1, 2, 1)
+		self.pbet_gl.addWidget(self.pbet_qlabel3, 0, 2, 2, 1)
+		self.pbet_gl.addWidget(self.pbet_btn, 2, 0, 1, 3, Qt.AlignCenter)
+		self.bet_vl.addWidget(self.pbet_qframe)
 	
 	def initialGlobalAttribute(self):
 		# initail global values of UIcreate_GridLayout
@@ -340,6 +357,23 @@ class GridWindow(QWidget):
 		self.ibet_qlabel4.setAlignment(Qt.AlignCenter)
 		
 		self.ibet_qlabel5.setAlignment(Qt.AlignCenter)
+		
+		# bet push button area
+		#--------------------------
+		#self.pbet_qframe.setStyleSheet('''.QFrame {background-color: gray;} .QLabel {background-color: white;}''')
+		self.pbet_qframe.setStyleSheet('''.QFrame {border: 1px solid gray;}''')
+		self.pbet_qframe.setSizePolicy(self.sizePolicy)
+		self.pbet_qframe.setFixedWidth(200)
+		self.pbet_qframe.setFixedHeight(125)
+		
+		self.pbet_gl.setSpacing(1)
+		self.pbet_gl.setMargin(1)
+		
+		self.pbet_btn.setText(self.tr('返回'))
+		#self.pbet_btn.setAlignment(Qt.AlignCenter)
+		#self.pbet_btn.setSizePolicy(self.sizePolicy)
+		self.pbet_btn.setFixedWidth(100)
+		self.pbet_btn.setFixedHeight(30)
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
