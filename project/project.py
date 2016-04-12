@@ -19,7 +19,7 @@ class GridWindow(QWidget):
 		self.sizeWidth = 60
 		self.sizeHeight = 25
 		self.sizeWidth_btn = 70
-		self.sizeHeight_btn = 20
+		self.sizeHeight_btn = 22
 		self.sizeWidth_qlineedit = 60
 		
 		self.UIcreate()
@@ -180,6 +180,25 @@ class GridWindow(QWidget):
 		self.nbet_gl.addWidget(self.nbet_qlabel4, 1, 2)
 		self.nbet_gl.addWidget(self.nbet_qlabel5, 1, 3)
 		self.bet_vl.addWidget(self.nbet_qframe)
+		
+		# bet inning count area
+		#----------------------------------------------------
+		self.ibet_qframe = QFrame()
+		self.ibet_gl = QGridLayout()
+		self.ibet_qlabel1 = QLabel()
+		self.ibet_qlabel2 = QLabel()
+		self.ibet_qlabel3 = QLabel()
+		self.ibet_qlabel4 = QLabel()
+		self.ibet_qlabel5 = QLabel()
+		
+		# set relationship
+		self.ibet_qframe.setLayout(self.ibet_gl)
+		self.ibet_gl.addWidget(self.ibet_qlabel1, 0, 0, 3, 2)
+		self.ibet_gl.addWidget(self.ibet_qlabel2, 0, 2)
+		self.ibet_gl.addWidget(self.ibet_qlabel3, 0, 3, 3, 1)
+		self.ibet_gl.addWidget(self.ibet_qlabel4, 1, 2)
+		self.ibet_gl.addWidget(self.ibet_qlabel5, 2, 2)
+		self.bet_vl.addWidget(self.ibet_qframe)
 	
 	def initialGlobalAttribute(self):
 		# initail global values of UIcreate_GridLayout
@@ -279,6 +298,7 @@ class GridWindow(QWidget):
 		# next bet area
 		#--------------------------
 		self.nbet_qframe.setStyleSheet('''.QFrame {background-color: gray;} .QLabel {background-color: white;}''')
+		#self.nbet_qframe.setStyleSheet('''.QLabel {border: 1px solid gray;}''')
 		self.nbet_qframe.setSizePolicy(self.sizePolicy)
 		self.nbet_qframe.setFixedWidth(200)
 		self.nbet_qframe.setFixedHeight(50)
@@ -301,6 +321,25 @@ class GridWindow(QWidget):
 		
 		self.nbet_qlabel5.setText('108')
 		self.nbet_qlabel5.setAlignment(Qt.AlignCenter)
+		
+		# bet inning count area
+		#--------------------------
+		self.ibet_qframe.setStyleSheet('''.QFrame {background-color: gray;} .QLabel {background-color: white;}''')
+		self.ibet_qframe.setSizePolicy(self.sizePolicy)
+		self.ibet_qframe.setFixedWidth(200)
+		self.ibet_qframe.setFixedHeight(75)
+		
+		self.ibet_gl.setSpacing(1)
+		self.ibet_gl.setMargin(1)
+		
+		self.ibet_qlabel2.setAlignment(Qt.AlignCenter)
+		
+		self.ibet_qlabel3.setText(self.tr('\n局'))
+		self.ibet_qlabel3.setAlignment(Qt.AlignCenter)
+		
+		self.ibet_qlabel4.setAlignment(Qt.AlignCenter)
+		
+		self.ibet_qlabel5.setAlignment(Qt.AlignCenter)
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
