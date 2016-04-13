@@ -2,7 +2,8 @@ import sys
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
-
+# show width and height
+sizeHint()
 
 # blue
 setStyleSheet('background-color: rgb(0, 85, 255);')

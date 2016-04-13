@@ -7,6 +7,9 @@ imgDir = '../img/'
 imgCell = imgDir + 'cell.jpg'
 imgBlack = imgDir + 'black.jpg'
 imgRed = imgDir + 'red.jpg'
+imgRedBtn = imgDir + 'red_btn.jpg'
+imgGreenBtn = imgDir + 'green_btn.jpg'
+imgBlueBtn = imgDir + 'blue_btn.jpg'
 
 QTextCodec.setCodecForTr(QTextCodec.codecForName("utf8"))
 
@@ -16,8 +19,8 @@ def clickable(widget):
 		clicked = pyqtSignal()
 		
 		def eventFilter(self, obj, event):
-			if obj == widget:
-				if event.type() == QEvent.MouseButtonRelease:
+			if obj  == widget:
+				if event.type()  == QEvent.MouseButtonRelease:
 					if obj.rect().contains(event.pos()):
 						self.clicked.emit()
 						# The developer can opt for .emit(obj) to get the object within the slot.
@@ -36,7 +39,7 @@ def pressed(widget):
 		
 		def eventFilter(self, obj, event):
 			if obj == widget:
-				if event.type() == QEvent.MouseButtonPress:
+				if event.type()  == QEvent.MouseButtonPress:
 					if obj.rect().contains(event.pos()):
 						self.clicked.emit()
 						# The developer can opt for .emit(obj) to get the object within the slot.
@@ -50,7 +53,7 @@ def pressed(widget):
 
 class GridWindow(QWidget):
 	
-	def __init__(self, parent = None):
+	def __init__(self, parent    = None):
 		super(GridWindow, self).__init__(parent)
 		self.count = 0
 		self.sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
@@ -61,11 +64,21 @@ class GridWindow(QWidget):
 		self.sizeWidth_qlineedit = 60
 		
 		self.UIcreate()
+		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+		self.setFixedSize(self.sizeHint())
+		#print self.sizeHint()
+		self.vline.setFixedHeight(self.sizeHint().height()-50)
 	
 	def UIcreate(self):
+		self.UI_hl = QHBoxLayout()
+		self.vline = QFrame()
+		self.vline.setFrameShape(QFrame.VLine)
+		self.vline.setFrameShadow(QFrame.Sunken)
+		
 		self.UIcreate_GridLayout()
 		self.UIcreate_BarForGrid()
 		self.UIcreate_BetStatus()
+		
 		self.initialGlobalAttribute()
 		
 		# initial leftUI and set relationship
@@ -76,21 +89,10 @@ class GridWindow(QWidget):
 			self.left_vl.addWidget(self.grid_qframe[i])
 		self.left_qframe.setLayout(self.left_vl)
 		
-		hl = QHBoxLayout()
-		hl.addWidget(self.left_qframe)
-		hl.addWidget(self.bet_qframe)
-		#hl.addLayout(self.left_vl)
-		#hl.addLayout(self.bet_vl)
-		#self.setLayout(left_vl)
-		#self.setLayout(self.bet_vl)
-		self.setLayout(hl)
-		
-		#self.bet_qframe.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-		#self.left_qframe.setStyleSheet('''.QFrame {border: 1px solid gray;}''')
-		#self.bet_qframe.setStyleSheet('''.QFrame {border: 1px solid gray;}''')
-		#self.bet_vl.expandingDirections()
-		#print self.left_qframe.height()
-		#print self.rbet_qframe.height()
+		self.UI_hl.addWidget(self.left_qframe)
+		self.UI_hl.addWidget(self.vline)
+		self.UI_hl.addWidget(self.bet_qframe)
+		self.setLayout(self.UI_hl)
 	
 	def UIcreate_GridLayout(self):
 		# global data
@@ -152,7 +154,7 @@ class GridWindow(QWidget):
 		self.lbar_qlineedit = []
 		
 		for i in range(4):
-			# initial left bar
+     			# initial left bar
 			self.lbar_qframe.append(QFrame())
 			self.lbar_hl.append(QHBoxLayout())
 			self.lbar_qlabel.append(QLabel())
@@ -192,8 +194,6 @@ class GridWindow(QWidget):
 	def UIcreate_BetStatus(self):
 		self.bet_qframe = QFrame()
 		self.bet_vl = QVBoxLayout()
-		#self.bet_vl.setAlignment(Qt.AlignTop)
-		#self.bet_vl.addStretch(0)
 		
 		self.bet_qframe.setLayout(self.bet_vl)
 		
@@ -286,6 +286,10 @@ class GridWindow(QWidget):
 		self.bet_vl.addWidget(self.rbet_qframe)
 	
 	def initialGlobalAttribute(self):
+		# initail global values of UIcreate
+		#----------------------------------------------------
+		self.UI_hl.setSpacing(15)
+		
 		# initail global values of UIcreate_GridLayout
 		#----------------------------------------------------
 		for i in range(4):
@@ -356,12 +360,14 @@ class GridWindow(QWidget):
 		
 		# initail global values of UIcreate_BetStatus
 		#----------------------------------------------------
+		self.bet_vl.setSpacing(25)
+		
 		# bet and print area
 		#--------------------------
 		self.bbet_qframe.setStyleSheet('''.QFrame {border: 1px solid gray;}''')
 		self.bbet_qframe.setSizePolicy(self.sizePolicy)
-		self.bbet_qframe.setFixedWidth(200)
-		self.bbet_qframe.setFixedHeight(50)
+		self.bbet_qframe.setFixedWidth(215)
+		self.bbet_qframe.setFixedHeight(80)
 		
 		self.bbet_gl.setSpacing(1)
 		self.bbet_gl.setMargin(1)
@@ -385,8 +391,8 @@ class GridWindow(QWidget):
 		self.nbet_qframe.setStyleSheet('''.QFrame {background-color: gray;} .QLabel {background-color: white;}''')
 		#self.nbet_qframe.setStyleSheet('''.QLabel {border: 1px solid gray;}''')
 		self.nbet_qframe.setSizePolicy(self.sizePolicy)
-		self.nbet_qframe.setFixedWidth(200)
-		self.nbet_qframe.setFixedHeight(50)
+		self.nbet_qframe.setFixedWidth(215)
+		self.nbet_qframe.setFixedHeight(55)
 		
 		self.nbet_gl.setSpacing(1)
 		self.nbet_gl.setMargin(1)
@@ -411,8 +417,8 @@ class GridWindow(QWidget):
 		#--------------------------
 		self.ibet_qframe.setStyleSheet('''.QFrame {background-color: gray;} .QLabel {background-color: white;}''')
 		self.ibet_qframe.setSizePolicy(self.sizePolicy)
-		self.ibet_qframe.setFixedWidth(200)
-		self.ibet_qframe.setFixedHeight(75)
+		self.ibet_qframe.setFixedWidth(215)
+		self.ibet_qframe.setFixedHeight(80)
 		
 		self.ibet_gl.setSpacing(1)
 		self.ibet_gl.setMargin(1)
@@ -431,16 +437,26 @@ class GridWindow(QWidget):
 		#self.pbet_qframe.setStyleSheet('''.QFrame {background-color: gray;} .QLabel {background-color: white;}''')
 		self.pbet_qframe.setStyleSheet('''.QFrame {border: 1px solid gray;}''')
 		self.pbet_qframe.setSizePolicy(self.sizePolicy)
-		self.pbet_qframe.setFixedWidth(200)
-		self.pbet_qframe.setFixedHeight(125)
+		self.pbet_qframe.setFixedWidth(215)
+		self.pbet_qframe.setFixedHeight(135)
 		
 		self.pbet_gl.setSpacing(1)
 		self.pbet_gl.setMargin(1)
 		
+		pixmap = QPixmap(imgRedBtn)
+		self.pbet_qlabel1.setPixmap(pixmap)
+		self.pbet_qlabel1.setScaledContents(True)
+		pixmap = QPixmap(imgGreenBtn)
+		self.pbet_qlabel2.setPixmap(pixmap)
+		self.pbet_qlabel2.setScaledContents(True)
+		pixmap = QPixmap(imgBlueBtn)
+		self.pbet_qlabel3.setPixmap(pixmap)
+		self.pbet_qlabel3.setScaledContents(True)
+		
 		self.pbet_btn.setText(self.tr('返回'))
 		#self.pbet_btn.setAlignment(Qt.AlignCenter)
 		#self.pbet_btn.setSizePolicy(self.sizePolicy)
-		self.pbet_btn.setFixedWidth(100)
+		self.pbet_btn.setFixedWidth(90)
 		self.pbet_btn.setFixedHeight(30)
 		
 		
@@ -449,22 +465,20 @@ class GridWindow(QWidget):
 		self.rbet_qframe.setStyleSheet('''.QLabel {background-color: white; border-top: 1px solid gray;
 											border-left: 1px solid gray; border-right: 1px solid gray;}''')
 		self.rbet_qframe.setSizePolicy(self.sizePolicy)
-		#self.rbet_qframe.setFixedWidth(200)
-		#self.rbet_qframe.setFixedHeight(300)
 		
 		self.rbet_vl.setSpacing(0)
 		self.rbet_vl.setMargin(1)
 		
 		self.rbet_qlabel.setText(self.tr('投注紀錄'))
 		self.rbet_qlabel.setAlignment(Qt.AlignCenter)
-		self.rbet_qlabel.setFixedWidth(200)
+		self.rbet_qlabel.setFixedWidth(215)
 		self.rbet_qlabel.setFixedHeight(30)
 		
 		#for i in range(30):
 			#self.rbet_qlistwidget.addItem(str(i))
 			
-		self.rbet_qlistwidget.setFixedWidth(200)
-		self.rbet_qlistwidget.setFixedHeight(460)
+		self.rbet_qlistwidget.setFixedWidth(215)
+		self.rbet_qlistwidget.setFixedHeight(350)
 		
 
 if __name__ == "__main__":
