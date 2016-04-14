@@ -3,7 +3,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 # image path
-imgDir = '../img/'
+imgDir = 'img/'
 imgCell = imgDir + 'cell.jpg'
 imgBlack = imgDir + 'black.jpg'
 imgRed = imgDir + 'red.jpg'
@@ -68,6 +68,8 @@ class GridWindow(QWidget):
 		self.setFixedSize(self.sizeHint())
 		#print self.sizeHint()
 		self.vline.setFixedHeight(self.sizeHint().height()-50)
+		
+		self.lbar_btn[0].clicked.connect(self.btn_test)
 	
 	def UIcreate(self):
 		self.UI_hl = QHBoxLayout()
@@ -479,7 +481,20 @@ class GridWindow(QWidget):
 			
 		self.rbet_qlistwidget.setFixedWidth(215)
 		self.rbet_qlistwidget.setFixedHeight(350)
+	
+	def btn_test(self):
+		#self.test_frame = QFrame()
+		#self.test_vl = QVBoxLayout()
+		self.test_qlabel1 = QLabel()
+		self.test_qlabel1.setText(self.tr('1'))
+		#self.test_qlabel2 = QLabel()
+		#self.test_qlabel2.setText(self.tr('2'))
 		
+		#self.test_frame.setLayout(self.test_vl)
+		#self.test_vl.addWidget(self.test_qlabel1)
+		#self.test_vl.addWidget(self.test_qlabel2)
+		
+		self.test_qlabel1.show()
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
