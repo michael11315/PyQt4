@@ -78,223 +78,6 @@ class GridWindow(QWidget):
 		
 		self.lbar_btn[0].clicked.connect(self.btn_test)
 	
-	def UIcreate(self):
-		self.UIcreate_Grid()
-		self.UI_create_Vline()
-		self.UIcreate_BetStatus()
-		
-		self.UI_hl.addWidget(self.left_qframe)
-		self.UI_hl.addWidget(self.vline)
-		self.UI_hl.addWidget(self.bet_qframe)
-		
-		self.initialGlobalAttribute()
-		
-		self.setLayout(self.UI_hl)
-	
-	def UI_create_Vline(self):
-		self.vline = QFrame(self)
-		self.vline.setFrameShape(QFrame.VLine)
-		self.vline.setFrameShadow(QFrame.Sunken)
-	
-	def UIcreate_Grid(self):
-		self.UIcreate_GridLayout()
-		self.UIcreate_GridBar()
-		
-		for i in range(4):
-			self.left_vl.addWidget(self.bar_qframe[i])
-			self.left_vl.addWidget(self.grid_qframe[i])
-		self.left_qframe.setLayout(self.left_vl)
-	
-	def UIcreate_GridBar(self):
-		# full bar global data
-		self.bar_qframe = []
-		self.bar_hl = []
-		for i in range(4):
-			self.bar_qframe.append(QFrame(self.left_qframe))
-			self.bar_hl.append(QHBoxLayout(self.bar_qframe[i]))
-		
-		# bar's title
-		#----------------------------------------------------
-		self.tbar_qframe = []
-		self.tbar_hl = []
-		self.tbar_qlabel = []
-		
-		for i in range(4):
-			# initial title bar
-			self.tbar_qframe.append(QFrame(self.bar_qframe[i]))
-			self.tbar_hl.append(QHBoxLayout(self.tbar_qframe[i]))
-			self.tbar_qlabel.append(QLabel(self.tbar_qframe[i]))
-			
-			# set relationship
-			self.tbar_hl[i].addWidget(self.tbar_qlabel[i])
-			self.tbar_qframe[i].setLayout(self.tbar_hl[i])
-			self.bar_hl[i].addWidget(self.tbar_qframe[i])
-			self.bar_hl[i].addWidget(QFrame())
-		
-		# left bar's global data
-		#----------------------------------------------------
-		self.lbar_qframe = []
-		self.lbar_hl = []
-		self.lbar_qlabel = []
-		self.lbar_btn = []
-		self.lbar_qlineedit = []
-		
-		for i in range(4):
-     			# initial left bar
-			self.lbar_qframe.append(QFrame(self.bar_qframe[i]))
-			self.lbar_hl.append(QHBoxLayout(self.lbar_qframe[i]))
-			self.lbar_qlabel.append(QLabel(self.lbar_qframe[i]))
-			self.lbar_btn.append(QPushButton(self.lbar_qframe[i]))
-			self.lbar_qlineedit.append(QLineEdit(self.lbar_qframe[i]))
-			
-			# set relationship
-			self.lbar_hl[i].addWidget(self.lbar_qlabel[i])
-			self.lbar_hl[i].addWidget(self.lbar_btn[i])
-			self.lbar_hl[i].addWidget(self.lbar_qlineedit[i])
-			self.lbar_qframe[i].setLayout(self.lbar_hl[i])
-			self.bar_hl[i].addWidget(self.lbar_qframe[i])
-		
-		# right bar's global data
-		#----------------------------------------------------
-		self.rbar_qframe = []
-		self.rbar_hl = []
-		self.rbar_qlabel1 = []
-		self.rbar_btn = []
-		self.rbar_qlabel2 = []
-		
-		for i in range(4):
-			# initial right bar
-			self.rbar_qframe.append(QFrame(self.bar_qframe[i]))
-			self.rbar_hl.append(QHBoxLayout(self.rbar_qframe[i]))
-			self.rbar_qlabel1.append(QLabel(self.rbar_qframe[i]))
-			self.rbar_btn.append(QPushButton(self.rbar_qframe[i]))
-			self.rbar_qlabel2.append(QLabel(self.rbar_qframe[i]))
-			
-			# set relationship
-			self.rbar_hl[i].addWidget(self.rbar_qlabel1[i])
-			self.rbar_hl[i].addWidget(self.rbar_btn[i])
-			self.rbar_hl[i].addWidget(self.rbar_qlabel2[i])
-			self.rbar_qframe[i].setLayout(self.rbar_hl[i])
-			self.bar_hl[i].addWidget(self.rbar_qframe[i])
-	
-	def UIcreate_GridLayout(self):
-		# global data
-		self.grid_qframe = []
-		self.grid_gl = []
-		self.grid_qlabelList = []
-		
-		# grid layout
-		for i in range(4):
-			# initial grid form
-			self.grid_qframe.append(QFrame(self.left_qframe))
-			self.grid_gl.append(QGridLayout(self.grid_qframe[i]))
-			
-			# initial each grid and set in gridlayout
-			tmp = []
-			for y in range(6):
-				for x in range(30):
-					tmp.append(QLabel(self.grid_qframe[i]))
-					pixmap = QPixmap(imgCell)
-					tmp[len(tmp)-1].setPixmap(pixmap)
-					tmp[len(tmp)-1].setScaledContents(True)
-					self.grid_gl[i].addWidget(tmp[len(tmp)-1], y, x)
-			
-			self.grid_qlabelList.append(tmp)
-			
-			# set relationship
-			self.grid_qframe[i].setLayout(self.grid_gl[i])
-	
-	def UIcreate_BetStatus(self):
-		self.bet_qframe.setLayout(self.bet_vl)
-		
-		# bet and print area
-		#----------------------------------------------------
-		# initial
-		self.bbet_qframe = QFrame(self.bet_qframe)
-		self.bbet_gl = QGridLayout(self.bbet_qframe)
-		self.bbet_btn1 = QPushButton(self.bbet_qframe)
-		self.bbet_qlineedit = QLineEdit(self.bbet_qframe)
-		self.bbet_btn2 = QPushButton(self.bbet_qframe)
-		self.bbet_qlabel1 = QLabel(self.bbet_qframe)
-		self.bbet_qlabel2 = QLabel(self.bbet_qframe)
-		
-		# set relationship
-		self.bbet_qframe.setLayout(self.bbet_gl)
-		self.bbet_gl.addWidget(self.bbet_btn1, 0, 0)
-		self.bbet_gl.addWidget(self.bbet_qlineedit, 0, 1)
-		self.bbet_gl.addWidget(self.bbet_btn2, 0, 2)
-		self.bbet_gl.addWidget(self.bbet_qlabel1, 1, 0, 1, 2)
-		self.bbet_gl.addWidget(self.bbet_qlabel2, 1, 2)
-		self.bet_vl.addWidget(self.bbet_qframe)
-		
-		# next bet area
-		#----------------------------------------------------
-		self.nbet_qframe = QFrame(self.bet_qframe)
-		self.nbet_gl = QGridLayout(self.nbet_qframe)
-		self.nbet_qlabel1 = QLabel(self.nbet_qframe)
-		self.nbet_qlabel2 = QLabel(self.nbet_qframe)
-		self.nbet_qlabel3 = QLabel(self.nbet_qframe)
-		self.nbet_qlabel4 = QLabel(self.nbet_qframe)
-		self.nbet_qlabel5 = QLabel(self.nbet_qframe)
-		
-		# set relationship
-		self.nbet_qframe.setLayout(self.nbet_gl)
-		self.nbet_gl.addWidget(self.nbet_qlabel1, 0, 0, 1, 3)
-		self.nbet_gl.addWidget(self.nbet_qlabel2, 0, 3)
-		self.nbet_gl.addWidget(self.nbet_qlabel3, 1, 0, 1, 2)
-		self.nbet_gl.addWidget(self.nbet_qlabel4, 1, 2)
-		self.nbet_gl.addWidget(self.nbet_qlabel5, 1, 3)
-		self.bet_vl.addWidget(self.nbet_qframe)
-		
-		# bet inning count area
-		#----------------------------------------------------
-		self.ibet_qframe = QFrame(self.bet_qframe)
-		self.ibet_gl = QGridLayout(self.ibet_qframe)
-		self.ibet_qlabel1 = QLabel(self.ibet_qframe)
-		self.ibet_qlabel2 = QLabel(self.ibet_qframe)
-		self.ibet_qlabel3 = QLabel(self.ibet_qframe)
-		self.ibet_qlabel4 = QLabel(self.ibet_qframe)
-		self.ibet_qlabel5 = QLabel(self.ibet_qframe)
-		
-		# set relationship
-		self.ibet_qframe.setLayout(self.ibet_gl)
-		self.ibet_gl.addWidget(self.ibet_qlabel1, 0, 0, 3, 2)
-		self.ibet_gl.addWidget(self.ibet_qlabel2, 0, 2)
-		self.ibet_gl.addWidget(self.ibet_qlabel3, 0, 3, 3, 1)
-		self.ibet_gl.addWidget(self.ibet_qlabel4, 1, 2)
-		self.ibet_gl.addWidget(self.ibet_qlabel5, 2, 2)
-		self.bet_vl.addWidget(self.ibet_qframe)
-		
-		# bet push button area
-		#----------------------------------------------------
-		self.pbet_qframe = QFrame(self.bet_qframe)
-		self.pbet_gl = QGridLayout(self.pbet_qframe)
-		self.pbet_qlabel1 = QLabel(self.pbet_qframe)
-		self.pbet_qlabel2 = QLabel(self.pbet_qframe)
-		self.pbet_qlabel3 = QLabel(self.pbet_qframe)
-		self.pbet_btn = QPushButton(self.pbet_qframe)
-		
-		# set relationship
-		self.pbet_qframe.setLayout(self.pbet_gl)
-		self.pbet_gl.addWidget(self.pbet_qlabel1, 0, 0, 2, 1)
-		self.pbet_gl.addWidget(self.pbet_qlabel2, 0, 1, 2, 1)
-		self.pbet_gl.addWidget(self.pbet_qlabel3, 0, 2, 2, 1)
-		self.pbet_gl.addWidget(self.pbet_btn, 2, 0, 1, 3, Qt.AlignCenter)
-		self.bet_vl.addWidget(self.pbet_qframe)
-		
-		# bet record area
-		#----------------------------------------------------
-		self.rbet_qframe = QFrame(self.bet_qframe)
-		self.rbet_vl = QVBoxLayout(self.rbet_qframe)
-		self.rbet_qlabel = QLabel(self.rbet_qframe)
-		self.rbet_qlistwidget = QListWidget(self.rbet_qframe)
-		
-		# set relationship
-		self.rbet_qframe.setLayout(self.rbet_vl)
-		self.rbet_vl.addWidget(self.rbet_qlabel)
-		self.rbet_vl.addWidget(self.rbet_qlistwidget)
-		self.bet_vl.addWidget(self.rbet_qframe)
-	
 	def initialGlobalAttribute(self):
 		# initail global values of UIcreate
 		#----------------------------------------------------
@@ -489,43 +272,325 @@ class GridWindow(QWidget):
 			
 		self.rbet_qlistwidget.setFixedWidth(215)
 		self.rbet_qlistwidget.setFixedHeight(330)
+		
+		# initail global values of UIcreate_numberInput
+		#----------------------------------------------------
+		self.binp_qframe.setStyleSheet('''.QFrame {background-color: rgb(218, 218, 218); border: 1px solid gray;}
+											.QPushButton {background-color: white;}''')
+		self.binp_qframe.setGeometry(QRect(565, 55, 147, 110))
+		self.binp_qframe.setFrameShape(QFrame.StyledPanel)
+		self.binp_qframe.setFrameShadow(QFrame.Raised)
+		
+		self.binp_gl.setSpacing(2)
+		self.binp_gl.setMargin(2)
+		
+		self.binp_btn0.setText('0')
+		self.binp_btn1.setText('1')
+		self.binp_btn2.setText('2')
+		self.binp_btn3.setText('3')
+		self.binp_btn4.setText('4')
+		self.binp_btn5.setText('5')
+		self.binp_btn6.setText('6')
+		self.binp_btn7.setText('7')
+		self.binp_btn8.setText('8')
+		self.binp_btn9.setText('9')
+		self.binp_btn10.setText(self.tr('莊'))
+		self.binp_btn11.setText(self.tr('閒'))
+		
+		self.binp_btn10.setStyleSheet('''.QPushButton {background-color: rgb(255, 47, 61); color: white;}''')
+		self.binp_btn11.setStyleSheet('''.QPushButton {background-color: rgb(116, 106, 255); color: white;}''')
+		
+		self.binp_btnWidth = 40
+		self.binp_btnHeight = 25
+		self.binp_btn0.setFixedWidth(self.binp_btnWidth)
+		self.binp_btn0.setFixedHeight(self.binp_btnHeight)
+		self.binp_btn1.setFixedWidth(self.binp_btnWidth)
+		self.binp_btn1.setFixedHeight(self.binp_btnHeight)
+		self.binp_btn2.setFixedWidth(self.binp_btnWidth)
+		self.binp_btn2.setFixedHeight(self.binp_btnHeight)
+		self.binp_btn3.setFixedWidth(self.binp_btnWidth)
+		self.binp_btn3.setFixedHeight(self.binp_btnHeight)
+		self.binp_btn4.setFixedWidth(self.binp_btnWidth)
+		self.binp_btn4.setFixedHeight(self.binp_btnHeight)
+		self.binp_btn5.setFixedWidth(self.binp_btnWidth)
+		self.binp_btn5.setFixedHeight(self.binp_btnHeight)
+		self.binp_btn6.setFixedWidth(self.binp_btnWidth)
+		self.binp_btn6.setFixedHeight(self.binp_btnHeight)
+		self.binp_btn7.setFixedWidth(self.binp_btnWidth)
+		self.binp_btn7.setFixedHeight(self.binp_btnHeight)
+		self.binp_btn8.setFixedWidth(self.binp_btnWidth)
+		self.binp_btn8.setFixedHeight(self.binp_btnHeight)
+		self.binp_btn9.setFixedWidth(self.binp_btnWidth)
+		self.binp_btn9.setFixedHeight(self.binp_btnHeight)
+		self.binp_btn10.setFixedWidth(self.binp_btnWidth)
+		self.binp_btn10.setFixedHeight(self.binp_btnHeight)
+		self.binp_btn11.setFixedWidth(self.binp_btnWidth)
+		self.binp_btn11.setFixedHeight(self.binp_btnHeight)
+	
+	def UIcreate(self):
+		self.UIcreate_Grid()
+		self.UI_create_Vline()
+		self.UIcreate_BetStatus()
+		self.UIcreate_numberInput()
+		
+		self.UI_hl.addWidget(self.left_qframe)
+		self.UI_hl.addWidget(self.vline)
+		self.UI_hl.addWidget(self.bet_qframe)
+		
+		self.initialGlobalAttribute()
+		
+		self.setLayout(self.UI_hl)
+	
+	def UI_create_Vline(self):
+		self.vline = QFrame(self)
+		self.vline.setFrameShape(QFrame.VLine)
+		self.vline.setFrameShadow(QFrame.Sunken)
+	
+	def UIcreate_Grid(self):
+		self.UIcreate_GridLayout()
+		self.UIcreate_GridBar()
+		
+		for i in range(4):
+			self.left_vl.addWidget(self.bar_qframe[i])
+			self.left_vl.addWidget(self.grid_qframe[i])
+		self.left_qframe.setLayout(self.left_vl)
+	
+	def UIcreate_GridBar(self):
+		# full bar global data
+		self.bar_qframe = []
+		self.bar_hl = []
+		for i in range(4):
+			self.bar_qframe.append(QFrame(self.left_qframe))
+			self.bar_hl.append(QHBoxLayout(self.bar_qframe[i]))
+		
+		# bar's title
+		#----------------------------------------------------
+		self.tbar_qframe = []
+		self.tbar_hl = []
+		self.tbar_qlabel = []
+		
+		for i in range(4):
+			# initial title bar
+			self.tbar_qframe.append(QFrame(self.bar_qframe[i]))
+			self.tbar_hl.append(QHBoxLayout(self.tbar_qframe[i]))
+			self.tbar_qlabel.append(QLabel(self.tbar_qframe[i]))
+			
+			# set relationship
+			self.tbar_hl[i].addWidget(self.tbar_qlabel[i])
+			self.tbar_qframe[i].setLayout(self.tbar_hl[i])
+			self.bar_hl[i].addWidget(self.tbar_qframe[i])
+			self.bar_hl[i].addWidget(QFrame())
+		
+		# left bar's global data
+		#----------------------------------------------------
+		self.lbar_qframe = []
+		self.lbar_hl = []
+		self.lbar_qlabel = []
+		self.lbar_btn = []
+		self.lbar_qlineedit = []
+		
+		for i in range(4):
+     			# initial left bar
+			self.lbar_qframe.append(QFrame(self.bar_qframe[i]))
+			self.lbar_hl.append(QHBoxLayout(self.lbar_qframe[i]))
+			self.lbar_qlabel.append(QLabel(self.lbar_qframe[i]))
+			self.lbar_btn.append(QPushButton(self.lbar_qframe[i]))
+			self.lbar_qlineedit.append(QLineEdit(self.lbar_qframe[i]))
+			
+			# set relationship
+			self.lbar_hl[i].addWidget(self.lbar_qlabel[i])
+			self.lbar_hl[i].addWidget(self.lbar_btn[i])
+			self.lbar_hl[i].addWidget(self.lbar_qlineedit[i])
+			self.lbar_qframe[i].setLayout(self.lbar_hl[i])
+			self.bar_hl[i].addWidget(self.lbar_qframe[i])
+		
+		# right bar's global data
+		#----------------------------------------------------
+		self.rbar_qframe = []
+		self.rbar_hl = []
+		self.rbar_qlabel1 = []
+		self.rbar_btn = []
+		self.rbar_qlabel2 = []
+		
+		for i in range(4):
+			# initial right bar
+			self.rbar_qframe.append(QFrame(self.bar_qframe[i]))
+			self.rbar_hl.append(QHBoxLayout(self.rbar_qframe[i]))
+			self.rbar_qlabel1.append(QLabel(self.rbar_qframe[i]))
+			self.rbar_btn.append(QPushButton(self.rbar_qframe[i]))
+			self.rbar_qlabel2.append(QLabel(self.rbar_qframe[i]))
+			
+			# set relationship
+			self.rbar_hl[i].addWidget(self.rbar_qlabel1[i])
+			self.rbar_hl[i].addWidget(self.rbar_btn[i])
+			self.rbar_hl[i].addWidget(self.rbar_qlabel2[i])
+			self.rbar_qframe[i].setLayout(self.rbar_hl[i])
+			self.bar_hl[i].addWidget(self.rbar_qframe[i])
+	
+	def UIcreate_GridLayout(self):
+		# global data
+		self.grid_qframe = []
+		self.grid_gl = []
+		self.grid_qlabelList = []
+		
+		# grid layout
+		for i in range(4):
+			# initial grid form
+			self.grid_qframe.append(QFrame(self.left_qframe))
+			self.grid_gl.append(QGridLayout(self.grid_qframe[i]))
+			
+			# initial each grid and set in gridlayout
+			tmp = []
+			for y in range(6):
+				for x in range(30):
+					tmp.append(QLabel(self.grid_qframe[i]))
+					pixmap = QPixmap(imgCell)
+					tmp[len(tmp)-1].setPixmap(pixmap)
+					tmp[len(tmp)-1].setScaledContents(True)
+					self.grid_gl[i].addWidget(tmp[len(tmp)-1], y, x)
+			
+			self.grid_qlabelList.append(tmp)
+			
+			# set relationship
+			self.grid_qframe[i].setLayout(self.grid_gl[i])
+	
+	def UIcreate_BetStatus(self):
+		self.bet_qframe.setLayout(self.bet_vl)
+		
+		# bet and print area
+		#----------------------------------------------------
+		# initial
+		self.bbet_qframe = QFrame(self.bet_qframe)
+		self.bbet_gl = QGridLayout(self.bbet_qframe)
+		self.bbet_btn1 = QPushButton(self.bbet_qframe)
+		self.bbet_qlineedit = QLineEdit(self.bbet_qframe)
+		self.bbet_btn2 = QPushButton(self.bbet_qframe)
+		self.bbet_qlabel1 = QLabel(self.bbet_qframe)
+		self.bbet_qlabel2 = QLabel(self.bbet_qframe)
+		
+		# set relationship
+		self.bbet_qframe.setLayout(self.bbet_gl)
+		self.bbet_gl.addWidget(self.bbet_btn1, 0, 0)
+		self.bbet_gl.addWidget(self.bbet_qlineedit, 0, 1)
+		self.bbet_gl.addWidget(self.bbet_btn2, 0, 2)
+		self.bbet_gl.addWidget(self.bbet_qlabel1, 1, 0, 1, 2)
+		self.bbet_gl.addWidget(self.bbet_qlabel2, 1, 2)
+		self.bet_vl.addWidget(self.bbet_qframe)
+		
+		# next bet area
+		#----------------------------------------------------
+		# initial
+		self.nbet_qframe = QFrame(self.bet_qframe)
+		self.nbet_gl = QGridLayout(self.nbet_qframe)
+		self.nbet_qlabel1 = QLabel(self.nbet_qframe)
+		self.nbet_qlabel2 = QLabel(self.nbet_qframe)
+		self.nbet_qlabel3 = QLabel(self.nbet_qframe)
+		self.nbet_qlabel4 = QLabel(self.nbet_qframe)
+		self.nbet_qlabel5 = QLabel(self.nbet_qframe)
+		
+		# set relationship
+		self.nbet_qframe.setLayout(self.nbet_gl)
+		self.nbet_gl.addWidget(self.nbet_qlabel1, 0, 0, 1, 3)
+		self.nbet_gl.addWidget(self.nbet_qlabel2, 0, 3)
+		self.nbet_gl.addWidget(self.nbet_qlabel3, 1, 0, 1, 2)
+		self.nbet_gl.addWidget(self.nbet_qlabel4, 1, 2)
+		self.nbet_gl.addWidget(self.nbet_qlabel5, 1, 3)
+		self.bet_vl.addWidget(self.nbet_qframe)
+		
+		# bet inning count area
+		#----------------------------------------------------
+		# initial
+		self.ibet_qframe = QFrame(self.bet_qframe)
+		self.ibet_gl = QGridLayout(self.ibet_qframe)
+		self.ibet_qlabel1 = QLabel(self.ibet_qframe)
+		self.ibet_qlabel2 = QLabel(self.ibet_qframe)
+		self.ibet_qlabel3 = QLabel(self.ibet_qframe)
+		self.ibet_qlabel4 = QLabel(self.ibet_qframe)
+		self.ibet_qlabel5 = QLabel(self.ibet_qframe)
+		
+		# set relationship
+		self.ibet_qframe.setLayout(self.ibet_gl)
+		self.ibet_gl.addWidget(self.ibet_qlabel1, 0, 0, 3, 2)
+		self.ibet_gl.addWidget(self.ibet_qlabel2, 0, 2)
+		self.ibet_gl.addWidget(self.ibet_qlabel3, 0, 3, 3, 1)
+		self.ibet_gl.addWidget(self.ibet_qlabel4, 1, 2)
+		self.ibet_gl.addWidget(self.ibet_qlabel5, 2, 2)
+		self.bet_vl.addWidget(self.ibet_qframe)
+		
+		# bet push button area
+		#----------------------------------------------------
+		# initial
+		self.pbet_qframe = QFrame(self.bet_qframe)
+		self.pbet_gl = QGridLayout(self.pbet_qframe)
+		self.pbet_qlabel1 = QLabel(self.pbet_qframe)
+		self.pbet_qlabel2 = QLabel(self.pbet_qframe)
+		self.pbet_qlabel3 = QLabel(self.pbet_qframe)
+		self.pbet_btn = QPushButton(self.pbet_qframe)
+		
+		# set relationship
+		self.pbet_qframe.setLayout(self.pbet_gl)
+		self.pbet_gl.addWidget(self.pbet_qlabel1, 0, 0, 2, 1)
+		self.pbet_gl.addWidget(self.pbet_qlabel2, 0, 1, 2, 1)
+		self.pbet_gl.addWidget(self.pbet_qlabel3, 0, 2, 2, 1)
+		self.pbet_gl.addWidget(self.pbet_btn, 2, 0, 1, 3, Qt.AlignCenter)
+		self.bet_vl.addWidget(self.pbet_qframe)
+		
+		# bet record area
+		#----------------------------------------------------
+		# initial
+		self.rbet_qframe = QFrame(self.bet_qframe)
+		self.rbet_vl = QVBoxLayout(self.rbet_qframe)
+		self.rbet_qlabel = QLabel(self.rbet_qframe)
+		self.rbet_qlistwidget = QListWidget(self.rbet_qframe)
+		
+		# set relationship
+		self.rbet_qframe.setLayout(self.rbet_vl)
+		self.rbet_vl.addWidget(self.rbet_qlabel)
+		self.rbet_vl.addWidget(self.rbet_qlistwidget)
+		self.bet_vl.addWidget(self.rbet_qframe)
+	
+	def UIcreate_numberInput(self):
+		# initial
+		self.binp_qframe = QFrame(self)
+		self.binp_gl = QGridLayout(self.binp_qframe)
+		self.binp_btn0 = QPushButton(self.binp_qframe)
+		self.binp_btn1 = QPushButton(self.binp_qframe)
+		self.binp_btn2 = QPushButton(self.binp_qframe)
+		self.binp_btn3 = QPushButton(self.binp_qframe)
+		self.binp_btn4 = QPushButton(self.binp_qframe)
+		self.binp_btn5 = QPushButton(self.binp_qframe)
+		self.binp_btn6 = QPushButton(self.binp_qframe)
+		self.binp_btn7 = QPushButton(self.binp_qframe)
+		self.binp_btn8 = QPushButton(self.binp_qframe)
+		self.binp_btn9 = QPushButton(self.binp_qframe)
+		self.binp_btn10 = QPushButton(self.binp_qframe)
+		self.binp_btn11 = QPushButton(self.binp_qframe)
+		
+		# set relationship
+		self.binp_qframe.setLayout(self.binp_gl)
+		self.binp_gl.addWidget(self.binp_btn1, 0, 0)
+		self.binp_gl.addWidget(self.binp_btn2, 0, 1)
+		self.binp_gl.addWidget(self.binp_btn3, 0, 2)
+		self.binp_gl.addWidget(self.binp_btn4, 1, 0)
+		self.binp_gl.addWidget(self.binp_btn5, 1, 1)
+		self.binp_gl.addWidget(self.binp_btn6, 1, 2)
+		self.binp_gl.addWidget(self.binp_btn7, 2, 0)
+		self.binp_gl.addWidget(self.binp_btn8, 2, 1)
+		self.binp_gl.addWidget(self.binp_btn9, 2, 2)
+		self.binp_gl.addWidget(self.binp_btn0, 3, 0)
+		self.binp_gl.addWidget(self.binp_btn10, 3, 1)
+		self.binp_gl.addWidget(self.binp_btn11, 3, 2)
 	
 	def btn_test(self):
-		self.test_frame = QFrame(self)
-		self.test_vl = QVBoxLayout()
-		self.test_btn1 = QPushButton()
-		self.test_btn1.setText(self.tr('1'))
-		self.test_btn2 = QPushButton()
-		self.test_btn2.setText(self.tr('2'))
+		self.binp_qframe.show()
+		#self.binp_qframe.close()
 		
-		self.test_frame.setLayout(self.test_vl)
-		self.test_vl.addWidget(self.test_btn1)
-		self.test_vl.addWidget(self.test_btn2)
-		
-		self.test_frame.setStyleSheet('''.QFrame {background-color: gray;}''')
-		self.test_frame.setGeometry(QRect(565, 60, 231, 151))
-		self.test_frame.setFrameShape(QFrame.StyledPanel)
-		self.test_frame.setFrameShadow(QFrame.Raised)
-		self.test_frame.show()
-		print self.pos()
-		print self.lbar_btn[0].pos()
-		print self.lbar_btn[1].pos()
-		self.lbar_btn[0].mapToGlobal( self.pos() )
-		#self.lbar_btn[0].parentWidget().mapToGlobal( self.lbar_btn[0].pos() )
-		#print 'aa', self.lbar_btn[0].geometry().topLeft()
-		#self.lbar_btn[0].mapFromGlobal(self.lbar_btn[0].pos())
-		#print self.lbar_btn[0].x(), self.lbar_btn[0].y()
-		#print self.lbar_btn[1].pos()
-		#print  self.rbet_qframe.pos()
-		#self.test_frame.setGeometry(a)
-		
-		#self.test_frame
 		#QObject.connect(self.lbar_btn[0], SIGNAL("clicked()"), self.test_frame.show)
-		QObject.connect(self.lbar_btn[1], SIGNAL("clicked()"), self.test_frame.close)
-		
+		#QObject.connect(self.lbar_btn[1], SIGNAL("clicked()"), self.binp_qframe.close)
+	
 	def mousePressEvent(self, QMouseEvent):
 		print QMouseEvent.pos()
-
+	
 	def mouseReleaseEvent(self, QMouseEvent):
 		cursor = QCursor()
 		print cursor.pos()
