@@ -19,6 +19,11 @@ setSizePolicy(sizePolicy)
 myListWidget->setStyleSheet( "QListWidget::item { border-bottom: 1px solid black; }" );
 
 
+#QObject.connect(self.lbar_btn[0], SIGNAL("clicked()"), self.test_frame.show)
+#QObject.connect(self.lbar_btn[1], SIGNAL("clicked()"), self.binp_qframe.close)
+
+print c.toUtf8()
+
 # mouse press and release
 def clickable(widget):
 	class Filter(QObject):
