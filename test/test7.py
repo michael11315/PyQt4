@@ -5,6 +5,9 @@ from PyQt4.QtCore import *
 # show width and height
 sizeHint()
 
+# home size
+PyQt4.QtCore.QSize(1239, 902)
+
 # blue
 setStyleSheet('background-color: rgb(0, 85, 255);')
 

@@ -77,7 +77,7 @@ class GridWindow(QWidget):
 		self.UIcreate()
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 		self.setFixedSize(self.sizeHint())
-		#print self.sizeHint()
+		print self.sizeHint()
 		#self.updateGeometry()
 		self.vline.setFixedHeight(self.sizeHint().height()-50)
 		
@@ -704,7 +704,7 @@ class GridWindow(QWidget):
 		print cursor.pos()
 	
 	def testFunc(self):
-		self.rbet_qscrollarea
+		#self.rbet_qscrollarea
 		test_frame = QFrame(self.rbet_qscrollarea)
 		test_vl = QVBoxLayout(test_frame)
 		test_vl.setSpacing(0)
@@ -713,7 +713,7 @@ class GridWindow(QWidget):
 			test_vl.addWidget(QLabel(str(i)))
 		
 		self.rbet_qscrollarea.setWidget(test_frame)
-		print self.pbet_qframe.sizeHint()
+		#print self.pbet_qframe.sizeHint()
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
