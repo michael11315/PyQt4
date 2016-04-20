@@ -713,6 +713,9 @@ class GridWindow(QWidget):
 			test_vl.addWidget(QLabel(str(i)))
 		
 		self.rbet_qscrollarea.setWidget(test_frame)
+		pixmap = QPixmap(imgRedCir)
+		self.grid_qlabelList[0][0].setPixmap(pixmap)
+		self.grid_qlabelList[0][1].setPixmap(pixmap)
 		#print self.pbet_qframe.sizeHint()
 
 if __name__ == "__main__":
