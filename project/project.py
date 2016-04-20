@@ -10,6 +10,8 @@ imgRed = imgDir + 'red.jpg'
 imgRedBtn = imgDir + 'red_btn.png'
 imgGreenBtn = imgDir + 'green_btn.png'
 imgBlueBtn = imgDir + 'blue_btn.png'
+imgRedCir = imgDir + 'red_cir.png'
+imgBlueCir = imgDir + 'blue_cir.png'
 
 QTextCodec.setCodecForTr(QTextCodec.codecForName("utf8"))
 
@@ -69,8 +71,8 @@ class GridWindow(QWidget):
 		self.sizeWidth_qlineedit = 60
 		self.sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
 		
-		self.binp_btnWidth = 40
-		self.binp_btnHeight = 25
+		self.binp_btnWidth = 37
+		self.binp_btnHeight = 30
 		
 		self.UIcreate()
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
@@ -278,6 +280,7 @@ class GridWindow(QWidget):
 		self.pbet_qframe = QFrame(self.bet_qframe)
 		self.pbet_gl = QGridLayout(self.pbet_qframe)
 		self.pbet_qlabel1 = QLabel(self.pbet_qframe)
+		#self.pbet_qlabel1 = QLabel("<html><img src='%s'></html>" %imgRedBtn)
 		self.pbet_qlabel2 = QLabel(self.pbet_qframe)
 		self.pbet_qlabel3 = QLabel(self.pbet_qframe)
 		self.pbet_btn = QPushButton(self.pbet_qframe)
@@ -555,19 +558,22 @@ class GridWindow(QWidget):
 		
 		# initail global values of UIcreate_numberInput
 		#----------------------------------------------------
-		self.binp_qframe[0].setGeometry(QRect(565, 60, 147, 110))
-		self.binp_qframe[1].setGeometry(QRect(565, 279, 147, 110))
-		self.binp_qframe[2].setGeometry(QRect(565, 498, 147, 110))
-		self.binp_qframe[3].setGeometry(QRect(565, 717, 147, 110))
+		self.binp_qframe[0].setGeometry(QRect(565, 60, 140, 150))
+		self.binp_qframe[1].setGeometry(QRect(565, 279, 140, 150))
+		self.binp_qframe[2].setGeometry(QRect(565, 498, 140, 150))
+		self.binp_qframe[3].setGeometry(QRect(565, 717, 140, 150))
 		for i in range(4):
-			self.binp_qframe[i].setStyleSheet('''.QFrame {background-color: rgb(218, 218, 218); border: 1px solid gray;}
-												.QPushButton {background-color: white;}''')
+			self.binp_qframe[i].setStyleSheet('''.QFrame {background-color: rgb(230, 230, 230); border: 2px solid gray;}
+												.QPushButton {background-color: rgb(250, 250, 250); font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			self.binp_qframe[i].setFrameShape(QFrame.StyledPanel)
 			self.binp_qframe[i].setFrameShadow(QFrame.Raised)
 			self.binp_qframe[i].close()
 			
-			self.binp_gl[i].setSpacing(2)
-			self.binp_gl[i].setMargin(2)
+			self.binp_gl[i].setSpacing(1)
+			self.binp_gl[i].setMargin(1)
+			
+			self.binp_btn10[i].setStyleSheet('''.QPushButton {background-color: rgb(255, 47, 61); color: white;}''')
+			self.binp_btn11[i].setStyleSheet('''.QPushButton {background-color: rgb(116, 106, 255); color: white;}''')
 			
 			self.binp_btn0[i].setText('0')
 			self.binp_btn1[i].setText('1')
@@ -581,9 +587,6 @@ class GridWindow(QWidget):
 			self.binp_btn9[i].setText('9')
 			self.binp_btn10[i].setText(self.tr('莊'))
 			self.binp_btn11[i].setText(self.tr('閒'))
-			
-			self.binp_btn10[i].setStyleSheet('''.QPushButton {background-color: rgb(255, 47, 61); color: white;}''')
-			self.binp_btn11[i].setStyleSheet('''.QPushButton {background-color: rgb(116, 106, 255); color: white;}''')
 			
 			self.binp_btn0[i].setFixedWidth(self.binp_btnWidth)
 			self.binp_btn0[i].setFixedHeight(self.binp_btnHeight)
