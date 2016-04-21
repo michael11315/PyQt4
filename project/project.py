@@ -12,10 +12,16 @@ imgRed = imgDir + 'red.jpg'
 imgRedBtn = imgDir + 'red_btn.png'
 imgGreenBtn = imgDir + 'green_btn.png'
 imgBlueBtn = imgDir + 'blue_btn.png'
-imgRedCir = imgDir + 'red_cir.png'
-imgBlueCir = imgDir + 'blue_cir.png'
-imgRedCirGreen = imgDir + 'red_cir_green.png'
-imgBlueCirGreen = imgDir + 'blue_cir_green.png'
+imgBigRedCir = imgDir + 'big_red_cir.png'
+imgBigBlueCir = imgDir + 'big_blue_cir.png'
+imgBigRedCirGreen = imgDir + 'big_red_cir_green.png'
+imgBigBlueCirGreen = imgDir + 'big_blue_cir_green.png'
+imgEyeRedCir = imgDir + 'eye_red_cir.png'
+imgEyeBlueCir = imgDir + 'eye_blue_cir.png'
+imgSmaRedCir = imgDir + 'sma_red_cir.png'
+imgSmaBlueCir = imgDir + 'sma_blue_cir.png'
+imgPenRedCir = imgDir + 'pen_red_cir.png'
+imgPenBlueCir = imgDir + 'pen_blue_cir.png'
 
 # value for bet button
 Banker = 0
@@ -47,7 +53,10 @@ class betRecord():
 		
 		self.imgPath = []
 		# imgPath[0] -> imgBig
-		self.imgPath.append([imgRedCir, imgBlueCir, (imgRedCirGreen, imgBlueCirGreen)])
+		self.imgPath.append([imgBigRedCir, imgBigBlueCir, (imgBigRedCirGreen, imgBigBlueCirGreen)])
+		self.imgPath.append([imgEyeRedCir, imgEyeBlueCir])
+		self.imgPath.append([imgSmaRedCir, imgSmaBlueCir])
+		self.imgPath.append([imgPenRedCir, imgPenBlueCir])
 	
 	def bet(self, winner):
 		if winner != Tie:
@@ -64,7 +73,7 @@ class betRecord():
 				self.mapBig[Big[0]][Big[1]] = winner
 			
 			self.recordAll.append(winner)
-			print 'record', self.recordAll
+			#print 'record', self.recordAll
 			
 			return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 		else:
@@ -128,7 +137,7 @@ class GridWindow(QWidget):
 		
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 		self.setFixedSize(1251, 917)
-		#print self.sizeHint()
+		print self.sizeHint()
 		self.vline.setFixedHeight(self.sizeHint().height()-50)
 		
 		self.betRecord = betRecord()
@@ -776,7 +785,7 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].setPixmap(pixmap)
 					else:
 						pass
-			pixmap = QPixmap(imgRedCir)
+			#pixmap = QPixmap(imgRedCir)
 		
 	
 	def connect_pbet_btn(self):
@@ -802,7 +811,7 @@ class GridWindow(QWidget):
 		
 		self.rbet_qscrollarea.setWidget(test_frame)
 		
-		pixmap = QPixmap(imgRedCir)
+		#pixmap = QPixmap(imgRedCir)
 		#self.grid_qlabelList[0][0][0].setPixmap(pixmap)
 		#self.grid_qlabelList[0][1][0].setPixmap(pixmap)
 		#self.grid_qlabelList[1][5][0].setPixmap(pixmap)
