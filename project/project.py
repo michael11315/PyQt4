@@ -2,6 +2,8 @@ import sys
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
+QTextCodec.setCodecForTr(QTextCodec.codecForName("utf8"))
+
 # image path
 imgDir = 'img/'
 imgCell = imgDir + 'cell.jpg'
@@ -12,46 +14,104 @@ imgGreenBtn = imgDir + 'green_btn.png'
 imgBlueBtn = imgDir + 'blue_btn.png'
 imgRedCir = imgDir + 'red_cir.png'
 imgBlueCir = imgDir + 'blue_cir.png'
+imgRedCirGreen = imgDir + 'red_cir_green.png'
+imgBlueCirGreen = imgDir + 'blue_cir_green.png'
 
-QTextCodec.setCodecForTr(QTextCodec.codecForName("utf8"))
+# value for bet button
+Banker = 0
+Player = 1
+Tie = 2
 
-def clickable(widget):
-	class Filter(QObject):
+class betRecord():
+	def __init__(self):
+		self.recordAll = []
+		self.recordBig = []
+		self.recordEye = []
+		self.recordSma = []
+		self.recordPen = []
 		
-		clicked = pyqtSignal()
+		self.mapBig = []
+		self.mapEye = []
+		self.mapSma = []
+		self.mapPen = []
 		
-		def eventFilter(self, obj, event):
-			if obj  == widget:
-				if event.type()  == QEvent.MouseButtonRelease:
-					if obj.rect().contains(event.pos()):
-						self.clicked.emit()
-						# The developer can opt for .emit(obj) to get the object within the slot.
-						return True
+		for row in range(6):
+			tmp = []
+			for col in range(30):
+				tmp.append(-1)
+				
+			self.mapEye.append(tmp)
+			self.mapBig.append(tmp)
+			self.mapSma.append(tmp)
+			self.mapPen.append(tmp)
+		
+		self.imgPath = []
+		# imgPath[0] -> imgBig
+		self.imgPath.append([imgRedCir, imgBlueCir, (imgRedCirGreen, imgBlueCirGreen)])
+	
+	def bet(self, winner):
+		if winner != Tie:
+			ret = self.findPos(winner)
+			if ret.get('status') == 0:
+				Big = ret.get('Big')
+				Eye = ret.get('Eye')
+				Sma = ret.get('Sma')
+				Pen = ret.get('Pen')
+				self.recordBig.append(Big)
+				self.recordEye.append(Eye)
+				self.recordSma.append(Sma)
+				self.recordPen.append(Pen)
+				self.mapBig[Big[0]][Big[1]] = winner
 			
-			return False
-	
-	filter = Filter(widget)
-	widget.installEventFilter(filter)
-	return filter.clicked
-	
-def pressed(widget):
-	class Filter(QObject):
-		
-		clicked = pyqtSignal()
-		
-		def eventFilter(self, obj, event):
-			if obj == widget:
-				if event.type()  == QEvent.MouseButtonPress:
-					if obj.rect().contains(event.pos()):
-						self.clicked.emit()
-						# The developer can opt for .emit(obj) to get the object within the slot.
-						return True
+			self.recordAll.append(winner)
+			print 'record', self.recordAll
 			
-			return False
+			return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
+		else:
+			pass
+		
+		return {'status': -1}
 	
-	filter = Filter(widget)
-	widget.installEventFilter(filter)
-	return filter.clicked
+	def findPos(self, winner):
+		Big, Eye, Sma, Pen = (-1, -1), (-1, -1), (-1, -1), (-1, -1)
+		
+		if len(self.recordAll) == 0:
+			Big = (0, 0)
+			return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
+		
+		#print self.recordBig
+		#print 'aaa', self.recordBig[len(self.recordBig)-1]
+		lastBet_row = self.recordBig[len(self.recordBig)-1][0]
+		lastBet_col = self.recordBig[len(self.recordBig)-1][1]
+		
+		if self.mapBig[lastBet_row][lastBet_col] == winner:
+			Big = self.PosNext(self.mapBig, winner, lastBet_row, lastBet_col)
+		else:
+			Big = self.PosChangeCol(self.mapBig)
+		
+		#lastBet_row = self.recordEye[len(self.recordEye)-1][0]
+		#lastBet_col = self.recordEye[len(self.recordEye)-1][1]
+		
+		#if self.mapBig[lastBet_row][lastBet_col] == -1:
+		
+		return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
+	
+	def PosNext(self, map, winner, lastBet_row, lastBet_col):
+		if lastBet_row == 5:
+			return (lastBet_row, lastBet_col+1)
+		if map[lastBet_row+1][lastBet_col-1] == winner:
+			return (lastBet_row, lastBet_col+1)
+		if lastBet_row < 4 and map[lastBet_row+2][lastBet_col] == winner:
+			return (lastBet_row, lastBet_col+1)
+		if map[lastBet_row+1][lastBet_col] != -1:
+			return (lastBet_row, lastBet_col+1)
+		else:
+			return (lastBet_row+1, lastBet_col)
+	
+	def PosChangeCol(self, map):
+		for col in range(30):
+			if map[0][col] == -1:
+				return (0, col)
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -63,6 +123,18 @@ class GridWindow(QWidget):
 		self.bet_qframe = QFrame(self)
 		self.bet_vl = QVBoxLayout(self.bet_qframe)
 		
+		self.sizeDefine()
+		self.UIcreate()
+		
+		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
+		self.setFixedSize(1251, 917)
+		#print self.sizeHint()
+		self.vline.setFixedHeight(self.sizeHint().height()-50)
+		
+		self.betRecord = betRecord()
+		self.testFunc()
+	
+	def sizeDefine(self):
 		self.count = 0
 		self.sizeWidth = 60
 		self.sizeHeight = 25
@@ -73,15 +145,6 @@ class GridWindow(QWidget):
 		
 		self.binp_btnWidth = 37
 		self.binp_btnHeight = 30
-		
-		self.UIcreate()
-		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-		self.setFixedSize(self.sizeHint())
-		print self.sizeHint()
-		#self.updateGeometry()
-		self.vline.setFixedHeight(self.sizeHint().height()-50)
-		
-		self.testFunc()
 	
 	def UIcreate(self):
 		self.UIcreate_Grid()
@@ -121,13 +184,16 @@ class GridWindow(QWidget):
 			
 			# initial each grid and set in gridlayout
 			tmp = []
-			for y in range(6):
-				for x in range(30):
-					tmp.append(QLabel(self.grid_qframe[i]))
+			for row in range(6):
+				tmprow = []
+				for col in range(30):
+					tmprow.append(QLabel(self.grid_qframe[i]))
 					pixmap = QPixmap(imgCell)
-					tmp[len(tmp)-1].setPixmap(pixmap)
-					tmp[len(tmp)-1].setScaledContents(True)
-					self.grid_gl[i].addWidget(tmp[len(tmp)-1], y, x)
+					tmprow[len(tmprow)-1].setPixmap(pixmap)
+					tmprow[len(tmprow)-1].setScaledContents(True)
+					self.grid_gl[i].addWidget(tmprow[len(tmprow)-1], row, col)
+				
+				tmp.append(tmprow)
 			
 			self.grid_qlabelList.append(tmp)
 			
@@ -640,18 +706,18 @@ class GridWindow(QWidget):
 		self.pbet_btn.clicked.connect(self.connect_pbet_btn)
 	
 	def connect_lbar_btn0(self):
-		self.connect_lbar_btn(0)
+		self.show_binp(0)
 	
 	def connect_lbar_btn1(self):
-		self.connect_lbar_btn(1)
+		self.show_binp(1)
 	
 	def connect_lbar_btn2(self):
-		self.connect_lbar_btn(2)
+		self.show_binp(2)
 	
 	def connect_lbar_btn3(self):
-		self.connect_lbar_btn(3)
+		self.show_binp(3)
 	
-	def connect_lbar_btn(self, i):
+	def show_binp(self, i):
 		c = self.lbar_btn[i].text()
 		#print c.toUtf8()
 		if self.lbar_btn[i].text().toUtf8() == '手動':
@@ -662,18 +728,19 @@ class GridWindow(QWidget):
 			self.binp_qframe[i].close()
 	
 	def connect_rbar_btn0(self):
-		self.connect_rbar_btn(0)
+		self.stop_count(0)
 	
 	def connect_rbar_btn1(self):
-		self.connect_rbar_btn(1)
+		self.stop_count(1)
 	
 	def connect_rbar_btn2(self):
-		self.connect_rbar_btn(2)
+		self.stop_count(2)
 	
 	def connect_rbar_btn3(self):
-		self.connect_rbar_btn(3)
+		self.stop_count(3)
 	
-	def connect_rbar_btn(self, i):
+	# stop and count
+	def stop_count(self, i):
 		print self.rbar_btn[i].text().toUtf8()
 	
 	def connect_bbet_btn1(self):
@@ -683,25 +750,46 @@ class GridWindow(QWidget):
 		print self.bbet_btn2.text().toUtf8()
 	
 	def connect_pbet_qlabel1(self):
-		print self.pbet_qlabel1.text().toUtf8()
+		#print self.pbet_qlabel1.text().toUtf8()
+		self.showBet(Banker)
 	
 	def connect_pbet_qlabel2(self):
-		print self.pbet_qlabel2.text().toUtf8()
+		#print self.pbet_qlabel2.text().toUtf8()
+		self.showBet(Tie)
 	
 	def connect_pbet_qlabel3(self):
-		print self.pbet_qlabel3.text().toUtf8()
+		#print self.pbet_qlabel3.text().toUtf8()
+		self.showBet(Player)
+	
+	def showBet(self, winner):
+		ret = self.betRecord.bet(winner)
+		if ret.get('status') == 0:
+			showList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
+			#print showList
+			
+			for i in range(4):
+				row = showList[i][0]
+				col = showList[i][1]
+				if row >= 0 and col >= 0:
+					if winner != Tie:
+						pixmap = QPixmap(self.betRecord.imgPath[i][winner])
+						self.grid_qlabelList[i][row][col].setPixmap(pixmap)
+					else:
+						pass
+			pixmap = QPixmap(imgRedCir)
+		
 	
 	def connect_pbet_btn(self):
 		print self.pbet_btn.text().toUtf8()
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
-		print QMouseEvent.pos()
+		print 'pos in the widget', QMouseEvent.pos()
 	
-	# pos in the screen
+	# pos in the windows screen
 	def mouseReleaseEvent(self, QMouseEvent):
 		cursor = QCursor()
-		print cursor.pos()
+		print 'pos in the windows screen', cursor.pos()
 	
 	def testFunc(self):
 		#self.rbet_qscrollarea
@@ -713,10 +801,50 @@ class GridWindow(QWidget):
 			test_vl.addWidget(QLabel(str(i)))
 		
 		self.rbet_qscrollarea.setWidget(test_frame)
+		
 		pixmap = QPixmap(imgRedCir)
-		self.grid_qlabelList[0][0].setPixmap(pixmap)
-		self.grid_qlabelList[0][1].setPixmap(pixmap)
+		#self.grid_qlabelList[0][0][0].setPixmap(pixmap)
+		#self.grid_qlabelList[0][1][0].setPixmap(pixmap)
+		#self.grid_qlabelList[1][5][0].setPixmap(pixmap)
 		#print self.pbet_qframe.sizeHint()
+
+def clickable(widget):
+	class Filter(QObject):
+		
+		clicked = pyqtSignal()
+		
+		def eventFilter(self, obj, event):
+			if obj  == widget:
+				if event.type()  == QEvent.MouseButtonRelease:
+					if obj.rect().contains(event.pos()):
+						self.clicked.emit()
+						# The developer can opt for .emit(obj) to get the object within the slot.
+						return True
+			
+			return False
+	
+	filter = Filter(widget)
+	widget.installEventFilter(filter)
+	return filter.clicked
+	
+def pressed(widget):
+	class Filter(QObject):
+		
+		clicked = pyqtSignal()
+		
+		def eventFilter(self, obj, event):
+			if obj == widget:
+				if event.type()  == QEvent.MouseButtonPress:
+					if obj.rect().contains(event.pos()):
+						self.clicked.emit()
+						# The developer can opt for .emit(obj) to get the object within the slot.
+						return True
+			
+			return False
+	
+	filter = Filter(widget)
+	widget.installEventFilter(filter)
+	return filter.clicked
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)

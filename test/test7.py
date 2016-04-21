@@ -7,6 +7,7 @@ sizeHint()
 
 # home size
 PyQt4.QtCore.QSize(1239, 902)
+PyQt4.QtCore.QSize(1251, 917)
 
 # blue
 setStyleSheet('background-color: rgb(0, 85, 255);')
