@@ -28,6 +28,9 @@ Banker = 0
 Player = 1
 Tie = 2
 
+Red = 0
+Blue = 1
+
 class betRecord():
 	def __init__(self):
 		self.recordAll = []
@@ -74,7 +77,6 @@ class betRecord():
 	
 	def bet(self, winner):
 		if winner != Tie:
-			self.countBig[0] += 1
 			ret = self.findPos(winner)
 			if ret.get('status') == 0:
 				Big = ret.get('Big')
@@ -106,32 +108,79 @@ class betRecord():
 		
 		if len(self.recordAll) == 0:
 			Big = (0, 0, winner)
+			self.countBig[0] += 1
 			return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 		
 		lastBet = self.recordBig[len(self.recordBig)-1]
+		jump = False
 		if lastBet[2] == winner:
 			Big = self.PosNext(self.mapBig, lastBet[0], lastBet[1], lastBet[2])
+			self.countBig[0] += 1
 		else:
 			Big = self.PosChangeCol(self.mapBig, lastBet[2])
-			self.countBig[3] = self.countBig[2]
-			self.countBig[2] = self.countBig[1]
-			self.countBig[1] = self.countBig[0]-1
-			self.countBig[0] = 1
+			jump = True
 		
 		lastBet = self.recordEye[len(self.recordEye)-1]
-		Eye = self.findPosOther(self.mapEye, lastBet[0], lastBet[1], lastBet[2], self.countBig[0],self.countBig[1])
-		#print 'Eye', Eye
+		if lastBet[0] != -1 or lastBet[1] != -1 or self.countBig[1] != 0:
+			if lastBet[0] != -1 or lastBet[1] != -1 or (self.countBig[0] != 1 or jump):
+				imgColor = self.findColor(jump, self.countBig[0], self.countBig[1])
+				
+				if lastBet[2] == -1:
+					Eye = self.PosNext(self.mapEye, lastBet[0], lastBet[1], imgColor)
+				elif lastBet[2] == imgColor:
+					Eye = self.PosNext(self.mapEye, lastBet[0], lastBet[1], lastBet[2])
+				else:
+					Eye = self.PosChangeCol(self.mapEye, lastBet[2])
 		
-		#lastBet = self.recordSma[len(self.recordSma)-1]
-		#Sma = self.findPosOther(lastBet[0], lastBet[1], lastBet[2], self.countBig[0],self.countBig[2])
+		lastBet = self.recordSma[len(self.recordSma)-1]
+		if lastBet[0] != -1 or lastBet[1] != -1 or self.countBig[2] != 0:
+			if lastBet[0] != -1 or lastBet[1] != -1 or (self.countBig[0] != 1 or jump):
+				imgColor = self.findColor(jump, self.countBig[0], self.countBig[2])
+				
+				if lastBet[2] == -1:
+					Sma = self.PosNext(self.mapSma, lastBet[0], lastBet[1], imgColor)
+				elif lastBet[2] == imgColor:
+					Sma = self.PosNext(self.mapSma, lastBet[0], lastBet[1], lastBet[2])
+				else:
+					Sma = self.PosChangeCol(self.mapSma, lastBet[2])
 		
-		#lastBet = self.recordPen[len(self.recordPen)-1]
-		#Pen = self.findPosOther(lastBet[0], lastBet[1], lastBet[2], self.countBig[0],self.countBig[3])
+		lastBet = self.recordPen[len(self.recordPen)-1]
+		if lastBet[0] != -1 or lastBet[1] != -1 or self.countBig[3] != 0:
+			if lastBet[0] != -1 or lastBet[1] != -1 or (self.countBig[0] != 1 or jump):
+				imgColor = self.findColor(jump, self.countBig[0], self.countBig[3])
+				
+				if lastBet[2] == -1:
+					Pen = self.PosNext(self.mapPen, lastBet[0], lastBet[1], imgColor)
+				elif lastBet[2] == imgColor:
+					Pen = self.PosNext(self.mapPen, lastBet[0], lastBet[1], lastBet[2])
+				else:
+					Pen = self.PosChangeCol(self.mapPen, lastBet[2])
 		
+		if jump:
+			self.countBig[3] = self.countBig[2]
+			self.countBig[2] = self.countBig[1]
+			self.countBig[1] = self.countBig[0]
+			self.countBig[0] = 1
+		
+		#print Big, Eye, Sma, Pen
 		return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 	
+	def findColor(self, jump, countBig_now, countBig_old):
+		if jump:
+			if countBig_now == countBig_old:
+				return Red
+			else:
+				return Blue
+		else:
+			if countBig_now <= countBig_old:
+				return Red
+			elif countBig_now == countBig_old+1:
+				return Blue
+			else:
+				return Red
+	
 	def findPosOther(self, map, lastBet_row, lastBet_col, lastBet_img, countBig_now, countBig_old):
-		if countBig_now < 2:
+		if lastBet_row == -1 and lastBet_col == -1 and countBig_now < 2:
 			return (-1, -1, -1)
 		
 		if countBig_old == 0:
@@ -155,7 +204,9 @@ class betRecord():
 		return pos
 	
 	def PosNext(self, map, lastBet_row, lastBet_col, lastBet_img):
-		if lastBet_row == 5:
+		if lastBet_row == -1 and lastBet_col == -1:
+			return (0, 0, lastBet_img)
+		elif lastBet_row == 5:
 			return (lastBet_row, lastBet_col+1, lastBet_img)
 		elif map[lastBet_row+1][lastBet_col-1] == lastBet_img:
 			return (lastBet_row, lastBet_col+1, lastBet_img)
