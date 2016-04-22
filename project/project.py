@@ -113,6 +113,10 @@ class betRecord():
 			Big = self.PosNext(self.mapBig, lastBet[0], lastBet[1], lastBet[2])
 		else:
 			Big = self.PosChangeCol(self.mapBig, lastBet[2])
+			self.countBig[3] = self.countBig[2]
+			self.countBig[2] = self.countBig[1]
+			self.countBig[1] = self.countBig[0]-1
+			self.countBig[0] = 1
 		
 		lastBet = self.recordEye[len(self.recordEye)-1]
 		Eye = self.findPosOther(self.mapEye, lastBet[0], lastBet[1], lastBet[2], self.countBig[0],self.countBig[1])
@@ -133,9 +137,11 @@ class betRecord():
 		if countBig_old == 0:
 			return (-1, -1, -1)
 		
-		img = lastBet_img
+		img = -1
 		if countBig_now == countBig_old+1:
 			img = 1
+		else:
+			img = 0
 		
 		if lastBet_row == -1 and lastBet_col == -1:
 			return (0, 0, 0)
@@ -161,12 +167,6 @@ class betRecord():
 			return (lastBet_row+1, lastBet_col, lastBet_img)
 	
 	def PosChangeCol(self, map, lastBet_img):
-		if map == self.mapBig:
-			self.countBig[3] = self.countBig[2]
-			self.countBig[2] = self.countBig[1]
-			self.countBig[1] = self.countBig[0]-1
-			self.countBig[0] = 1
-		
 		img = 0
 		if lastBet_img == 0:
 			img = 1
