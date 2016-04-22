@@ -36,30 +36,45 @@ class betRecord():
 		self.recordSma = []
 		self.recordPen = []
 		
+		# count continuous times for Eye, Sma, Pen
+		self.countBig = [0, 0, 0, 0]
+		
 		self.mapBig = []
 		self.mapEye = []
 		self.mapSma = []
 		self.mapPen = []
-		
 		for row in range(6):
 			tmp = []
 			for col in range(30):
 				tmp.append(-1)
+			tmp2 = []
+			for col in range(30):
+				tmp2.append(-1)
+			tmp3 = []
+			for col in range(30):
+				tmp3.append(-1)
+			tmp4 = []
+			for col in range(30):
+				tmp4.append(-1)
 				
-			self.mapEye.append(tmp)
 			self.mapBig.append(tmp)
-			self.mapSma.append(tmp)
-			self.mapPen.append(tmp)
+			self.mapEye.append(tmp2)
+			self.mapSma.append(tmp3)
+			self.mapPen.append(tmp4)
 		
 		self.imgPath = []
 		# imgPath[0] -> imgBig
 		self.imgPath.append([imgBigRedCir, imgBigBlueCir, (imgBigRedCirGreen, imgBigBlueCirGreen)])
+		# imgPath[1] -> imgEye
 		self.imgPath.append([imgEyeRedCir, imgEyeBlueCir])
+		# imgPath[2] -> imgSma
 		self.imgPath.append([imgSmaRedCir, imgSmaBlueCir])
+		# imgPath[3] -> imgPen
 		self.imgPath.append([imgPenRedCir, imgPenBlueCir])
 	
 	def bet(self, winner):
 		if winner != Tie:
+			self.countBig[0] += 1
 			ret = self.findPos(winner)
 			if ret.get('status') == 0:
 				Big = ret.get('Big')
@@ -70,57 +85,99 @@ class betRecord():
 				self.recordEye.append(Eye)
 				self.recordSma.append(Sma)
 				self.recordPen.append(Pen)
-				self.mapBig[Big[0]][Big[1]] = winner
+				self.mapBig[Big[0]][Big[1]] = Big[2]
+				self.mapEye[Eye[0]][Eye[1]] = Eye[2]
+				self.mapSma[Sma[0]][Sma[1]] = Sma[2]
+				self.mapPen[Pen[0]][Pen[1]] = Pen[2]
 			
 			self.recordAll.append(winner)
 			#print 'record', self.recordAll
+			#print self.countBig
 			
 			return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 		else:
+			self.countBig[0] -= 1
 			pass
 		
 		return {'status': -1}
 	
 	def findPos(self, winner):
-		Big, Eye, Sma, Pen = (-1, -1), (-1, -1), (-1, -1), (-1, -1)
+		Big, Eye, Sma, Pen = (-1, -1, -1), (-1, -1, -1), (-1, -1, -1), (-1, -1, -1)
 		
 		if len(self.recordAll) == 0:
-			Big = (0, 0)
+			Big = (0, 0, winner)
 			return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 		
-		#print self.recordBig
-		#print 'aaa', self.recordBig[len(self.recordBig)-1]
-		lastBet_row = self.recordBig[len(self.recordBig)-1][0]
-		lastBet_col = self.recordBig[len(self.recordBig)-1][1]
-		
-		if self.mapBig[lastBet_row][lastBet_col] == winner:
-			Big = self.PosNext(self.mapBig, winner, lastBet_row, lastBet_col)
+		lastBet = self.recordBig[len(self.recordBig)-1]
+		if lastBet[2] == winner:
+			Big = self.PosNext(self.mapBig, lastBet[0], lastBet[1], lastBet[2])
 		else:
-			Big = self.PosChangeCol(self.mapBig)
+			Big = self.PosChangeCol(self.mapBig, lastBet[2])
 		
-		#lastBet_row = self.recordEye[len(self.recordEye)-1][0]
-		#lastBet_col = self.recordEye[len(self.recordEye)-1][1]
+		lastBet = self.recordEye[len(self.recordEye)-1]
+		Eye = self.findPosOther(self.mapEye, lastBet[0], lastBet[1], lastBet[2], self.countBig[0],self.countBig[1])
+		#print 'Eye', Eye
 		
-		#if self.mapBig[lastBet_row][lastBet_col] == -1:
+		#lastBet = self.recordSma[len(self.recordSma)-1]
+		#Sma = self.findPosOther(lastBet[0], lastBet[1], lastBet[2], self.countBig[0],self.countBig[2])
+		
+		#lastBet = self.recordPen[len(self.recordPen)-1]
+		#Pen = self.findPosOther(lastBet[0], lastBet[1], lastBet[2], self.countBig[0],self.countBig[3])
 		
 		return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 	
-	def PosNext(self, map, winner, lastBet_row, lastBet_col):
-		if lastBet_row == 5:
-			return (lastBet_row, lastBet_col+1)
-		if map[lastBet_row+1][lastBet_col-1] == winner:
-			return (lastBet_row, lastBet_col+1)
-		if lastBet_row < 4 and map[lastBet_row+2][lastBet_col] == winner:
-			return (lastBet_row, lastBet_col+1)
-		if map[lastBet_row+1][lastBet_col] != -1:
-			return (lastBet_row, lastBet_col+1)
+	def findPosOther(self, map, lastBet_row, lastBet_col, lastBet_img, countBig_now, countBig_old):
+		if countBig_now < 2:
+			return (-1, -1, -1)
+		
+		if countBig_old == 0:
+			return (-1, -1, -1)
+		'''
+		img = -1
+		if countBig_now == countBig_old+1:
+			img = 1
 		else:
-			return (lastBet_row+1, lastBet_col)
+			img = 0
+		'''
+		if lastBet_row == -1 and lastBet_col == -1:
+			return (0, 0, 0)
+		
+		pos = (-1, -1, -1)
+		if img == lastBet_img:
+			pos = self.PosNext(map, lastBet_row, lastBet_col, lastBet_img)
+		else:
+			pos = self.PosChangeCol(map, lastBet_img)
+		
+		return pos
 	
-	def PosChangeCol(self, map):
+	def PosNext(self, map, lastBet_row, lastBet_col, lastBet_img):
+		if lastBet_row == 5:
+			return (lastBet_row, lastBet_col+1, lastBet_img)
+		elif map[lastBet_row+1][lastBet_col-1] == lastBet_img:
+			return (lastBet_row, lastBet_col+1, lastBet_img)
+		elif lastBet_row < 4 and map[lastBet_row+2][lastBet_col] == lastBet_img:
+			return (lastBet_row, lastBet_col+1, lastBet_img)
+		elif map[lastBet_row+1][lastBet_col] != -1:
+			return (lastBet_row, lastBet_col+1, lastBet_img)
+		else:
+			return (lastBet_row+1, lastBet_col, lastBet_img)
+	
+	def PosChangeCol(self, map, lastBet_img):
+		if map == self.mapBig:
+			self.countBig[3] = self.countBig[2]
+			self.countBig[2] = self.countBig[1]
+			self.countBig[1] = self.countBig[0]-1
+			self.countBig[0] = 1
+		
+		img = 0
+		if lastBet_img == 0:
+			img = 1
+		else:
+			img = 0
+		
 		for col in range(30):
 			if map[0][col] == -1:
-				return (0, col)
+				return (0, col, img)
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -759,15 +816,12 @@ class GridWindow(QWidget):
 		print self.bbet_btn2.text().toUtf8()
 	
 	def connect_pbet_qlabel1(self):
-		#print self.pbet_qlabel1.text().toUtf8()
 		self.showBet(Banker)
 	
 	def connect_pbet_qlabel2(self):
-		#print self.pbet_qlabel2.text().toUtf8()
 		self.showBet(Tie)
 	
 	def connect_pbet_qlabel3(self):
-		#print self.pbet_qlabel3.text().toUtf8()
 		self.showBet(Player)
 	
 	def showBet(self, winner):
@@ -779,26 +833,26 @@ class GridWindow(QWidget):
 			for i in range(4):
 				row = showList[i][0]
 				col = showList[i][1]
+				img = showList[i][2]
 				if row >= 0 and col >= 0:
 					if winner != Tie:
-						pixmap = QPixmap(self.betRecord.imgPath[i][winner])
+						pixmap = QPixmap(self.betRecord.imgPath[i][img])
 						self.grid_qlabelList[i][row][col].setPixmap(pixmap)
 					else:
 						pass
-			#pixmap = QPixmap(imgRedCir)
-		
 	
 	def connect_pbet_btn(self):
 		print self.pbet_btn.text().toUtf8()
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
-		print 'pos in the widget', QMouseEvent.pos()
+		#print 'pos in the widget', QMouseEvent.pos()
+		pass
 	
 	# pos in the windows screen
 	def mouseReleaseEvent(self, QMouseEvent):
 		cursor = QCursor()
-		print 'pos in the windows screen', cursor.pos()
+		#print 'pos in the windows screen', cursor.pos()
 	
 	def testFunc(self):
 		#self.rbet_qscrollarea
