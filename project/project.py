@@ -132,13 +132,11 @@ class betRecord():
 		
 		if countBig_old == 0:
 			return (-1, -1, -1)
-		'''
-		img = -1
+		
+		img = lastBet_img
 		if countBig_now == countBig_old+1:
 			img = 1
-		else:
-			img = 0
-		'''
+		
 		if lastBet_row == -1 and lastBet_col == -1:
 			return (0, 0, 0)
 		
