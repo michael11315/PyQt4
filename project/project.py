@@ -33,6 +33,9 @@ Back_From_Tie = 1
 Still_Tie = 2
 No_Back = 5
 
+# TODO : handle first record is Tie
+# TODO : handle overflow(when over 6*30)
+
 class betRecord():
 	def __init__(self):
 		self.recordAll = []
@@ -101,7 +104,7 @@ class betRecord():
 			
 				return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 		else:
-			# TODO : first Tie
+			# TODO : handle first record is Tie
 			
 			lastBet = self.recordBig[len(self.recordBig)-1]
 			Big = (lastBet[0], lastBet[1], Tie)
