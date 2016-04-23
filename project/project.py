@@ -98,10 +98,17 @@ class betRecord():
 			
 			return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 		else:
-			self.countBig[0] -= 1
-			pass
-		
-		return {'status': -1}
+			lastBet = self.recordBig[len(self.recordBig)-1]
+			Big = (lastBet[0], lastBet[1], 2)
+			Eye = (-1, -1, -1)
+			Sma = (-1, -1, -1)
+			Pen = (-1, -1, -1)
+			self.recordBig.append(Big)
+			self.recordEye.append(Eye)
+			self.recordSma.append(Sma)
+			self.recordPen.append(Pen)
+			
+			return {'status': 0, 'Big': lastBet, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 	
 	def findPos(self, winner):
 		Big, Eye, Sma, Pen = (-1, -1, -1), (-1, -1, -1), (-1, -1, -1), (-1, -1, -1)
@@ -179,30 +186,6 @@ class betRecord():
 			else:
 				return Red
 	
-	def findPosOther(self, map, lastBet_row, lastBet_col, lastBet_img, countBig_now, countBig_old):
-		if lastBet_row == -1 and lastBet_col == -1 and countBig_now < 2:
-			return (-1, -1, -1)
-		
-		if countBig_old == 0:
-			return (-1, -1, -1)
-		
-		img = -1
-		if countBig_now == countBig_old+1:
-			img = 1
-		else:
-			img = 0
-		
-		if lastBet_row == -1 and lastBet_col == -1:
-			return (0, 0, 0)
-		
-		pos = (-1, -1, -1)
-		if img == lastBet_img:
-			pos = self.PosNext(map, lastBet_row, lastBet_col, lastBet_img)
-		else:
-			pos = self.PosChangeCol(map, lastBet_img)
-		
-		return pos
-	
 	def PosNext(self, map, lastBet_row, lastBet_col, lastBet_img):
 		if lastBet_row == -1 and lastBet_col == -1:
 			return (0, 0, lastBet_img)
@@ -227,6 +210,9 @@ class betRecord():
 		for col in range(30):
 			if map[0][col] == -1:
 				return (0, col, img)
+	
+	def backOneStep(self):
+		pass
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -888,7 +874,8 @@ class GridWindow(QWidget):
 						pixmap = QPixmap(self.betRecord.imgPath[i][img])
 						self.grid_qlabelList[i][row][col].setPixmap(pixmap)
 					else:
-						pass
+						pixmap = QPixmap(self.betRecord.imgPath[i][Tie][img])
+						self.grid_qlabelList[i][row][col].setPixmap(pixmap)
 	
 	def connect_pbet_btn(self):
 		print self.pbet_btn.text().toUtf8()
