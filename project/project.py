@@ -28,9 +28,6 @@ Banker = 0
 Player = 1
 Tie = 2
 
-Red = 0
-Blue = 1
-
 class betRecord():
 	def __init__(self):
 		self.recordAll = []
@@ -91,15 +88,16 @@ class betRecord():
 				self.mapEye[Eye[0]][Eye[1]] = Eye[2]
 				self.mapSma[Sma[0]][Sma[1]] = Sma[2]
 				self.mapPen[Pen[0]][Pen[1]] = Pen[2]
+				self.recordAll.append(winner)
+				#print 'record', self.recordAll
+				#print self.countBig
 			
-			self.recordAll.append(winner)
-			#print 'record', self.recordAll
-			#print self.countBig
-			
-			return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
+				return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 		else:
+			# TODO : first Tie
+			
 			lastBet = self.recordBig[len(self.recordBig)-1]
-			Big = (lastBet[0], lastBet[1], 2)
+			Big = (lastBet[0], lastBet[1], Tie)
 			Eye = (-1, -1, -1)
 			Sma = (-1, -1, -1)
 			Pen = (-1, -1, -1)
@@ -107,6 +105,10 @@ class betRecord():
 			self.recordEye.append(Eye)
 			self.recordSma.append(Sma)
 			self.recordPen.append(Pen)
+			self.recordAll.append(winner)
+			
+			if lastBet[2] == Tie:
+				return {'status': 2}
 			
 			return {'status': 0, 'Big': lastBet, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 	
@@ -118,7 +120,12 @@ class betRecord():
 			self.countBig[0] += 1
 			return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 		
-		lastBet = self.recordBig[len(self.recordBig)-1]
+		i = len(self.recordBig)-1
+		lastBet = self.recordBig[i]
+		while lastBet[2] == Tie:
+			i = i-1
+			lastBet = self.recordBig[i]
+		
 		jump = False
 		if lastBet[2] == winner:
 			Big = self.PosNext(self.mapBig, lastBet[0], lastBet[1], lastBet[2])
@@ -175,16 +182,16 @@ class betRecord():
 	def findColor(self, jump, countBig_now, countBig_old):
 		if jump:
 			if countBig_now == countBig_old:
-				return Red
+				return Banker
 			else:
-				return Blue
+				return Player
 		else:
 			if countBig_now <= countBig_old:
-				return Red
+				return Banker
 			elif countBig_now == countBig_old+1:
-				return Blue
+				return Player
 			else:
-				return Red
+				return Banker
 	
 	def PosNext(self, map, lastBet_row, lastBet_col, lastBet_img):
 		if lastBet_row == -1 and lastBet_col == -1:
@@ -861,6 +868,7 @@ class GridWindow(QWidget):
 	
 	def showBet(self, winner):
 		ret = self.betRecord.bet(winner)
+		#print ret
 		if ret.get('status') == 0:
 			showList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
 			#print showList
@@ -876,6 +884,8 @@ class GridWindow(QWidget):
 					else:
 						pixmap = QPixmap(self.betRecord.imgPath[i][Tie][img])
 						self.grid_qlabelList[i][row][col].setPixmap(pixmap)
+		elif ret.get('status') == 2:
+			pass
 	
 	def connect_pbet_btn(self):
 		print self.pbet_btn.text().toUtf8()
