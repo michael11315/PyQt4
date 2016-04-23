@@ -28,6 +28,11 @@ Banker = 0
 Player = 1
 Tie = 2
 
+# status value
+Back_From_Tie = 1
+Still_Tie = 2
+No_Back = 5
+
 class betRecord():
 	def __init__(self):
 		self.recordAll = []
@@ -37,7 +42,9 @@ class betRecord():
 		self.recordPen = []
 		
 		# count continuous times for Eye, Sma, Pen
-		self.countBig = [0, 0, 0, 0]
+		self.countBig = []
+		for i in range(30):
+			self.countBig.append(0)
 		
 		self.mapBig = []
 		self.mapEye = []
@@ -101,14 +108,10 @@ class betRecord():
 			Eye = (-1, -1, -1)
 			Sma = (-1, -1, -1)
 			Pen = (-1, -1, -1)
-			self.recordBig.append(Big)
-			self.recordEye.append(Eye)
-			self.recordSma.append(Sma)
-			self.recordPen.append(Pen)
 			self.recordAll.append(winner)
 			
 			if lastBet[2] == Tie:
-				return {'status': 2}
+				return {'status': Still_Tie}
 			
 			return {'status': 0, 'Big': lastBet, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 	
@@ -171,9 +174,8 @@ class betRecord():
 					Pen = self.PosChangeCol(self.mapPen, lastBet[2])
 		
 		if jump:
-			self.countBig[3] = self.countBig[2]
-			self.countBig[2] = self.countBig[1]
-			self.countBig[1] = self.countBig[0]
+			for i in range(29, 0, -1):
+				self.countBig[i] = self.countBig[i-1]
 			self.countBig[0] = 1
 		
 		#print Big, Eye, Sma, Pen
@@ -219,7 +221,31 @@ class betRecord():
 				return (0, col, img)
 	
 	def backOneStep(self):
-		pass
+		if len(self.recordAll) != 0:
+			if self.recordAll.pop() != Tie:
+				Big = self.recordBig.pop()
+				Eye = self.recordEye.pop()
+				Sma = self.recordSma.pop()
+				Pen = self.recordPen.pop()
+				self.mapBig[Big[0]][Big[1]] = -1
+				self.mapEye[Eye[0]][Eye[1]] = -1
+				self.mapSma[Sma[0]][Sma[1]] = -1
+				self.mapPen[Pen[0]][Pen[1]] = -1
+				
+				self.countBig[0] -= 1
+				if self.countBig[0] == 0:
+					for i in range(29):
+						self.countBig[i] = self.countBig[i+1]
+				
+				return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
+			else:
+				if self.recordAll[len(self.recordAll)-1] == Tie:
+					return {'status': Still_Tie}
+				else:
+					Big = self.recordBig[len(self.recordBig)-1]
+					return {'status': Back_From_Tie, 'Big': Big}
+		else:
+			return {'status': No_Back}
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -884,11 +910,29 @@ class GridWindow(QWidget):
 					else:
 						pixmap = QPixmap(self.betRecord.imgPath[i][Tie][img])
 						self.grid_qlabelList[i][row][col].setPixmap(pixmap)
-		elif ret.get('status') == 2:
+		elif ret.get('status') == Still_Tie:
 			pass
 	
 	def connect_pbet_btn(self):
-		print self.pbet_btn.text().toUtf8()
+		#print self.pbet_btn.text().toUtf8()
+		ret = self.betRecord.backOneStep()
+		if ret.get('status') == 0:
+			removeList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
+			
+			for i in range(4):
+				row = removeList[i][0]
+				col = removeList[i][1]
+				if row >= 0 and col >= 0:
+					pixmap = QPixmap(imgCell)
+					self.grid_qlabelList[i][row][col].setPixmap(pixmap)
+		elif ret.get('status') == No_Back:
+			pass
+		elif ret.get('status') == Still_Tie:
+			pass
+		elif ret.get('status') == Back_From_Tie:
+			BackBig = ret.get('Big')
+			pixmap = QPixmap(self.betRecord.imgPath[0][BackBig[2]])
+			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].setPixmap(pixmap)
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
