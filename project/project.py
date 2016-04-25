@@ -1,4 +1,5 @@
 import sys
+import functools
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -820,43 +821,43 @@ class GridWindow(QWidget):
 		# initail left bar btn in UIcreate_Grid
 		#----------------------------------------------------
 		for i in range(4):
-			func = getattr(self, 'connect_lbar_btn' + str(i))
-			self.lbar_btn[i].clicked.connect(func)
+			self.lbar_btn[i].clicked.connect(functools.partial(self.connect_lbar_btn, i))
 		
 		# initail right bar btn in UIcreate_Grid
 		#----------------------------------------------------
 		for i in range(4):
-			func = getattr(self, 'connect_rbar_btn' + str(i))
-			self.rbar_btn[i].clicked.connect(func)
+			self.rbar_btn[i].clicked.connect(functools.partial(self.connect_rbar_btn, i))
 		
 		# initail bet and print area in UIcreate_BetStatus
 		#----------------------------------------------------
 		self.bbet_btn1.clicked.connect(self.connect_bbet_btn1)
 		self.bbet_btn2.clicked.connect(self.connect_bbet_btn2)
-		#clickable(self.bbet_qlabel1).connect(self.connect_bbet_qlabel1)
 		
 		# initail bet push button area in UIcreate_BetStatus
 		#----------------------------------------------------
-		clickable(self.pbet_qlabel1).connect(self.connect_pbet_qlabel1)
-		clickable(self.pbet_qlabel2).connect(self.connect_pbet_qlabel2)
-		clickable(self.pbet_qlabel3).connect(self.connect_pbet_qlabel3)
+		clickable(self.pbet_qlabel1).connect(functools.partial(self.connect_pbet_qlabel, Banker))
+		clickable(self.pbet_qlabel2).connect(functools.partial(self.connect_pbet_qlabel, Tie))
+		clickable(self.pbet_qlabel3).connect(functools.partial(self.connect_pbet_qlabel, Player))
 		self.pbet_btn.clicked.connect(self.connect_pbet_btn)
+		
+		# initail UIcreate_numberInput
+		#----------------------------------------------------
+		for i in range(4):
+			self.binp_btn0[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 0))
+			self.binp_btn1[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 1))
+			self.binp_btn2[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 2))
+			self.binp_btn3[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 3))
+			self.binp_btn4[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 4))
+			self.binp_btn5[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 5))
+			self.binp_btn6[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 6))
+			self.binp_btn7[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 7))
+			self.binp_btn8[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 8))
+			self.binp_btn9[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 9))
+			self.binp_btn10[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 10))
+			self.binp_btn11[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 11))
 	
-	def connect_lbar_btn0(self):
-		self.show_binp(0)
-	
-	def connect_lbar_btn1(self):
-		self.show_binp(1)
-	
-	def connect_lbar_btn2(self):
-		self.show_binp(2)
-	
-	def connect_lbar_btn3(self):
-		self.show_binp(3)
-	
-	def show_binp(self, i):
-		c = self.lbar_btn[i].text()
-		#print c.toUtf8()
+	def connect_lbar_btn(self, i):
+		#print self.lbar_btn[i].text().toUtf8()
 		if self.lbar_btn[i].text().toUtf8() == '手動':
 			self.lbar_btn[i].setText(self.tr('確認'))
 			self.binp_qframe[i].show()
@@ -864,20 +865,8 @@ class GridWindow(QWidget):
 			self.lbar_btn[i].setText(self.tr('手動'))
 			self.binp_qframe[i].close()
 	
-	def connect_rbar_btn0(self):
-		self.stop_count(0)
-	
-	def connect_rbar_btn1(self):
-		self.stop_count(1)
-	
-	def connect_rbar_btn2(self):
-		self.stop_count(2)
-	
-	def connect_rbar_btn3(self):
-		self.stop_count(3)
-	
 	# stop and count
-	def stop_count(self, i):
+	def connect_rbar_btn(self, i):
 		print self.rbar_btn[i].text().toUtf8()
 	
 	def connect_bbet_btn1(self):
@@ -886,16 +875,7 @@ class GridWindow(QWidget):
 	def connect_bbet_btn2(self):
 		print self.bbet_btn2.text().toUtf8()
 	
-	def connect_pbet_qlabel1(self):
-		self.showBet(Banker)
-	
-	def connect_pbet_qlabel2(self):
-		self.showBet(Tie)
-	
-	def connect_pbet_qlabel3(self):
-		self.showBet(Player)
-	
-	def showBet(self, winner):
+	def connect_pbet_qlabel(self, winner):
 		ret = self.betRecord.bet(winner)
 		#print ret
 		if ret.get('status') == 0:
@@ -936,6 +916,17 @@ class GridWindow(QWidget):
 			BackBig = ret.get('Big')
 			pixmap = QPixmap(self.betRecord.imgPath[0][BackBig[2]])
 			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].setPixmap(pixmap)
+	
+	def connect_binp_btn(self, i, number):
+		if number in range(10):
+			tmp = self.lbar_qlineedit[i].text() + str(number)
+			self.lbar_qlineedit[i].setText(tmp)
+		elif number == 10:
+			self.lbar_qlabel[i].setText(self.tr('莊'))
+			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+		elif number == 11:
+			self.lbar_qlabel[i].setText(self.tr('閒'))
+			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
