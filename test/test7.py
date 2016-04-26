@@ -22,11 +22,30 @@ setSizePolicy(sizePolicy)
 # set item bottom border in list widget
 myListWidget->setStyleSheet( "QListWidget::item { border-bottom: 1px solid black; }" );
 
+# 按鈕的連結
+#----------------------------------------------------
+QObject.connect(self.lbar_btn[0], SIGNAL("clicked()"), self.test_frame.show)
+QObject.connect(self.lbar_btn[1], SIGNAL("clicked()"), self.binp_qframe.close)
 
-#QObject.connect(self.lbar_btn[0], SIGNAL("clicked()"), self.test_frame.show)
-#QObject.connect(self.lbar_btn[1], SIGNAL("clicked()"), self.binp_qframe.close)
+# 中文字處理
+#----------------------------------------------------
+# 支援 utf8
+QTextCodec.setCodecForTr(QTextCodec.codecForName("utf8"))
+# 設 utf8 字串
+self.lbar_qlabel.setText(self.tr('哈哈'))
+# 印出 utf8 字串
+print self.lbar_qlabel.text().toUtf8()
 
-print c.toUtf8()
+# 顯示滑鼠位置(要放在 widget class中)
+#----------------------------------------------------
+# 滑鼠在視窗內的位置
+def mousePressEvent(self, QMouseEvent):
+	print 'pos in the widget', QMouseEvent.pos()
+	
+# 滑鼠在螢幕中的位置
+def mouseReleaseEvent(self, QMouseEvent):
+	cursor = QCursor()
+	print 'pos in the windows screen', cursor.pos()
 
 # mouse press and release
 def clickable(widget):

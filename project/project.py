@@ -250,6 +250,16 @@ class betRecord():
 					return {'status': Back_From_Tie, 'Big': Big}
 		else:
 			return {'status': No_Back}
+	
+	def predictNextStatus(self):
+		nextStatus = []
+		
+		for i in range(2):
+			ret = self.bet(i)
+			nextStatus.append((ret.get('Eye')[2], ret.get('Sma')[2], ret.get('Pen')[2]))
+			self.backOneStep()
+		
+		return nextStatus
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -895,6 +905,10 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].setPixmap(pixmap)
 		elif ret.get('status') == Still_Tie:
 			pass
+		
+		# predict next status
+		nextStatus = self.betRecord.predictNextStatus()
+		print 'nextStatus :', nextStatus
 	
 	def connect_pbet_btn(self):
 		#print self.pbet_btn.text().toUtf8()
@@ -916,6 +930,10 @@ class GridWindow(QWidget):
 			BackBig = ret.get('Big')
 			pixmap = QPixmap(self.betRecord.imgPath[0][BackBig[2]])
 			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].setPixmap(pixmap)
+		
+		# predict next status
+		nextStatus = self.betRecord.predictNextStatus()
+		print 'nextStatus :', nextStatus
 	
 	def connect_binp_btn(self, i, number):
 		if number in range(10):
