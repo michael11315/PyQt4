@@ -336,8 +336,11 @@ class GridWindow(QWidget):
 				tmprow = []
 				for col in range(30):
 					tmprow.append(QLabel(self.grid_qframe[i]))
-					pixmap = QPixmap(imgCell)
-					tmprow[len(tmprow)-1].setPixmap(pixmap)
+					#pixmap = QPixmap(imgCell)
+					#tmprow[len(tmprow)-1].setPixmap(pixmap)
+					tmprow[len(tmprow)-1].setStyleSheet('''.QLabel {background-image: url(%s);}'''%imgCell)
+					tmprow[len(tmprow)-1].setFixedWidth(30)
+					tmprow[len(tmprow)-1].setFixedHeight(25)
 					tmprow[len(tmprow)-1].setScaledContents(True)
 					self.grid_gl[i].addWidget(tmprow[len(tmprow)-1], row, col)
 				
@@ -578,6 +581,8 @@ class GridWindow(QWidget):
 		#----------------------------------------------------
 		for i in range(4):
 			self.grid_qframe[i].setStyleSheet('''.QFrame {background-color: gray;}''')
+			self.grid_qframe[i].setFixedWidth(931)
+			self.grid_qframe[i].setFixedHeight(157)
 			
 			self.grid_gl[i].setSpacing(1)
 			self.grid_gl[i].setMargin(1)
@@ -722,29 +727,39 @@ class GridWindow(QWidget):
 		self.pbet_qframe.setStyleSheet('''.QFrame {background-color: white; border: 1px solid gray;}''')
 		self.pbet_qframe.setSizePolicy(self.sizePolicy)
 		self.pbet_qframe.setFixedWidth(215)
-		self.pbet_qframe.setFixedHeight(135)
+		self.pbet_qframe.setFixedHeight(145)
 		
 		self.pbet_gl.setSpacing(1)
-		self.pbet_gl.setMargin(1)
+		#self.pbet_gl.setMargin(1)
 		
-		self.pbet_qlabel1.setStyleSheet('''.QLabel {background-color: white; border-bottom: 1px solid gray;}''')
-		pixmap = QPixmap(imgRedBtn)
-		self.pbet_qlabel1.setPixmap(pixmap)
-		self.pbet_qlabel1.setScaledContents(True)
+		self.pbet_qlabel1.setText(self.tr('莊'))
+		self.pbet_qlabel1.setAlignment(Qt.AlignCenter)
+		self.pbet_qlabel1.setFixedWidth(70)
+		self.pbet_qlabel1.setFixedHeight(90)
+		self.pbet_qlabel1.setStyleSheet('''.QLabel {font-size: 16pt; font-weight:bold; color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+													border-bottom: 1px solid gray; background-image: url(%s);}'''%imgRedBtn)
+		#self.pbet_qlabel1.setScaledContents(True)
+		#self.pbet_qlabel1.setText('111')
 		
-		self.pbet_qlabel2.setStyleSheet('''.QLabel {background-color: white; border-bottom: 1px solid gray;}''')
-		pixmap = QPixmap(imgGreenBtn)
-		self.pbet_qlabel2.setPixmap(pixmap)
-		self.pbet_qlabel2.setScaledContents(True)
+		self.pbet_qlabel2.setText(self.tr('和'))
+		self.pbet_qlabel2.setAlignment(Qt.AlignCenter)
+		self.pbet_qlabel2.setFixedWidth(70)
+		self.pbet_qlabel2.setFixedHeight(90)
+		self.pbet_qlabel2.setStyleSheet('''.QLabel {font-size: 16pt; font-weight:bold; color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+													border-bottom: 1px solid gray; background-image: url(%s);}'''%imgGreenBtn)
+		#self.pbet_qlabel2.setScaledContents(True)
 		
-		self.pbet_qlabel3.setStyleSheet('''.QLabel {background-color: white; border-bottom: 1px solid gray;}''')
-		pixmap = QPixmap(imgBlueBtn)
-		self.pbet_qlabel3.setPixmap(pixmap)
-		self.pbet_qlabel3.setScaledContents(True)
+		self.pbet_qlabel3.setText(self.tr('閒'))
+		self.pbet_qlabel3.setAlignment(Qt.AlignCenter)
+		self.pbet_qlabel3.setFixedWidth(70)
+		self.pbet_qlabel3.setFixedHeight(90)
+		self.pbet_qlabel3.setStyleSheet('''.QLabel {font-size: 16pt; font-weight:bold; color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+													border-bottom: 1px solid gray; background-image: url(%s);}'''%imgBlueBtn)
+		#self.pbet_qlabel3.setScaledContents(True)
 		
 		self.pbet_btn.setText(self.tr('返回'))
 		#self.pbet_btn.setAlignment(Qt.AlignCenter)
-		#self.pbet_btn.setSizePolicy(self.sizePolicy)
+		self.pbet_btn.setSizePolicy(self.sizePolicy)
 		self.pbet_btn.setFixedWidth(90)
 		self.pbet_btn.setFixedHeight(30)
 		
@@ -898,17 +913,25 @@ class GridWindow(QWidget):
 				img = showList[i][2]
 				if row >= 0 and col >= 0:
 					if winner != Tie:
-						pixmap = QPixmap(self.betRecord.imgPath[i][img])
-						self.grid_qlabelList[i][row][col].setPixmap(pixmap)
+						#pixmap = QPixmap(self.betRecord.imgPath[i][img])
+						#self.grid_qlabelList[i][row][col].setPixmap(pixmap)
+						self.grid_qlabelList[i][row][col].setText('1')
+						self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
+						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																			background-image: url(%s);}'''%self.betRecord.imgPath[i][img])
 					else:
-						pixmap = QPixmap(self.betRecord.imgPath[i][Tie][img])
-						self.grid_qlabelList[i][row][col].setPixmap(pixmap)
+						#pixmap = QPixmap(self.betRecord.imgPath[i][Tie][img])
+						#self.grid_qlabelList[i][row][col].setPixmap(pixmap)
+						self.grid_qlabelList[i][row][col].setText('1')
+						self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
+						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																			background-image: url(%s);}'''%self.betRecord.imgPath[i][Tie][img])
 		elif ret.get('status') == Still_Tie:
 			pass
 		
 		# predict next status
 		nextStatus = self.betRecord.predictNextStatus()
-		print 'nextStatus :', nextStatus
+		#print 'nextStatus :', nextStatus
 	
 	def connect_pbet_btn(self):
 		#print self.pbet_btn.text().toUtf8()
@@ -920,20 +943,28 @@ class GridWindow(QWidget):
 				row = removeList[i][0]
 				col = removeList[i][1]
 				if row >= 0 and col >= 0:
-					pixmap = QPixmap(imgCell)
-					self.grid_qlabelList[i][row][col].setPixmap(pixmap)
+					#pixmap = QPixmap(imgCell)
+					#self.grid_qlabelList[i][row][col].setPixmap(pixmap)
+					self.grid_qlabelList[i][row][col].setText('')
+					self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
+					self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																		background-image: url(%s);}'''%imgCell)
 		elif ret.get('status') == No_Back:
 			pass
 		elif ret.get('status') == Still_Tie:
 			pass
 		elif ret.get('status') == Back_From_Tie:
 			BackBig = ret.get('Big')
-			pixmap = QPixmap(self.betRecord.imgPath[0][BackBig[2]])
-			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].setPixmap(pixmap)
+			#pixmap = QPixmap(self.betRecord.imgPath[0][BackBig[2]])
+			#self.grid_qlabelList[0][BackBig[0]][BackBig[1]].setPixmap(pixmap)
+			#self.grid_qlabelList[i][row][col].setText('1')
+			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].setAlignment(Qt.AlignCenter)
+			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																background-image: url(%s);}'''%self.betRecord.imgPath[0][BackBig[2]])
 		
 		# predict next status
 		nextStatus = self.betRecord.predictNextStatus()
-		print 'nextStatus :', nextStatus
+		#print 'nextStatus :', nextStatus
 	
 	def connect_binp_btn(self, i, number):
 		if number in range(10):
