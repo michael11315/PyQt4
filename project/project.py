@@ -93,14 +93,18 @@ class betRecord():
 		# imgPath[3] -> imgPen
 		self.imgPath.append([imgPenRedCir, imgPenBlueCir])
 		
-		self.betBig = []
-		self.betEye = []
-		self.betSma = []
-		self.betPen = []
+		self.betSugBig = []
+		self.betSugEye = []
+		self.betSugSma = []
+		self.betSugPen = []
 		self.countBig = 0
 		self.countEye = 0
 		self.countSma = 0
 		self.countPen = 0
+		self.betStatusBig = []
+		self.betStatusEye = []
+		self.betStatusSma = []
+		self.betStatusPen = []
 	
 	def bet(self, winner):
 		if winner != Tie:
@@ -119,9 +123,8 @@ class betRecord():
 				self.mapSma[Sma[0]][Sma[1]] = Sma[2]
 				self.mapPen[Pen[0]][Pen[1]] = Pen[2]
 				self.recordAll.append(winner)
-				#print 'record', self.recordAll
-				#print self.countBig
 				
+				self.storeBetStatus()
 				retSug = self.suggestNextBet(self, Big, Eye, Sma, Pen)
 			
 				return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen,
@@ -283,14 +286,22 @@ class betRecord():
 		
 		return nextStatus
 	
+	def storeBetStatus(self):
+		self.betStatusBig = []
+		self.betStatusEye = []
+		self.betStatusSma = []
+		self.betStatusPen = []
+		pass
+	
 	def suggestNextBet(self, Big, Eye, Sma, Pen):
-		if len(self.recordAll) = 0:
+		if len(self.recordAll) == 0:
 			return {'SugBig': (-1, -1, -1, -1), 'SugEye': (-1, -1, -1, -1), 'SugSma': (-1, -1, -1, -1), 'SugPen': (-1, -1, -1, -1)}
 		
-		if countBig > 0:
+		if self.betStatusBig[len(self.betStatusBig)-1] > 0:
 			lastBet = self.recordBig[len(self.recordBig)-1]
-			sugColor = lastBet[2]
-			sugBet = 0
+			sugBigBet = self.betSugBig[len(self.betSugBig)-1][3] + 1
+			tmpBig = self.PosNext(self.mapBig, lastBet[0], lastBet[1], lastBet[2])
+			SugBig = (tmpBig[0], tmpBig[1], tmpBig[2], sugBigBet)
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
