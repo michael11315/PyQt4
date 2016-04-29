@@ -9,8 +9,8 @@
 # If everything works well you should find a subdirectory in the build
 # subdirectory that contains the files needed to run the application
 
-application_title = "hello" #what you want to application to be called
-main_python_file = "project.py" #the name of the python file you use to run the program
+application_title = "login_util" #what you want to application to be called
+main_python_file = "login_util.py" #the name of the python file you use to run the program
 
 import sys
 
@@ -25,6 +25,6 @@ includes = ["atexit","re"]
 setup(
 		name = application_title,
 		version = "0.1",
-		description = "Sample cx_Freeze PyQt4 script",
+		description = "login_util",
 		options = {"build_exe" : {"includes" : includes }},
 			executables = [Executable(main_python_file, base = base, icon="screen.ico")])

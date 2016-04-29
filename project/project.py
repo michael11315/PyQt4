@@ -7,22 +7,32 @@ QTextCodec.setCodecForTr(QTextCodec.codecForName("utf8"))
 
 # image path
 imgDir = 'img/'
-imgCell = imgDir + 'cell.jpg'
-imgBlack = imgDir + 'black.jpg'
-imgRed = imgDir + 'red.jpg'
+imgCell = imgDir + 'cell.png'
+
 imgRedBtn = imgDir + 'red_btn.png'
 imgGreenBtn = imgDir + 'green_btn.png'
 imgBlueBtn = imgDir + 'blue_btn.png'
-imgBigRedCir = imgDir + 'big_red_cir.png'
-imgBigBlueCir = imgDir + 'big_blue_cir.png'
+
+imgCirGreen = imgDir + 'cir_green.png'
 imgBigRedCirGreen = imgDir + 'big_red_cir_green.png'
 imgBigBlueCirGreen = imgDir + 'big_blue_cir_green.png'
+imgBigRedCir = imgDir + 'big_red_cir.png'
+imgBigBlueCir = imgDir + 'big_blue_cir.png'
 imgEyeRedCir = imgDir + 'eye_red_cir.png'
 imgEyeBlueCir = imgDir + 'eye_blue_cir.png'
 imgSmaRedCir = imgDir + 'sma_red_cir.png'
 imgSmaBlueCir = imgDir + 'sma_blue_cir.png'
 imgPenRedCir = imgDir + 'pen_red_cir.png'
 imgPenBlueCir = imgDir + 'pen_blue_cir.png'
+
+imgSugBigRedCir = imgDir + 'sug_big_red_cir.png'
+imgSugBigBlueCir = imgDir + 'sug_big_blue_cir.png'
+imgSugEyeRedCir = imgDir + 'sug_eye_red_cir.png'
+imgSugEyeBlueCir = imgDir + 'sug_eye_blue_cir.png'
+imgSugSmaRedCir = imgDir + 'sug_sma_red_cir.png'
+imgSugSmaBlueCir = imgDir + 'sug_sma_blue_cir.png'
+imgSugPenRedCir = imgDir + 'sug_pen_red_cir.png'
+imgSugPenBlueCir = imgDir + 'sug_pen_blue_cir.png'
 
 # value for bet button
 Banker = 0
@@ -82,15 +92,24 @@ class betRecord():
 		self.imgPath.append([imgSmaRedCir, imgSmaBlueCir])
 		# imgPath[3] -> imgPen
 		self.imgPath.append([imgPenRedCir, imgPenBlueCir])
+		
+		self.betBig = []
+		self.betEye = []
+		self.betSma = []
+		self.betPen = []
+		self.countBig = 0
+		self.countEye = 0
+		self.countSma = 0
+		self.countPen = 0
 	
 	def bet(self, winner):
 		if winner != Tie:
-			ret = self.findPos(winner)
+			retPos = self.findPos(winner)
 			if ret.get('status') == 0:
-				Big = ret.get('Big')
-				Eye = ret.get('Eye')
-				Sma = ret.get('Sma')
-				Pen = ret.get('Pen')
+				Big = retPos.get('Big')
+				Eye = retPos.get('Eye')
+				Sma = retPos.get('Sma')
+				Pen = retPos.get('Pen')
 				self.recordBig.append(Big)
 				self.recordEye.append(Eye)
 				self.recordSma.append(Sma)
@@ -102,8 +121,11 @@ class betRecord():
 				self.recordAll.append(winner)
 				#print 'record', self.recordAll
 				#print self.countBig
+				
+				retSug = self.suggestNextBet(self, Big, Eye, Sma, Pen)
 			
-				return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
+				return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen,
+						'SugBig': (-1, -1, -1, -1), 'SugEye': (-1, -1, -1, -1), 'SugSma': (-1, -1, -1, -1), 'SugPen': (-1, -1, -1, -1)}
 		else:
 			# TODO : handle first record is Tie
 			
@@ -260,6 +282,15 @@ class betRecord():
 			self.backOneStep()
 		
 		return nextStatus
+	
+	def suggestNextBet(self, Big, Eye, Sma, Pen):
+		if len(self.recordAll) = 0:
+			return {'SugBig': (-1, -1, -1, -1), 'SugEye': (-1, -1, -1, -1), 'SugSma': (-1, -1, -1, -1), 'SugPen': (-1, -1, -1, -1)}
+		
+		if countBig > 0:
+			lastBet = self.recordBig[len(self.recordBig)-1]
+			sugColor = lastBet[2]
+			sugBet = 0
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
