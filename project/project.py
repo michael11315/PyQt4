@@ -1301,6 +1301,11 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
 						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 																			background-image: url(%s);}'''%self.betRecord.imgPath[i][Tie][img])
+			
+			if len(self.betRecord.betCountBig) > 0:
+				betCount = [self.betRecord.betCountBig[-1], self.betRecord.betCountEye[-1], self.betRecord.betCountSma[-1], self.betRecord.betCountPen[-1]]
+				for i in range(4):
+					self.rbar_qlabel1[i].setText(self.tr('小計 : %s' % str(betCount[i])))
 		elif ret.get('status') == Still_Tie:
 			pass
 		
@@ -1345,6 +1350,11 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
 					self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 																		background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
+			
+			if len(self.betRecord.betCountBig) > 0:
+				betCount = [self.betRecord.betCountBig[-1], self.betRecord.betCountEye[-1], self.betRecord.betCountSma[-1], self.betRecord.betCountPen[-1]]
+				for i in range(4):
+					self.rbar_qlabel1[i].setText(self.tr('小計 : %s' % str(betCount[i])))
 		elif ret.get('status') == No_Back:
 			pass
 		elif ret.get('status') == Still_Tie:
