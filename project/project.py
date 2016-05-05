@@ -143,8 +143,12 @@ class betRecord():
 				self.betSugPen.append(SugPen)
 				
 				if not isPredict:
-					SugBig = self.sumBetInSugBig(Big, SugBig, SugEye, SugSma, SugPen)
-				self.betSugBig_sum.append(SugBig)
+					# if SugBig want to show sum, edit SugBig_sum to SugBig
+					# or just return SugBig_sum replace SugBig
+					SugBig_sum = self.sumBetInSugBig(Big, SugBig, SugEye, SugSma, SugPen)
+					self.betSugBig_sum.append(SugBig_sum)
+				else:
+					self.betSugBig_sum.append(SugBig)
 				
 				lastSug = self.lastSugBet()
 				lastSugBig = lastSug.get('lastSugBig')
@@ -604,6 +608,88 @@ class betRecord():
 			sameBet[0] = not sameBet[0]
 		
 		return {'isBet': isBet, 'sameBet': sameBet, 'countBet': countBet}
+	
+	def manualChangeSug(self, i, img, bet):
+		row, col = -1, -1
+		erase_row, rease_col = -1, -1
+		if i == 0:
+			if len(self.betSugBig) != 0 and self.betSugBig[-1][0] != -1:
+				tmp = self.betSugBig.pop()
+				lastBet = self.recordBig[-1]
+				if img == lastBet[2]:
+					sugBig = self.PosNext(self.mapBig, lastBet[0], lastBet[1], lastBet[2])
+					row = sugBig[0]
+					col = sugBig[1]
+					erase_row = tmp[0]
+					rease_col = tmp[1]
+				else:
+					sugBig = self.PosChangeCol(self.mapBig, img)
+					row = sugBig[0]
+					col = sugBig[1]
+					erase_row = tmp[0]
+					rease_col = tmp[1]
+				
+				self.betSugBig.append((row, col, img, bet))
+				
+				SugBig = self.sumBetInSugBig(self.recordBig[-1], self.betSugBig[-1], self.betSugEye[-1], self.betSugSma[-1], self.betSugPen[-1])
+				self.betSugBig_sum.pop()
+				self.betSugBig_sum.append(SugBig)
+		elif i == 1:
+			if len(self.betSugEye) != 0 and self.betSugEye[-1][0] != -1:
+				tmp = self.betSugEye.pop()
+				lastBet = self.recordEye[-1]
+				if img == lastBet[2]:
+					sugEye = self.PosNext(self.mapEye, lastBet[0], lastBet[1], lastBet[2])
+					row = sugEye[0]
+					col = sugEye[1]
+					erase_row = tmp[0]
+					rease_col = tmp[1]
+				else:
+					sugEye = self.PosChangeCol(self.mapEye, img)
+					row = sugEye[0]
+					col = sugEye[1]
+					erase_row = tmp[0]
+					rease_col = tmp[1]
+				
+				self.betSugEye.append((row, col, img, bet))
+		elif i == 2:
+			if len(self.betSugSma) != 0 and self.betSugSma[-1][0] != -1:
+				tmp = self.betSugSma.pop()
+				lastBet = self.recordSma[-1]
+				if img == lastBet[2]:
+					sugSma = self.PosNext(self.mapSma, lastBet[0], lastBet[1], lastBet[2])
+					row = sugSma[0]
+					col = sugSma[1]
+					erase_row = tmp[0]
+					rease_col = tmp[1]
+				else:
+					sugSma = self.PosChangeCol(self.mapSma, img)
+					row = sugSma[0]
+					col = sugSma[1]
+					erase_row = tmp[0]
+					rease_col = tmp[1]
+				
+				self.betSugSma.append((row, col, img, bet))
+		else:
+			if len(self.betSugPen) != 0 and self.betSugPen[-1][0] != -1:
+				tmp = self.betSugPen.pop()
+				lastBet = self.recordPen[-1]
+				if img == lastBet[2]:
+					sugPen = self.PosNext(self.mapPen, lastBet[0], lastBet[1], lastBet[2])
+					row = sugPen[0]
+					col = sugPen[1]
+					erase_row = tmp[0]
+					rease_col = tmp[1]
+				else:
+					sugPen = self.PosChangeCol(self.mapPen, img)
+					row = sugPen[0]
+					col = sugPen[1]
+					erase_row = tmp[0]
+					rease_col = tmp[1]
+				
+				self.betSugPen.append((row, col, img, bet))
+		
+		return (row, col, img, bet), (erase_row, rease_col)
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -1230,9 +1316,42 @@ class GridWindow(QWidget):
 		#print self.lbar_btn[i].text().toUtf8()
 		if self.lbar_btn[i].text().toUtf8() == '手動':
 			self.lbar_btn[i].setText(self.tr('確認'))
+			self.lbar_qlineedit[i].setText('')
 			self.binp_qframe[i].show()
 		else:
 			self.lbar_btn[i].setText(self.tr('手動'))
+			print str(i), self.lbar_qlabel[i].text().toUtf8(), self.lbar_qlineedit[i].text()
+			
+			if len(self.lbar_qlineedit[i].text()) > 0:
+				img = 0
+				bet = int(self.lbar_qlineedit[i].text())
+				if self.lbar_qlabel[i].text().toUtf8() == '莊':
+					img = 0
+				else:
+					img = 1
+				
+				retSug, eraseSug = self.betRecord.manualChangeSug(i, img, bet)
+				print eraseSug
+				
+				row = eraseSug[0]
+				col = eraseSug[1]
+				if row >= 0 and col >= 0:
+					self.grid_qlabelList[i][row][col].setText('')
+					self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
+					self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																		background-image: url(%s);}'''%imgCell)
+				
+				row = retSug[0]
+				col = retSug[1]
+				img = retSug[2]
+				bet = retSug[3]
+				if row >= 0 and col >= 0:
+					if img != Tie:
+						self.grid_qlabelList[i][row][col].setText(str(bet))
+						self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
+						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																			background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
+			
 			self.binp_qframe[i].close()
 	
 	# stop and count
@@ -1246,6 +1365,7 @@ class GridWindow(QWidget):
 		print self.bbet_btn2.text().toUtf8()
 	
 	def connect_pbet_qlabel(self, winner):
+		self.initial_lbar()
 		ret = self.betRecord.bet(winner)
 		#print ret
 		if ret.get('status') == 0:
@@ -1314,6 +1434,7 @@ class GridWindow(QWidget):
 		#print 'nextStatus :', nextStatus
 	
 	def connect_pbet_btn(self):
+		self.initial_lbar()
 		ret = self.betRecord.backOneStep()
 		if ret.get('status') == 0:
 			removeList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
@@ -1390,6 +1511,12 @@ class GridWindow(QWidget):
 		cursor = QCursor()
 		#print 'pos in the windows screen', cursor.pos()
 	
+	def initial_lbar(self):
+		for i in range(4):
+			self.lbar_qlabel[i].setText(self.tr('莊'))
+			self.lbar_btn[i].setText(self.tr('手動'))
+			self.binp_qframe[i].close()
+	
 	def testFunc(self):
 		#self.rbet_qscrollarea
 		test_frame = QFrame(self.rbet_qscrollarea)
@@ -1400,6 +1527,14 @@ class GridWindow(QWidget):
 			test_vl.addWidget(QLabel(str(i)))
 		
 		self.rbet_qscrollarea.setWidget(test_frame)
+		
+		#self.status_txt = QLabel(self)
+		#movie = QMovie(imgDir + 'sug_big_red_cir.gif')
+		#self.status_txt.setMovie(movie)
+		#movie.start()
+		#self.status_txt.setLayout(QHBoxLayout())
+		#self.status_txt.layout().addWidget(QLabel('1'))
+		#self.status_txt.setGeometry(QRect(100, 100, 30, 20))
 		
 		#pixmap = QPixmap(imgRedCir)
 		#self.grid_qlabelList[0][0][0].setPixmap(pixmap)
