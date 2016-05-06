@@ -34,6 +34,13 @@ imgSugSmaBlueCir = imgDir + 'sug_sma_blue_cir.png'
 imgSugPenRedCir = imgDir + 'sug_pen_red_cir.png'
 imgSugPenBlueCir = imgDir + 'sug_pen_blue_cir.png'
 
+imgNextStatusEyeRedCir = imgDir + 'next_eye_red_cir.png'
+imgNextStatusEyeBlueCir = imgDir + 'next_eye_blue_cir.png'
+imgNextStatusSmaRedCir = imgDir + 'next_sma_red_cir.png'
+imgNextStatusSmaBlueCir = imgDir + 'next_sma_red_cir.png'
+imgNextStatusPenRedCir = imgDir + 'next_pen_red_cir.png'
+imgNextStatusPenBlueCir = imgDir + 'next_pen_red_cir.png'
+
 # value for bet button
 Banker = 0
 Player = 1
@@ -112,6 +119,12 @@ class betRecord():
 		self.imgSugPath.append([imgSugEyeRedCir, imgSugEyeBlueCir])
 		self.imgSugPath.append([imgSugSmaRedCir, imgSugSmaBlueCir])
 		self.imgSugPath.append([imgSugPenRedCir, imgSugPenBlueCir])
+		
+		self.imgNextStatusPath = []
+		self.imgNextStatusPath.append(['', ''])
+		self.imgNextStatusPath.append([imgNextStatusEyeRedCir, imgNextStatusEyeBlueCir])
+		self.imgNextStatusPath.append([imgNextStatusSmaRedCir, imgNextStatusSmaBlueCir])
+		self.imgNextStatusPath.append([imgNextStatusPenRedCir, imgNextStatusPenBlueCir])
 	
 	def bet(self, winner, isPredict = False):
 		if winner != Tie:
@@ -910,15 +923,44 @@ class GridWindow(QWidget):
 		self.ibet_qlabel2 = QLabel(self.ibet_qframe)
 		self.ibet_qlabel3 = QLabel(self.ibet_qframe)
 		self.ibet_qlabel4 = QLabel(self.ibet_qframe)
-		self.ibet_qlabel5 = QLabel(self.ibet_qframe)
+		
+		self.libet_qframe = QFrame(self.ibet_qframe)
+		self.libet_gl = QGridLayout(self.libet_qframe)
+		self.ibet_qlabel_banker1 = QLabel(self.libet_qframe)
+		self.ibet_qlabel_banker2 = QLabel(self.libet_qframe)
+		self.ibet_qlabel_banker3 = QLabel(self.libet_qframe)
+		self.ibet_qlabel_banker4 = QLabel(self.libet_qframe)
+		self.ibet_qlabel_player1 = QLabel(self.libet_qframe)
+		self.ibet_qlabel_player2 = QLabel(self.libet_qframe)
+		self.ibet_qlabel_player3 = QLabel(self.libet_qframe)
+		self.ibet_qlabel_player4 = QLabel(self.libet_qframe)
+		self.ibet_qlabel_tie1 = QLabel(self.libet_qframe)
+		self.ibet_qlabel_tie2 = QLabel(self.libet_qframe)
+		self.ibet_qlabel_tie3 = QLabel(self.libet_qframe)
+		self.ibet_qlabel_tie4 = QLabel(self.libet_qframe)
 		
 		# set relationship
 		self.ibet_qframe.setLayout(self.ibet_gl)
-		self.ibet_gl.addWidget(self.ibet_qlabel1, 0, 0, 3, 2)
-		self.ibet_gl.addWidget(self.ibet_qlabel2, 0, 2)
-		self.ibet_gl.addWidget(self.ibet_qlabel3, 0, 3, 3, 1)
-		self.ibet_gl.addWidget(self.ibet_qlabel4, 1, 2)
-		self.ibet_gl.addWidget(self.ibet_qlabel5, 2, 2)
+		self.ibet_gl.addWidget(self.ibet_qlabel1, 0, 4, 1, 2)
+		self.ibet_gl.addWidget(self.ibet_qlabel2, 0, 6, 3, 2)
+		self.ibet_gl.addWidget(self.ibet_qlabel3, 1, 4, 1, 2)
+		self.ibet_gl.addWidget(self.ibet_qlabel4, 2, 4, 1, 2)
+		self.ibet_gl.addWidget(self.libet_qframe, 0, 0, 3, 4)
+		
+		self.libet_qframe.setLayout(self.libet_gl)
+		self.libet_gl.addWidget(self.ibet_qlabel_banker1, 0, 0)
+		self.libet_gl.addWidget(self.ibet_qlabel_banker2, 0, 1)
+		self.libet_gl.addWidget(self.ibet_qlabel_banker3, 0, 2)
+		self.libet_gl.addWidget(self.ibet_qlabel_banker4, 0, 3)
+		self.libet_gl.addWidget(self.ibet_qlabel_player1, 1, 0)
+		self.libet_gl.addWidget(self.ibet_qlabel_player2, 1, 1)
+		self.libet_gl.addWidget(self.ibet_qlabel_player3, 1, 2)
+		self.libet_gl.addWidget(self.ibet_qlabel_player4, 1, 3)
+		self.libet_gl.addWidget(self.ibet_qlabel_tie1, 2, 0)
+		self.libet_gl.addWidget(self.ibet_qlabel_tie2, 2, 1)
+		self.libet_gl.addWidget(self.ibet_qlabel_tie3, 2, 2)
+		self.libet_gl.addWidget(self.ibet_qlabel_tie4, 2, 3)
+		
 		self.bet_vl.addWidget(self.ibet_qframe)
 		
 		# bet push button area
@@ -1024,6 +1066,7 @@ class GridWindow(QWidget):
 		for i in range(4):
 			self.tbar_hl[i].setSpacing(1)
 			self.tbar_hl[i].setMargin(1)
+			self.tbar_qlabel[i].setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		
 		self.tbar_qlabel[0].setText(self.tr('下局預測  大路'))
 		self.tbar_qlabel[1].setText(self.tr('下局預測  眼路'))
@@ -1040,12 +1083,13 @@ class GridWindow(QWidget):
 			self.lbar_hl[i].setMargin(1)
 			
 			self.lbar_qlabel[i].setText(self.tr('莊'))
-			self.lbar_qlabel[i].setStyleSheet('color: rgb(255, 255, 255);')
+			self.lbar_qlabel[i].setStyleSheet('''.QLabel {color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			self.lbar_qlabel[i].setAlignment(Qt.AlignCenter)
 			self.lbar_qlabel[i].setSizePolicy(self.sizePolicy)
 			self.lbar_qlabel[i].setFixedWidth(self.sizeWidth)
 			
 			self.lbar_btn[i].setText(self.tr('手動'))
+			self.lbar_btn[i].setStyleSheet('''.QPushButton {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			self.lbar_btn[i].setSizePolicy(self.sizePolicy)
 			self.lbar_btn[i].setFixedWidth(self.sizeWidth_btn)
 			self.lbar_btn[i].setFixedHeight(self.sizeHeight_btn)
@@ -1063,16 +1107,19 @@ class GridWindow(QWidget):
 			self.rbar_hl[i].setMargin(1)
 			
 			self.rbar_qlabel1[i].setText(self.tr('小計 : '))
+			self.rbar_qlabel1[i].setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			self.rbar_qlabel1[i].setAlignment(Qt.AlignCenter)
 			self.rbar_qlabel1[i].setSizePolicy(self.sizePolicy)
 			self.rbar_qlabel1[i].setFixedWidth(self.sizeWidth)
 			
 			self.rbar_btn[i].setText(self.tr('切停'))
+			self.rbar_btn[i].setStyleSheet('''.QPushButton {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			self.rbar_btn[i].setSizePolicy(self.sizePolicy)
 			self.rbar_btn[i].setFixedWidth(self.sizeWidth_btn)
 			self.rbar_btn[i].setFixedHeight(self.sizeHeight_btn)
 			
 			self.rbar_qlabel2[i].setText(self.tr('合計 : '))
+			self.rbar_qlabel2[i].setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			self.rbar_qlabel2[i].setAlignment(Qt.AlignCenter)
 			self.rbar_qlabel2[i].setSizePolicy(self.sizePolicy)
 			self.rbar_qlabel2[i].setFixedWidth(self.sizeWidth)
@@ -1092,23 +1139,26 @@ class GridWindow(QWidget):
 		self.bbet_gl.setMargin(1)
 		
 		self.bbet_btn1.setText(self.tr('本金'))
+		self.bbet_btn1.setStyleSheet('''.QPushButton {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.bbet_btn1.setSizePolicy(self.sizePolicy)
 		
 		self.bbet_qlineedit.setFixedWidth(self.sizeWidth_qlineedit)
 		
 		self.bbet_btn2.setText(self.tr('列印'))
+		self.bbet_btn2.setStyleSheet('''.QPushButton {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.bbet_btn2.setSizePolicy(self.sizePolicy)
 		
 		self.bbet_qlabel1.setText(self.tr('檯面數 : '))
+		self.bbet_qlabel1.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.bbet_qlabel1.setSizePolicy(self.sizePolicy)
 		
 		self.bbet_qlabel2.setText(self.tr('轉碼 : '))
+		self.bbet_qlabel2.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.bbet_qlabel2.setSizePolicy(self.sizePolicy)
 		
 		# next bet area
 		#--------------------------
 		self.nbet_qframe.setStyleSheet('''.QFrame {background-color: gray;} .QLabel {background-color: white;}''')
-		#self.nbet_qframe.setStyleSheet('''.QLabel {border: 1px solid gray;}''')
 		self.nbet_qframe.setSizePolicy(self.sizePolicy)
 		self.nbet_qframe.setFixedWidth(215)
 		self.nbet_qframe.setFixedHeight(55)
@@ -1117,19 +1167,22 @@ class GridWindow(QWidget):
 		self.nbet_gl.setMargin(1)
 		
 		self.nbet_qlabel1.setText(self.tr('下局注碼'))
+		self.nbet_qlabel1.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.nbet_qlabel1.setAlignment(Qt.AlignCenter)
 		
 		self.nbet_qlabel2.setText(self.tr('總計'))
+		self.nbet_qlabel2.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.nbet_qlabel2.setAlignment(Qt.AlignCenter)
 		
-		self.nbet_qlabel3.setText(self.tr('莊'))
+		#self.nbet_qlabel3.setText(self.tr('莊'))
+		self.nbet_qlabel3.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.nbet_qlabel3.setAlignment(Qt.AlignCenter)
 		self.nbet_qlabel3.setStyleSheet('''.QLabel {color: red;}''')
 		
-		self.nbet_qlabel4.setText('99')
+		#self.nbet_qlabel4.setText('99')
 		self.nbet_qlabel4.setAlignment(Qt.AlignCenter)
 		
-		self.nbet_qlabel5.setText('108')
+		#self.nbet_qlabel5.setText('108')
 		self.nbet_qlabel5.setAlignment(Qt.AlignCenter)
 		
 		# bet inning count area
@@ -1142,18 +1195,42 @@ class GridWindow(QWidget):
 		self.ibet_gl.setSpacing(1)
 		self.ibet_gl.setMargin(1)
 		
+		self.ibet_qlabel1.setAlignment(Qt.AlignCenter)
+		self.ibet_qlabel1.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		
+		self.ibet_qlabel2.setText(self.tr('\n局'))
+		self.ibet_qlabel2.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.ibet_qlabel2.setAlignment(Qt.AlignCenter)
 		
-		self.ibet_qlabel3.setText(self.tr('\n局'))
+		self.ibet_qlabel3.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.ibet_qlabel3.setAlignment(Qt.AlignCenter)
 		
+		self.ibet_qlabel4.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.ibet_qlabel4.setAlignment(Qt.AlignCenter)
 		
-		self.ibet_qlabel5.setAlignment(Qt.AlignCenter)
+		self.libet_qframe.setStyleSheet('''.QFrame {background-color: white;} .QLabel {background-color: white;}''')
+		
+		self.libet_gl.setSpacing(2)
+		self.libet_gl.setMargin(2)
+		
+		self.ibet_qlabel_banker1.setText(self.tr('莊'))
+		self.ibet_qlabel_banker1.setStyleSheet('''.QLabel {color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		self.ibet_qlabel_banker1.setAlignment(Qt.AlignCenter)
+		self.ibet_qlabel_banker2.setAlignment(Qt.AlignCenter)
+		self.ibet_qlabel_banker3.setAlignment(Qt.AlignCenter)
+		self.ibet_qlabel_banker4.setAlignment(Qt.AlignCenter)
+		
+		self.ibet_qlabel_player1.setText(self.tr('閒'))
+		self.ibet_qlabel_player1.setStyleSheet('''.QLabel {color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		self.ibet_qlabel_player1.setAlignment(Qt.AlignCenter)
+		
+		self.ibet_qlabel_tie1.setText(self.tr('和'))
+		self.ibet_qlabel_tie1.setStyleSheet('''.QLabel {color: green; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		self.ibet_qlabel_tie1.setAlignment(Qt.AlignCenter)
+		
 		
 		# bet push button area
 		#--------------------------
-		#self.pbet_qframe.setStyleSheet('''.QFrame {background-color: gray;} .QLabel {background-color: white;}''')
 		self.pbet_qframe.setStyleSheet('''.QFrame {background-color: white; border: 1px solid gray;}''')
 		self.pbet_qframe.setSizePolicy(self.sizePolicy)
 		self.pbet_qframe.setFixedWidth(215)
@@ -1188,6 +1265,7 @@ class GridWindow(QWidget):
 		#self.pbet_qlabel3.setScaledContents(True)
 		
 		self.pbet_btn.setText(self.tr('返回'))
+		self.pbet_btn.setStyleSheet('''.QPushButton {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		#self.pbet_btn.setAlignment(Qt.AlignCenter)
 		self.pbet_btn.setSizePolicy(self.sizePolicy)
 		self.pbet_btn.setFixedWidth(90)
@@ -1201,10 +1279,10 @@ class GridWindow(QWidget):
 		self.rbet_vl.setSpacing(0)
 		self.rbet_vl.setMargin(1)
 		
+		self.rbet_qlabel.setText(self.tr('投注紀錄'))
 		self.rbet_qlabel.setStyleSheet('''.QLabel {background-color: white; border-top: 1px solid gray;
 											border-left: 1px solid gray; border-right: 1px solid gray;
 											font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
-		self.rbet_qlabel.setText(self.tr('投注紀錄'))
 		self.rbet_qlabel.setAlignment(Qt.AlignCenter)
 		self.rbet_qlabel.setFixedWidth(215)
 		self.rbet_qlabel.setFixedHeight(30)
@@ -1365,7 +1443,6 @@ class GridWindow(QWidget):
 		print self.bbet_btn2.text().toUtf8()
 	
 	def connect_pbet_qlabel(self, winner):
-		self.initial_lbar()
 		ret = self.betRecord.bet(winner)
 		#print ret
 		if ret.get('status') == 0:
@@ -1429,12 +1506,10 @@ class GridWindow(QWidget):
 		elif ret.get('status') == Still_Tie:
 			pass
 		
-		# predict next status
-		nextStatus = self.betRecord.predictNextStatus()
-		#print 'nextStatus :', nextStatus
+		self.initial_lbar()
+		self.initial_ibet()
 	
 	def connect_pbet_btn(self):
-		self.initial_lbar()
 		ret = self.betRecord.backOneStep()
 		if ret.get('status') == 0:
 			removeList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
@@ -1486,9 +1561,8 @@ class GridWindow(QWidget):
 			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 																background-image: url(%s);}'''%self.betRecord.imgPath[0][BackBig[2]])
 		
-		# predict next status
-		nextStatus = self.betRecord.predictNextStatus()
-		#print 'nextStatus :', nextStatus
+		self.initial_lbar()
+		self.initial_ibet()
 	
 	def connect_binp_btn(self, i, number):
 		if number in range(10):
@@ -1517,6 +1591,23 @@ class GridWindow(QWidget):
 			self.lbar_btn[i].setText(self.tr('手動'))
 			self.binp_qframe[i].close()
 	
+	def initial_ibet(self):
+		# predict next status
+		nextStatus = self.betRecord.predictNextStatus()
+		if nextStatus[0][0] != -1:
+			print self.betRecord.imgNextStatusPath[1]
+			self.ibet_qlabel_banker2.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[1][nextStatus[0][0]])
+		if nextStatus[0][1] != -1:
+			self.ibet_qlabel_banker3.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[2][nextStatus[0][1]])
+		if nextStatus[0][2] != -1:
+			self.ibet_qlabel_banker4.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[3][nextStatus[0][2]])
+		if nextStatus[1][0] != -1:
+			self.ibet_qlabel_player2.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[1][nextStatus[1][0]])
+		if nextStatus[1][1] != -1:
+			self.ibet_qlabel_player3.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[2][nextStatus[1][1]])
+		if nextStatus[1][2] != -1:
+			self.ibet_qlabel_player4.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[3][nextStatus[1][2]])
+	
 	def testFunc(self):
 		#self.rbet_qscrollarea
 		test_frame = QFrame(self.rbet_qscrollarea)
@@ -1524,7 +1615,8 @@ class GridWindow(QWidget):
 		test_vl.setSpacing(0)
 		
 		for i in range(50):
-			test_vl.addWidget(QLabel(str(i)))
+			#test_vl.addWidget(QLabel(str(i)))
+			test_vl.addWidget(QLabel(''))
 		
 		self.rbet_qscrollarea.setWidget(test_frame)
 		
