@@ -37,9 +37,9 @@ imgSugPenBlueCir = imgDir + 'sug_pen_blue_cir.png'
 imgNextStatusEyeRedCir = imgDir + 'next_eye_red_cir.png'
 imgNextStatusEyeBlueCir = imgDir + 'next_eye_blue_cir.png'
 imgNextStatusSmaRedCir = imgDir + 'next_sma_red_cir.png'
-imgNextStatusSmaBlueCir = imgDir + 'next_sma_red_cir.png'
+imgNextStatusSmaBlueCir = imgDir + 'next_sma_blue_cir.png'
 imgNextStatusPenRedCir = imgDir + 'next_pen_red_cir.png'
-imgNextStatusPenBlueCir = imgDir + 'next_pen_red_cir.png'
+imgNextStatusPenBlueCir = imgDir + 'next_pen_blue_cir.png'
 
 # value for bet button
 Banker = 0
@@ -61,6 +61,13 @@ class betRecord():
 		self.recordEye = []
 		self.recordSma = []
 		self.recordPen = []
+		
+		# self.countResult[0] is the count of Banker
+		# self.countResult[1] is the count of Player
+		# self.countResult[2] is the count of Tie
+		self.countResult = []
+		for i in range(3):
+			self.countResult.append(0)
 		
 		# count continuous times for Eye, Sma, Pen
 		self.countBig = []
@@ -127,6 +134,7 @@ class betRecord():
 		self.imgNextStatusPath.append([imgNextStatusPenRedCir, imgNextStatusPenBlueCir])
 	
 	def bet(self, winner, isPredict = False):
+		self.countResult[winner] += 1
 		if winner != Tie:
 			retPos = self.findPos(winner)
 			if retPos.get('status') == 0:
@@ -306,7 +314,9 @@ class betRecord():
 	
 	def backOneStep(self):
 		if len(self.recordAll) != 0:
-			if self.recordAll.pop() != Tie:
+			winner = self.recordAll.pop()
+			self.countResult[winner] -= 1
+			if winner != Tie:
 				Big = self.recordBig.pop()
 				Eye = self.recordEye.pop()
 				Sma = self.recordSma.pop()
@@ -344,7 +354,7 @@ class betRecord():
 				
 				return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen,
 						'SugBig': SugBig, 'SugEye': SugEye, 'SugSma': SugSma, 'SugPen': SugPen,
-						'lastSugBig': lastSugBig_sum, 'lastSugEye': lastSugEye, 'lastSugSma': lastSugSma, 'lastSugPen': lastSugPen}
+						'lastSugBig': lastSugBig, 'lastSugEye': lastSugEye, 'lastSugSma': lastSugSma, 'lastSugPen': lastSugPen}
 			else:
 				if self.recordAll[-1] == Tie:
 					return {'status': Still_Tie}
@@ -703,6 +713,12 @@ class betRecord():
 				self.betSugPen.append((row, col, img, bet))
 		
 		return (row, col, img, bet), (erase_row, rease_col)
+	
+	def gameIsBegin(self):
+		if len(self.recordBig) == 0:
+			return False
+		else:
+			return True
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -1174,15 +1190,13 @@ class GridWindow(QWidget):
 		self.nbet_qlabel2.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.nbet_qlabel2.setAlignment(Qt.AlignCenter)
 		
-		#self.nbet_qlabel3.setText(self.tr('莊'))
 		self.nbet_qlabel3.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.nbet_qlabel3.setAlignment(Qt.AlignCenter)
-		self.nbet_qlabel3.setStyleSheet('''.QLabel {color: red;}''')
 		
-		#self.nbet_qlabel4.setText('99')
+		self.nbet_qlabel4.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.nbet_qlabel4.setAlignment(Qt.AlignCenter)
 		
-		#self.nbet_qlabel5.setText('108')
+		self.nbet_qlabel5.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.nbet_qlabel5.setAlignment(Qt.AlignCenter)
 		
 		# bet inning count area
@@ -1195,17 +1209,20 @@ class GridWindow(QWidget):
 		self.ibet_gl.setSpacing(1)
 		self.ibet_gl.setMargin(1)
 		
+		self.ibet_qlabel1.setText('0')
 		self.ibet_qlabel1.setAlignment(Qt.AlignCenter)
-		self.ibet_qlabel1.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		self.ibet_qlabel1.setStyleSheet('''.QLabel {color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		
-		self.ibet_qlabel2.setText(self.tr('\n局'))
+		self.ibet_qlabel2.setText(self.tr('0\n局'))
 		self.ibet_qlabel2.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.ibet_qlabel2.setAlignment(Qt.AlignCenter)
 		
-		self.ibet_qlabel3.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		self.ibet_qlabel3.setText('0')
+		self.ibet_qlabel3.setStyleSheet('''.QLabel {color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.ibet_qlabel3.setAlignment(Qt.AlignCenter)
 		
-		self.ibet_qlabel4.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		self.ibet_qlabel4.setText('0')
+		self.ibet_qlabel4.setStyleSheet('''.QLabel {color: green; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.ibet_qlabel4.setAlignment(Qt.AlignCenter)
 		
 		self.libet_qframe.setStyleSheet('''.QFrame {background-color: white;} .QLabel {background-color: white;}''')
@@ -1391,44 +1408,43 @@ class GridWindow(QWidget):
 			self.binp_btn11[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 11))
 	
 	def connect_lbar_btn(self, i):
-		#print self.lbar_btn[i].text().toUtf8()
 		if self.lbar_btn[i].text().toUtf8() == '手動':
 			self.lbar_btn[i].setText(self.tr('確認'))
 			self.lbar_qlineedit[i].setText('')
 			self.binp_qframe[i].show()
 		else:
 			self.lbar_btn[i].setText(self.tr('手動'))
-			print str(i), self.lbar_qlabel[i].text().toUtf8(), self.lbar_qlineedit[i].text()
-			
-			if len(self.lbar_qlineedit[i].text()) > 0:
-				img = 0
-				bet = int(self.lbar_qlineedit[i].text())
-				if self.lbar_qlabel[i].text().toUtf8() == '莊':
+			if self.betRecord.gameIsBegin():
+				if len(self.lbar_qlineedit[i].text()) > 0:
 					img = 0
-				else:
-					img = 1
-				
-				retSug, eraseSug = self.betRecord.manualChangeSug(i, img, bet)
-				print eraseSug
-				
-				row = eraseSug[0]
-				col = eraseSug[1]
-				if row >= 0 and col >= 0:
-					self.grid_qlabelList[i][row][col].setText('')
-					self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
-					self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																		background-image: url(%s);}'''%imgCell)
-				
-				row = retSug[0]
-				col = retSug[1]
-				img = retSug[2]
-				bet = retSug[3]
-				if row >= 0 and col >= 0:
-					if img != Tie:
-						self.grid_qlabelList[i][row][col].setText(str(bet))
+					bet = int(self.lbar_qlineedit[i].text())
+					if self.lbar_qlabel[i].text().toUtf8() == '莊':
+						img = 0
+					else:
+						img = 1
+					
+					retSug, eraseSug = self.betRecord.manualChangeSug(i, img, bet)
+					
+					row = eraseSug[0]
+					col = eraseSug[1]
+					if row >= 0 and col >= 0:
+						self.grid_qlabelList[i][row][col].setText('')
 						self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
 						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																			background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
+																			background-image: url(%s);}'''%imgCell)
+					
+					row = retSug[0]
+					col = retSug[1]
+					img = retSug[2]
+					bet = retSug[3]
+					if row >= 0 and col >= 0:
+						if img != Tie:
+							self.grid_qlabelList[i][row][col].setText(str(bet))
+							self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
+							self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																				background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
+					if i == 0:
+						self.initial_nbet(img, bet)
 			
 			self.binp_qframe[i].close()
 	
@@ -1503,6 +1519,9 @@ class GridWindow(QWidget):
 				betCount = [self.betRecord.betCountBig[-1], self.betRecord.betCountEye[-1], self.betRecord.betCountSma[-1], self.betRecord.betCountPen[-1]]
 				for i in range(4):
 					self.rbar_qlabel1[i].setText(self.tr('小計 : %s' % str(betCount[i])))
+			
+			self.initial_nbet(showSugList[0][2], showSugList[0][3])
+			
 		elif ret.get('status') == Still_Tie:
 			pass
 		
@@ -1551,6 +1570,12 @@ class GridWindow(QWidget):
 				betCount = [self.betRecord.betCountBig[-1], self.betRecord.betCountEye[-1], self.betRecord.betCountSma[-1], self.betRecord.betCountPen[-1]]
 				for i in range(4):
 					self.rbar_qlabel1[i].setText(self.tr('小計 : %s' % str(betCount[i])))
+			
+			if removeList[0][0] == 0 and removeList[0][1] == 0:
+				self.initial_nbet(-2, -2)
+			else:
+				self.initial_nbet(ShowLastSugList[0][2], ShowLastSugList[0][3])
+			
 		elif ret.get('status') == No_Back:
 			pass
 		elif ret.get('status') == Still_Tie:
@@ -1575,6 +1600,63 @@ class GridWindow(QWidget):
 			self.lbar_qlabel[i].setText(self.tr('閒'))
 			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 	
+	def initial_lbar(self):
+		for i in range(4):
+			self.lbar_qlabel[i].setText(self.tr('莊'))
+			self.lbar_btn[i].setText(self.tr('手動'))
+			self.binp_qframe[i].close()
+	
+	def initial_nbet(self, img, bet):
+		if img == 0:
+			self.nbet_qlabel3.setText(self.tr('莊'))
+			self.nbet_qlabel3.setStyleSheet('''.QLabel {color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+			self.nbet_qlabel4.setText(str(bet))
+		elif img == 1:
+			self.nbet_qlabel3.setText(self.tr('賢'))
+			self.nbet_qlabel3.setStyleSheet('''.QLabel {color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+			self.nbet_qlabel4.setText(str(bet))
+		elif img == -1:
+			pass
+		elif img == -2:
+			self.nbet_qlabel3.setText('')
+			self.nbet_qlabel4.setText('')
+		
+		#self.nbet_qlabel5.setText('108')
+	
+	def initial_ibet(self):
+		# predict next status
+		nextStatus = self.betRecord.predictNextStatus()
+		if nextStatus[0][0] != -1:
+			self.ibet_qlabel_banker2.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[1][nextStatus[0][0]])
+		else:
+			self.ibet_qlabel_banker2.setStyleSheet('''.QLabel {}''')
+		if nextStatus[0][1] != -1:
+			self.ibet_qlabel_banker3.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[2][nextStatus[0][1]])
+		else:
+			self.ibet_qlabel_banker3.setStyleSheet('''.QLabel {}''')
+		if nextStatus[0][2] != -1:
+			self.ibet_qlabel_banker4.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[3][nextStatus[0][2]])
+		else:
+			self.ibet_qlabel_banker4.setStyleSheet('''.QLabel {}''')
+		if nextStatus[1][0] != -1:
+			self.ibet_qlabel_player2.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[1][nextStatus[1][0]])
+		else:
+			self.ibet_qlabel_player2.setStyleSheet('''.QLabel {}''')
+		if nextStatus[1][1] != -1:
+			self.ibet_qlabel_player3.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[2][nextStatus[1][1]])
+		else:
+			self.ibet_qlabel_player3.setStyleSheet('''.QLabel {}''')
+		if nextStatus[1][2] != -1:
+			self.ibet_qlabel_player4.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[3][nextStatus[1][2]])
+		else:
+			self.ibet_qlabel_player4.setStyleSheet('''.QLabel {}''')
+		
+		self.ibet_qlabel1.setText(str(self.betRecord.countResult[0]))
+		self.ibet_qlabel3.setText(str(self.betRecord.countResult[1]))
+		self.ibet_qlabel4.setText(str(self.betRecord.countResult[2]))
+		sumRecord = self.betRecord.countResult[0] + self.betRecord.countResult[1] + self.betRecord.countResult[2]
+		self.ibet_qlabel2.setText(self.tr(str(sumRecord) + '\n局'))
+	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
 		#print 'pos in the widget', QMouseEvent.pos()
@@ -1584,29 +1666,6 @@ class GridWindow(QWidget):
 	def mouseReleaseEvent(self, QMouseEvent):
 		cursor = QCursor()
 		#print 'pos in the windows screen', cursor.pos()
-	
-	def initial_lbar(self):
-		for i in range(4):
-			self.lbar_qlabel[i].setText(self.tr('莊'))
-			self.lbar_btn[i].setText(self.tr('手動'))
-			self.binp_qframe[i].close()
-	
-	def initial_ibet(self):
-		# predict next status
-		nextStatus = self.betRecord.predictNextStatus()
-		if nextStatus[0][0] != -1:
-			print self.betRecord.imgNextStatusPath[1]
-			self.ibet_qlabel_banker2.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[1][nextStatus[0][0]])
-		if nextStatus[0][1] != -1:
-			self.ibet_qlabel_banker3.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[2][nextStatus[0][1]])
-		if nextStatus[0][2] != -1:
-			self.ibet_qlabel_banker4.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[3][nextStatus[0][2]])
-		if nextStatus[1][0] != -1:
-			self.ibet_qlabel_player2.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[1][nextStatus[1][0]])
-		if nextStatus[1][1] != -1:
-			self.ibet_qlabel_player3.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[2][nextStatus[1][1]])
-		if nextStatus[1][2] != -1:
-			self.ibet_qlabel_player4.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[3][nextStatus[1][2]])
 	
 	def testFunc(self):
 		#self.rbet_qscrollarea
