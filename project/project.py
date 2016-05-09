@@ -659,7 +659,7 @@ class betRecord():
 		return {'lastSugBig': lastSugBig,'lastSugBig_sum': lastSugBig_sum, 'lastSugEye': lastSugEye, 'lastSugSma': lastSugSma, 'lastSugPen': lastSugPen}
 	
 	def sumBetInSugBig(self, Big, SugBig, SugEye, SugSma, SugPen):
-		if Big[0] == 0 and Big[0] == 0:
+		if Big[0] == 0 and Big[1] == 0:
 			return SugBig
 		
 		nextStatus = self.predictNextStatus()
@@ -681,8 +681,8 @@ class betRecord():
 				tmp = self.PosNext(self.mapBig, Big[0], Big[1], Big[2])
 			
 			return (tmp[0], tmp[1], tmp[2], betBig)
-		
-		return (SugBig[0], SugBig[1], imgBig, betBig)
+		else:
+			return (SugBig[0], SugBig[1], imgBig, betBig)
 	
 	def resultBet(self, lastSugBig, lastSugEye, lastSugSma, lastSugPen, Big, Eye, Sma, Pen):
 		isBet = [False, False, False, False]
@@ -1619,10 +1619,9 @@ class GridWindow(QWidget):
 							self.grid_qlabelList[i][row][col].setText('')
 						else:
 							self.grid_qlabelList[i][row][col].setText(str(bet))
-						
-						self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
-						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																			background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
+							self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
+							self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																				background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
 			
 			showList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
 			isBet = ret.get('isBet')
@@ -1691,7 +1690,6 @@ class GridWindow(QWidget):
 																		background-image: url(%s);}'''%imgCell)
 			
 			ShowLastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
-			#ShowLastSugList = [ret.get('lastSugBig_sum'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
 			for i in range(4):
 				row = ShowLastSugList[i][0]
 				col = ShowLastSugList[i][1]
@@ -1702,9 +1700,9 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].setText('')
 					else:
 						self.grid_qlabelList[i][row][col].setText(str(bet))
-					self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
-					self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																		background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
+						self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
+						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																			background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
 			
 			if removeList[0][0] == 0 and removeList[0][1] == 0:
 				self.initial_nbet(-2, -2)
