@@ -907,8 +907,6 @@ class GridWindow(QWidget):
 				tmprow = []
 				for col in range(30):
 					tmprow.append(QLabel(self.grid_qframe[i]))
-					#pixmap = QPixmap(imgCell)
-					#tmprow[len(tmprow)-1].setPixmap(pixmap)
 					tmprow[len(tmprow)-1].setStyleSheet('''.QLabel {background-image: url(%s);}'''%imgCell)
 					tmprow[len(tmprow)-1].setFixedWidth(30)
 					tmprow[len(tmprow)-1].setFixedHeight(25)
@@ -1097,7 +1095,6 @@ class GridWindow(QWidget):
 		self.pbet_qframe = QFrame(self.bet_qframe)
 		self.pbet_gl = QGridLayout(self.pbet_qframe)
 		self.pbet_qlabel1 = QLabel(self.pbet_qframe)
-		#self.pbet_qlabel1 = QLabel("<html><img src='%s'></html>" %imgRedBtn)
 		self.pbet_qlabel2 = QLabel(self.pbet_qframe)
 		self.pbet_qlabel3 = QLabel(self.pbet_qframe)
 		self.pbet_btn = QPushButton(self.pbet_qframe)
@@ -1375,7 +1372,6 @@ class GridWindow(QWidget):
 		self.pbet_qlabel1.setStyleSheet('''.QLabel {font-size: 16pt; font-weight:bold; color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 													border-bottom: 1px solid gray; background-image: url(%s);}'''%imgRedBtn)
 		#self.pbet_qlabel1.setScaledContents(True)
-		#self.pbet_qlabel1.setText('111')
 		
 		self.pbet_qlabel2.setText(self.tr('和'))
 		self.pbet_qlabel2.setAlignment(Qt.AlignCenter)
@@ -1560,7 +1556,7 @@ class GridWindow(QWidget):
 			
 			self.binp_qframe[i].close()
 	
-	# stop and count
+	# cut stop
 	def connect_rbar_btn(self, i):
 		if len(self.betRecord.betCountBig) > 0:
 			if i == 0:
@@ -1578,7 +1574,7 @@ class GridWindow(QWidget):
 			
 			show = self.betRecord.lastShow(i)
 			style = str(self.grid_qlabelList[i][show[0]][show[1]].styleSheet())
-			style = style.replace('{', '{ border: 2px solid black;')
+			style = style.replace('{', '{ border: 1px solid black;')
 			self.grid_qlabelList[i][show[0]][show[1]].setStyleSheet('''%s'''%style)
 			
 			self.initial_rbar()
