@@ -50,6 +50,7 @@ Tie = 2
 Back_From_Tie = 1
 Still_Tie = 2
 No_Back = 5
+Need_Enter_First = 10
 
 # TODO : handle first record is Tie
 # TODO : handle overflow(when over 6*30)
@@ -138,8 +139,14 @@ class betRecord():
 		self.imgNextStatusPath.append([imgNextStatusEyeRedCir, imgNextStatusEyeBlueCir])
 		self.imgNextStatusPath.append([imgNextStatusSmaRedCir, imgNextStatusSmaBlueCir])
 		self.imgNextStatusPath.append([imgNextStatusPenRedCir, imgNextStatusPenBlueCir])
+		
+		self.principal = 0
+		self.startGame = False
 	
 	def bet(self, winner, isPredict = False):
+		if self.startGame == False:
+			return {'status': Need_Enter_First}
+		
 		self.countResult[winner] += 1
 		if winner != Tie:
 			retPos = self.findPos(winner)
@@ -380,10 +387,13 @@ class betRecord():
 		
 		for i in range(2):
 			ret = self.bet(i, isPredict = True)
+			if ret.get('status') == Need_Enter_First:
+				return {'status': Need_Enter_First}
+			
 			nextStatus.append((ret.get('Eye')[2], ret.get('Sma')[2], ret.get('Pen')[2]))
 			self.backOneStep()
 		
-		return nextStatus
+		return {'status': 0, 'nextStatus': nextStatus}
 	
 	def storeBetStatus(self, Big, Eye, Sma, Pen):
 		# bet count Big
@@ -662,13 +672,13 @@ class betRecord():
 		if Big[0] == 0 and Big[1] == 0:
 			return SugBig
 		
-		nextStatus = self.predictNextStatus()
+		ret = self.predictNextStatus()
 		sumList = [SugEye, SugSma, SugPen]
 		imgBig = SugBig[2]
 		betBig = SugBig[3]
 		for i in range(3):
 			if sumList[i][2] != -1:
-				if sumList[i][2] == nextStatus[SugBig[2]][i]:
+				if sumList[i][2] == ret['nextStatus'][SugBig[2]][i]:
 					betBig += sumList[i][3]
 				else:
 					betBig -= sumList[i][3]
@@ -831,6 +841,13 @@ class betRecord():
 	
 	def lastShow(self, i):
 		return self.record[i][-1]
+	
+	def enterPrincipal(self, principal):
+		self.principal = principal
+		self.startGame = True
+	
+	def getPrincipal(self):
+		return self.principal
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -1581,7 +1598,9 @@ class GridWindow(QWidget):
 			self.initial_nbet(-1, -1)
 	
 	def connect_bbet_btn1(self):
-		print self.bbet_btn1.text().toUtf8()
+		principal = int(self.bbet_qlineedit.text())
+		self.betRecord.enterPrincipal(principal)
+		self.bbet_qlabel1.setText(self.tr('檯面數 : %d' %principal))
 	
 	def connect_bbet_btn2(self):
 		print self.bbet_btn2.text().toUtf8()
@@ -1654,6 +1673,8 @@ class GridWindow(QWidget):
 			
 		elif ret.get('status') == Still_Tie:
 			pass
+		elif ret.get('status') == Need_Enter_First:
+			print 'haha'
 		
 		self.initial_lbar()
 		self.initial_rbar()
@@ -1776,31 +1797,32 @@ class GridWindow(QWidget):
 	
 	def initial_ibet(self):
 		# predict next status
-		nextStatus = self.betRecord.predictNextStatus()
-		if nextStatus[0][0] != -1:
-			self.ibet_qlabel_banker2.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[1][nextStatus[0][0]])
-		else:
-			self.ibet_qlabel_banker2.setStyleSheet('''.QLabel {}''')
-		if nextStatus[0][1] != -1:
-			self.ibet_qlabel_banker3.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[2][nextStatus[0][1]])
-		else:
-			self.ibet_qlabel_banker3.setStyleSheet('''.QLabel {}''')
-		if nextStatus[0][2] != -1:
-			self.ibet_qlabel_banker4.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[3][nextStatus[0][2]])
-		else:
-			self.ibet_qlabel_banker4.setStyleSheet('''.QLabel {}''')
-		if nextStatus[1][0] != -1:
-			self.ibet_qlabel_player2.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[1][nextStatus[1][0]])
-		else:
-			self.ibet_qlabel_player2.setStyleSheet('''.QLabel {}''')
-		if nextStatus[1][1] != -1:
-			self.ibet_qlabel_player3.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[2][nextStatus[1][1]])
-		else:
-			self.ibet_qlabel_player3.setStyleSheet('''.QLabel {}''')
-		if nextStatus[1][2] != -1:
-			self.ibet_qlabel_player4.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[3][nextStatus[1][2]])
-		else:
-			self.ibet_qlabel_player4.setStyleSheet('''.QLabel {}''')
+		ret = self.betRecord.predictNextStatus()
+		if ret.get('status') == 0:
+			if ret['nextStatus'][0][0] != -1:
+				self.ibet_qlabel_banker2.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[1][ret['nextStatus'][0][0]])
+			else:
+				self.ibet_qlabel_banker2.setStyleSheet('''.QLabel {}''')
+			if ret['nextStatus'][0][1] != -1:
+				self.ibet_qlabel_banker3.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[2][ret['nextStatus'][0][1]])
+			else:
+				self.ibet_qlabel_banker3.setStyleSheet('''.QLabel {}''')
+			if ret['nextStatus'][0][2] != -1:
+				self.ibet_qlabel_banker4.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[3][ret['nextStatus'][0][2]])
+			else:
+				self.ibet_qlabel_banker4.setStyleSheet('''.QLabel {}''')
+			if ret['nextStatus'][1][0] != -1:
+				self.ibet_qlabel_player2.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[1][ret['nextStatus'][1][0]])
+			else:
+				self.ibet_qlabel_player2.setStyleSheet('''.QLabel {}''')
+			if ret['nextStatus'][1][1] != -1:
+				self.ibet_qlabel_player3.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[2][ret['nextStatus'][1][1]])
+			else:
+				self.ibet_qlabel_player3.setStyleSheet('''.QLabel {}''')
+			if ret['nextStatus'][1][2] != -1:
+				self.ibet_qlabel_player4.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[3][ret['nextStatus'][1][2]])
+			else:
+				self.ibet_qlabel_player4.setStyleSheet('''.QLabel {}''')
 		
 		self.ibet_qlabel1.setText(str(self.betRecord.countResult[0]))
 		self.ibet_qlabel3.setText(str(self.betRecord.countResult[1]))
