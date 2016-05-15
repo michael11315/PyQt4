@@ -142,6 +142,7 @@ class betRecord():
 		
 		self.principal = 0
 		self.startGame = False
+		self.principalEntryList = []
 	
 	def bet(self, winner, isPredict = False):
 		if self.startGame == False:
@@ -848,6 +849,12 @@ class betRecord():
 	
 	def getPrincipal(self):
 		return self.principal
+	
+	def principalAddEntry(self, entry):
+		self.principalEntryList.append(entry)
+	
+	def principalPopEntry(self):
+		return self.principalEntryList.pop()
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -1131,12 +1138,16 @@ class GridWindow(QWidget):
 		self.rbet_vl = QVBoxLayout(self.rbet_qframe)
 		self.rbet_qlabel = QLabel(self.rbet_qframe)
 		self.rbet_qscrollarea = QScrollArea(self.rbet_qframe)
+		self.rbet_qscrollarea_qframe = QFrame(self.rbet_qscrollarea)
+		self.rbet_qscrollarea_vl = QVBoxLayout(self.rbet_qscrollarea_qframe)
 		
 		# set relationship
 		self.rbet_qframe.setLayout(self.rbet_vl)
 		self.rbet_vl.addWidget(self.rbet_qlabel)
 		self.rbet_vl.addWidget(self.rbet_qscrollarea)
 		self.bet_vl.addWidget(self.rbet_qframe)
+		self.rbet_qscrollarea.setWidget(self.rbet_qscrollarea_qframe)
+		self.rbet_qscrollarea_qframe.setLayout(self.rbet_qscrollarea_vl)
 	
 	def UIcreate_numberInput(self):
 		self.binp_qframe = []
@@ -1429,12 +1440,10 @@ class GridWindow(QWidget):
 		self.rbet_qlabel.setFixedWidth(215)
 		self.rbet_qlabel.setFixedHeight(30)
 		
-		#for i in range(30):
-			#self.rbet_qscrollarea.setWidget(QLabel(str(i)))
-		
 		self.rbet_qscrollarea.setStyleSheet('''.QScrollArea {background-color: white;}''')
 		self.rbet_qscrollarea.setFixedWidth(215)
 		self.rbet_qscrollarea.setFixedHeight(380)
+		self.rbet_qscrollarea_vl.setSpacing(1)
 		
 		# initail global values of UIcreate_numberInput
 		#----------------------------------------------------
@@ -1569,7 +1578,7 @@ class GridWindow(QWidget):
 							self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 																				background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
 					if i == 0:
-						self.initial_nbet(img, bet)
+						self.update_nbet(img, bet)
 			
 			self.binp_qframe[i].close()
 	
@@ -1594,13 +1603,19 @@ class GridWindow(QWidget):
 			style = style.replace('{', '{ border: 1px solid black;')
 			self.grid_qlabelList[i][show[0]][show[1]].setStyleSheet('''%s'''%style)
 			
-			self.initial_rbar()
-			self.initial_nbet(-1, -1)
+			self.update_rbar()
+			self.update_nbet(-1, -1)
 	
 	def connect_bbet_btn1(self):
-		principal = int(self.bbet_qlineedit.text())
-		self.betRecord.enterPrincipal(principal)
-		self.bbet_qlabel1.setText(self.tr('檯面數 : %d' %principal))
+		# set principal, and change lineedit to read only
+		if not self.bbet_qlineedit.isReadOnly():
+			try:
+				principal = int(self.bbet_qlineedit.text())
+				self.betRecord.enterPrincipal(principal)
+				self.bbet_qlabel1.setText(self.tr('檯面數 : %d' %principal))
+				self.bbet_qlineedit.setReadOnly(True)
+			except:
+				pass
 	
 	def connect_bbet_btn2(self):
 		print self.bbet_btn2.text().toUtf8()
@@ -1669,16 +1684,18 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 																			background-image: url(%s);}'''%self.betRecord.imgPath[i][Tie][img])
 			
-			self.initial_nbet(showSugList[0][2], showSugList[0][3])
+			self.update_nbet(showSugList[0][2], showSugList[0][3])
+			if winner != Tie:
+				self.update_rbet(countBet[0], sameBet[0], showList[0][2])
 			
 		elif ret.get('status') == Still_Tie:
 			pass
 		elif ret.get('status') == Need_Enter_First:
-			print 'haha'
+			pass
 		
-		self.initial_lbar()
-		self.initial_rbar()
-		self.initial_ibet()
+		self.update_lbar()
+		self.update_rbar()
+		self.update_ibet()
 	
 	def connect_pbet_btn(self):
 		ret = self.betRecord.backOneStep()
@@ -1722,9 +1739,9 @@ class GridWindow(QWidget):
 																			background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
 			
 			if removeList[0][0] == 0 and removeList[0][1] == 0:
-				self.initial_nbet(-2, -2)
+				self.update_nbet(-2, -2)
 			else:
-				self.initial_nbet(ShowLastSugList[0][2], ShowLastSugList[0][3])
+				self.update_nbet(ShowLastSugList[0][2], ShowLastSugList[0][3])
 			
 		elif ret.get('status') == No_Back:
 			pass
@@ -1736,9 +1753,9 @@ class GridWindow(QWidget):
 			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 																background-image: url(%s);}'''%self.betRecord.imgPath[0][BackBig[2]])
 		
-		self.initial_lbar()
-		self.initial_rbar()
-		self.initial_ibet()
+		self.update_lbar()
+		self.update_rbar()
+		self.update_ibet()
 	
 	def connect_binp_btn(self, i, number):
 		if number in range(10):
@@ -1751,13 +1768,13 @@ class GridWindow(QWidget):
 			self.lbar_qlabel[i].setText(self.tr('閒'))
 			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 	
-	def initial_lbar(self):
+	def update_lbar(self):
 		for i in range(4):
 			self.lbar_qlabel[i].setText(self.tr('莊'))
 			self.lbar_btn[i].setText(self.tr('手動'))
 			self.binp_qframe[i].close()
 	
-	def initial_rbar(self):
+	def update_rbar(self):
 		if len(self.betRecord.betCountBig) > 0:
 			smallCount = [self.betRecord.betCountBig[-1], self.betRecord.betCountEye[-1], self.betRecord.betCountSma[-1], self.betRecord.betCountPen[-1]]
 		else:
@@ -1774,7 +1791,7 @@ class GridWindow(QWidget):
 		for i in range(4):
 			self.rbar_qlabel2[i].setText(self.tr('合計 : %s' % str(sumCount[i])))
 	
-	def initial_nbet(self, img, bet):
+	def update_nbet(self, img, bet):
 		if img == 0:
 			self.nbet_qlabel3.setText(self.tr('莊'))
 			self.nbet_qlabel3.setStyleSheet('''.QLabel {color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
@@ -1795,7 +1812,7 @@ class GridWindow(QWidget):
 			sumCount = 0
 		self.nbet_qlabel5.setText(str(sumCount))
 	
-	def initial_ibet(self):
+	def update_ibet(self):
 		# predict next status
 		ret = self.betRecord.predictNextStatus()
 		if ret.get('status') == 0:
@@ -1830,6 +1847,57 @@ class GridWindow(QWidget):
 		sumRecord = self.betRecord.countResult[0] + self.betRecord.countResult[1] + self.betRecord.countResult[2]
 		self.ibet_qlabel2.setText(self.tr(str(sumRecord) + '\n局'))
 	
+	def update_rbet(self, countBet, sameBet, colorBet):
+		if colorBet != 2:
+			pointBet = countBet
+			if colorBet == 0 and sameBet:
+				pointBet = pointBet * 0.95
+			
+			self.betRecord.principalAddEntry(pointBet)
+			self.addOneRecord(countBet, sameBet, colorBet, pointBet)
+	
+	def addOneRecord(self, countBet, sameBet, colorBet, pointBet):
+		if colorBet != 2:
+			tmp_qframe = QFrame()
+			tmp_hl = QHBoxLayout()
+			tmp_qframe.setLayout(tmp_hl)
+			tmp_hl.setSpacing(0)
+			tmp_qframe.setStyleSheet('''.QFrame {background-color: white;}''')
+			
+			qlabel_no = QLabel()
+			qlabel_no.setText(str(self.rbet_qscrollarea_vl.count()))
+			qlabel_no.setStyleSheet('''.QLabel {background-color: white; color: gray;}''')
+			
+			qlabel_countBet = QLabel()
+			if sameBet:
+				qlabel_countBet.setText('+' + str(countBet))
+				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: blue;}''')
+			else:
+				qlabel_countBet.setText('-' + str(countBet))
+				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: red;}''')
+			
+			qlabel_colorBet = QLabel()
+			if colorBet == 0:
+				qlabel_colorBet.setText(self.tr('莊'))
+				qlabel_colorBet.setStyleSheet('''.QLabel {background-color: white; color: red;}''')
+			elif colorBet == 1:
+				qlabel_colorBet.setText(self.tr('閒'))
+				qlabel_colorBet.setStyleSheet('''.QLabel {background-color: white; color: blue;}''')
+			
+			qlabel_pointBet = QLabel()
+			qlabel_pointBet.setText(str(pointBet))
+			qlabel_pointBet.setStyleSheet('''.QLabel {background-color: white; color: gray;}''')
+			
+			tmp_hl.addWidget(qlabel_no)
+			tmp_hl.addWidget(qlabel_countBet)
+			tmp_hl.addWidget(qlabel_colorBet)
+			tmp_hl.addWidget(qlabel_pointBet)
+			self.rbet_qscrollarea_vl.addWidget(tmp_qframe)
+			
+			#tmp_qframe.setFixedWidth(215)
+			#tmp_qframe.setFixedHeight(30)
+			#tmp_qframe.show()
+	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
 		#print 'pos in the widget', QMouseEvent.pos()
@@ -1841,16 +1909,18 @@ class GridWindow(QWidget):
 		#print 'pos in the windows screen', cursor.pos()
 	
 	def testFunc(self):
+		pass
+		
 		#self.rbet_qscrollarea
-		test_frame = QFrame(self.rbet_qscrollarea)
-		test_vl = QVBoxLayout(test_frame)
-		test_vl.setSpacing(0)
+		#test_frame = QFrame(self.rbet_qscrollarea)
+		#test_vl = QVBoxLayout(test_frame)
+		#test_vl.setSpacing(0)
 		
-		for i in range(50):
+		#for i in range(50):
 			#test_vl.addWidget(QLabel(str(i)))
-			test_vl.addWidget(QLabel(''))
+			#test_vl.addWidget(QLabel(''))
 		
-		self.rbet_qscrollarea.setWidget(test_frame)
+		#self.rbet_qscrollarea.setWidget(test_frame)
 		
 		#self.status_txt = QLabel(self)
 		#movie = QMovie(imgDir + 'sug_big_red_cir.gif')
