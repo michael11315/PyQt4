@@ -285,7 +285,6 @@ class betRecord():
 				self.countBig[i] = self.countBig[i-1]
 			self.countBig[0] = 1
 		
-		#print Big, Eye, Sma, Pen
 		return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen}
 	
 	def findColor(self, jump, countBig_now, countBig_old):
@@ -855,6 +854,29 @@ class betRecord():
 	
 	def principalPopEntry(self):
 		return self.principalEntryList.pop()
+	
+	def principalSum(self):
+		sum = 0
+		for entry in self.principalEntryList:
+			sum += entry
+		
+		return sum
+	
+	def principalSumPositive(self):
+		sum = 0
+		for entry in self.principalEntryList:
+			if entry > 0:
+				sum += entry
+		
+		return sum
+	
+	def principalSumNegative(self):
+		sum = 0
+		for entry in self.principalEntryList:
+			if entry < 0:
+				sum += entry
+		
+		return sum
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -1147,7 +1169,8 @@ class GridWindow(QWidget):
 		self.rbet_vl.addWidget(self.rbet_qscrollarea)
 		self.bet_vl.addWidget(self.rbet_qframe)
 		self.rbet_qscrollarea.setWidget(self.rbet_qscrollarea_qframe)
-		self.rbet_qscrollarea_qframe.setLayout(self.rbet_qscrollarea_vl)
+		self.rbet_qscrollarea.setWidgetResizable(True)
+		#self.rbet_qscrollarea_qframe.setLayout(self.rbet_qscrollarea_vl)
 	
 	def UIcreate_numberInput(self):
 		self.binp_qframe = []
@@ -1443,7 +1466,11 @@ class GridWindow(QWidget):
 		self.rbet_qscrollarea.setStyleSheet('''.QScrollArea {background-color: white;}''')
 		self.rbet_qscrollarea.setFixedWidth(215)
 		self.rbet_qscrollarea.setFixedHeight(380)
-		self.rbet_qscrollarea_vl.setSpacing(1)
+		self.rbet_qscrollarea_qframe.setStyleSheet('''.QFrame {background-color: white;}''')
+		self.rbet_qscrollarea_vl.setAlignment(Qt.AlignTop)
+		self.rbet_qscrollarea_vl.setDirection(QBoxLayout.BottomToTop)
+		self.rbet_qscrollarea_vl.setSpacing(0)
+		self.rbet_qscrollarea_vl.setMargin(0)
 		
 		# initail global values of UIcreate_numberInput
 		#----------------------------------------------------
@@ -1612,7 +1639,7 @@ class GridWindow(QWidget):
 			try:
 				principal = int(self.bbet_qlineedit.text())
 				self.betRecord.enterPrincipal(principal)
-				self.bbet_qlabel1.setText(self.tr('檯面數 : %d' %principal))
+				self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %principal))
 				self.bbet_qlineedit.setReadOnly(True)
 			except:
 				pass
@@ -1622,7 +1649,6 @@ class GridWindow(QWidget):
 	
 	def connect_pbet_qlabel(self, winner):
 		ret = self.betRecord.bet(winner)
-		#print ret
 		if ret.get('status') == 0:
 			lastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
 			for i in range(4):
@@ -1695,6 +1721,7 @@ class GridWindow(QWidget):
 		
 		self.update_lbar()
 		self.update_rbar()
+		self.update_bbet()
 		self.update_ibet()
 	
 	def connect_pbet_btn(self):
@@ -1738,6 +1765,12 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 																			background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
 			
+			self.betRecord.principalPopEntry()
+			removeQframe = self.rbet_qscrollarea_vl.takeAt(self.rbet_qscrollarea_vl.count()-1).widget()
+			#self.rbet_qscrollarea_vl.removeWidget(removeQframe)
+			removeQframe.close()
+			self.rbet_qscrollarea_qframe.update()
+			
 			if removeList[0][0] == 0 and removeList[0][1] == 0:
 				self.update_nbet(-2, -2)
 			else:
@@ -1755,6 +1788,7 @@ class GridWindow(QWidget):
 		
 		self.update_lbar()
 		self.update_rbar()
+		self.update_bbet()
 		self.update_ibet()
 	
 	def connect_binp_btn(self, i, number):
@@ -1790,6 +1824,12 @@ class GridWindow(QWidget):
 		
 		for i in range(4):
 			self.rbar_qlabel2[i].setText(self.tr('合計 : %s' % str(sumCount[i])))
+	
+	def update_bbet(self):
+		tmp = self.betRecord.getPrincipal() + self.betRecord.principalSum()
+		self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %tmp))
+		tmp = self.betRecord.principalSumNegative() * -1
+		self.bbet_qlabel2.setText(self.tr('轉碼 : %d' %tmp))
 	
 	def update_nbet(self, img, bet):
 		if img == 0:
@@ -1853,7 +1893,10 @@ class GridWindow(QWidget):
 			if colorBet == 0 and sameBet:
 				pointBet = pointBet * 0.95
 			
-			self.betRecord.principalAddEntry(pointBet)
+			if sameBet:
+				self.betRecord.principalAddEntry(pointBet)
+			else:
+				self.betRecord.principalAddEntry(-1 * pointBet)
 			self.addOneRecord(countBet, sameBet, colorBet, pointBet)
 	
 	def addOneRecord(self, countBet, sameBet, colorBet, pointBet):
@@ -1862,13 +1905,16 @@ class GridWindow(QWidget):
 			tmp_hl = QHBoxLayout()
 			tmp_qframe.setLayout(tmp_hl)
 			tmp_hl.setSpacing(0)
-			tmp_qframe.setStyleSheet('''.QFrame {background-color: white;}''')
+			tmp_qframe.setStyleSheet('''.QFrame {background-color: white; border-bottom: 1px solid gray;}''')
 			
 			qlabel_no = QLabel()
 			qlabel_no.setText(str(self.rbet_qscrollarea_vl.count()))
 			qlabel_no.setStyleSheet('''.QLabel {background-color: white; color: gray;}''')
 			
 			qlabel_countBet = QLabel()
+			if countBet == 0:
+				qlabel_countBet.setText(str(countBet))
+				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: blue;}''')
 			if sameBet:
 				qlabel_countBet.setText('+' + str(countBet))
 				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: blue;}''')
@@ -1892,11 +1938,10 @@ class GridWindow(QWidget):
 			tmp_hl.addWidget(qlabel_countBet)
 			tmp_hl.addWidget(qlabel_colorBet)
 			tmp_hl.addWidget(qlabel_pointBet)
-			self.rbet_qscrollarea_vl.addWidget(tmp_qframe)
+			tmp_qframe.setFixedWidth(205)
+			tmp_qframe.setFixedHeight(30)
 			
-			#tmp_qframe.setFixedWidth(215)
-			#tmp_qframe.setFixedHeight(30)
-			#tmp_qframe.show()
+			self.rbet_qscrollarea_vl.addWidget(tmp_qframe)
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
@@ -1909,19 +1954,6 @@ class GridWindow(QWidget):
 		#print 'pos in the windows screen', cursor.pos()
 	
 	def testFunc(self):
-		pass
-		
-		#self.rbet_qscrollarea
-		#test_frame = QFrame(self.rbet_qscrollarea)
-		#test_vl = QVBoxLayout(test_frame)
-		#test_vl.setSpacing(0)
-		
-		#for i in range(50):
-			#test_vl.addWidget(QLabel(str(i)))
-			#test_vl.addWidget(QLabel(''))
-		
-		#self.rbet_qscrollarea.setWidget(test_frame)
-		
 		#self.status_txt = QLabel(self)
 		#movie = QMovie(imgDir + 'sug_big_red_cir.gif')
 		#self.status_txt.setMovie(movie)
@@ -1935,6 +1967,7 @@ class GridWindow(QWidget):
 		#self.grid_qlabelList[0][1][0].setPixmap(pixmap)
 		#self.grid_qlabelList[1][5][0].setPixmap(pixmap)
 		#print self.pbet_qframe.sizeHint()
+		pass
 
 def clickable(widget):
 	class Filter(QObject):
