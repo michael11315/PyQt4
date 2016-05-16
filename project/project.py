@@ -1890,7 +1890,7 @@ class GridWindow(QWidget):
 	def update_rbet(self, countBet, sameBet, colorBet):
 		if colorBet != 2:
 			pointBet = countBet
-			if colorBet == 0 and sameBet:
+			if colorBet == 0 and sameBet and countBet != 0:
 				pointBet = pointBet * 0.95
 			
 			if sameBet:
@@ -1914,8 +1914,8 @@ class GridWindow(QWidget):
 			qlabel_countBet = QLabel()
 			if countBet == 0:
 				qlabel_countBet.setText(str(countBet))
-				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: blue;}''')
-			if sameBet:
+				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: black;}''')
+			elif sameBet:
 				qlabel_countBet.setText('+' + str(countBet))
 				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: blue;}''')
 			else:
