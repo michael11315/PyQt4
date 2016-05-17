@@ -1915,14 +1915,15 @@ class GridWindow(QWidget):
 			tmp_qframe = QFrame()
 			tmp_hl = QHBoxLayout()
 			tmp_hl.setSpacing(0)
-			tmp_hl.setMargin(0)
+			#tmp_hl.setMargin(0)
+			tmp_hl.setContentsMargins(0, 0, 0, 1)
 			tmp_qframe.setLayout(tmp_hl)
-			tmp_qframe.setStyleSheet('''.QFrame {background-color: white; border-bottom: 1px solid gray;}''')
+			tmp_qframe.setStyleSheet('''.QFrame {background-color: white; border-bottom: 2px solid gray;}''')
 			
 			qlabel_no = QLabel()
 			qlabel_no.setAlignment(Qt.AlignCenter)
 			qlabel_no.setText(str(self.rbet_qscrollarea_vl.count()))
-			qlabel_no.setStyleSheet('''.QLabel {background-color: white; color: gray;}''')
+			qlabel_no.setStyleSheet('''.QLabel {background-color: white; color: gray; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			
 			qlabel_countBet = QLabel()
 			if countBet == 0:
