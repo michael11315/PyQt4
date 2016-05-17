@@ -893,6 +893,7 @@ class GridWindow(QWidget):
 		
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 		self.setFixedSize(1251, 917)
+		#self.setFixedSize(1251, 917)
 		print self.sizeHint()
 		self.vline.setFixedHeight(self.sizeHint().height()-50)
 		
@@ -1674,6 +1675,16 @@ class GridWindow(QWidget):
 						if bet == 0:
 							self.grid_qlabelList[i][row][col].setText('')
 						else:
+							#movie = QMovie(imgDir + 'sug_big_red_cir.gif')
+							#self.grid_qlabelList[i][row][col].setMovie(movie)
+							#movie.start()
+							#self.grid_qlabelList[i][row][col].setLayout(QHBoxLayout())
+							
+							#label = QLabel(str(bet))
+							#label.setAlignment(Qt.AlignCenter)
+							#label.setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+							#self.grid_qlabelList[i][row][col].layout().addWidget(label)
+							
 							self.grid_qlabelList[i][row][col].setText(str(bet))
 							self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
 							self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
@@ -1903,36 +1914,38 @@ class GridWindow(QWidget):
 		if colorBet != 2:
 			tmp_qframe = QFrame()
 			tmp_hl = QHBoxLayout()
-			tmp_qframe.setLayout(tmp_hl)
 			tmp_hl.setSpacing(0)
+			tmp_hl.setMargin(0)
+			tmp_qframe.setLayout(tmp_hl)
 			tmp_qframe.setStyleSheet('''.QFrame {background-color: white; border-bottom: 1px solid gray;}''')
 			
 			qlabel_no = QLabel()
+			qlabel_no.setAlignment(Qt.AlignCenter)
 			qlabel_no.setText(str(self.rbet_qscrollarea_vl.count()))
 			qlabel_no.setStyleSheet('''.QLabel {background-color: white; color: gray;}''')
 			
 			qlabel_countBet = QLabel()
 			if countBet == 0:
 				qlabel_countBet.setText(str(countBet))
-				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: black;}''')
+				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: black; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			elif sameBet:
 				qlabel_countBet.setText('+' + str(countBet))
-				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: blue;}''')
+				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			else:
 				qlabel_countBet.setText('-' + str(countBet))
-				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: red;}''')
+				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			
 			qlabel_colorBet = QLabel()
 			if colorBet == 0:
 				qlabel_colorBet.setText(self.tr('莊'))
-				qlabel_colorBet.setStyleSheet('''.QLabel {background-color: white; color: red;}''')
+				qlabel_colorBet.setStyleSheet('''.QLabel {background-color: white; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			elif colorBet == 1:
 				qlabel_colorBet.setText(self.tr('閒'))
-				qlabel_colorBet.setStyleSheet('''.QLabel {background-color: white; color: blue;}''')
+				qlabel_colorBet.setStyleSheet('''.QLabel {background-color: white; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			
 			qlabel_pointBet = QLabel()
 			qlabel_pointBet.setText(str(pointBet))
-			qlabel_pointBet.setStyleSheet('''.QLabel {background-color: white; color: gray;}''')
+			qlabel_pointBet.setStyleSheet('''.QLabel {background-color: white; color: gray; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			
 			tmp_hl.addWidget(qlabel_no)
 			tmp_hl.addWidget(qlabel_countBet)
