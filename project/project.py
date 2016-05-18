@@ -892,7 +892,7 @@ class GridWindow(QWidget):
 		self.UIcreate()
 		
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-		self.setFixedSize(1175, 743)
+		#self.setFixedSize(1169, 731)
 		print self.sizeHint()
 		self.vline.setFixedHeight(self.sizeHint().height()-10)
 		
@@ -1224,9 +1224,9 @@ class GridWindow(QWidget):
 		# initail global values of UIcreate
 		#----------------------------------------------------
 		self.UI_hl.setSpacing(10)
-		self.UI_hl.setMargin(1)
+		self.UI_hl.setMargin(0)
 		self.left_vl.setSpacing(1)
-		self.left_vl.setMargin(1)
+		self.left_vl.setMargin(0)
 		
 		# initail global values of UIcreate_GridLayout
 		#----------------------------------------------------
@@ -1242,7 +1242,7 @@ class GridWindow(QWidget):
 		# initail global values of UIcreate_BarForGrid
 		#----------------------------------------------------
 		for i in range(4):
-			self.bar_hl[i].setMargin(1)
+			self.bar_hl[i].setMargin(0)
 		
 		# bar's title
 		#--------------------------
@@ -1310,7 +1310,7 @@ class GridWindow(QWidget):
 		# initail global values of UIcreate_BetStatus
 		#----------------------------------------------------
 		self.bet_vl.setSpacing(10)
-		self.bet_vl.setMargin(1)
+		self.bet_vl.setMargin(0)
 		
 		# bet and print area
 		#--------------------------
@@ -1472,7 +1472,7 @@ class GridWindow(QWidget):
 		
 		self.rbet_qscrollarea.setStyleSheet('''.QScrollArea {background-color: white;}''')
 		self.rbet_qscrollarea.setFixedWidth(215)
-		self.rbet_qscrollarea.setFixedHeight(309)
+		self.rbet_qscrollarea.setFixedHeight(301)
 		self.rbet_qscrollarea_qframe.setStyleSheet('''.QFrame {background-color: white;}''')
 		self.rbet_qscrollarea_vl.setAlignment(Qt.AlignTop)
 		self.rbet_qscrollarea_vl.setDirection(QBoxLayout.BottomToTop)
