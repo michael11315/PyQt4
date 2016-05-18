@@ -1,6 +1,5 @@
 import sys
-import threading
-import time
+import copy
 import functools
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -8,24 +7,25 @@ from PyQt4.QtCore import *
 QTextCodec.setCodecForTr(QTextCodec.codecForName("utf8"))
 
 # image path
+
 imgDir = 'img/'
-imgCell = imgDir + 'cell.png'
+imgCell = imgDir + 'cell.gif'
 
 imgRedBtn = imgDir + 'red_btn.png'
 imgGreenBtn = imgDir + 'green_btn.png'
 imgBlueBtn = imgDir + 'blue_btn.png'
 
-imgCirGreen = imgDir + 'cir_green.png'
-imgBigRedCirGreen = imgDir + 'big_red_cir_green.png'
-imgBigBlueCirGreen = imgDir + 'big_blue_cir_green.png'
-imgBigRedCir = imgDir + 'big_red_cir.png'
-imgBigBlueCir = imgDir + 'big_blue_cir.png'
-imgEyeRedCir = imgDir + 'eye_red_cir.png'
-imgEyeBlueCir = imgDir + 'eye_blue_cir.png'
-imgSmaRedCir = imgDir + 'sma_red_cir.png'
-imgSmaBlueCir = imgDir + 'sma_blue_cir.png'
-imgPenRedCir = imgDir + 'pen_red_cir.png'
-imgPenBlueCir = imgDir + 'pen_blue_cir.png'
+imgCirGreen = imgDir + 'cir_green.gif'
+imgBigRedCirGreen = imgDir + 'big_red_cir_green.gif'
+imgBigBlueCirGreen = imgDir + 'big_blue_cir_green.gif'
+imgBigRedCir = imgDir + 'big_red_cir.gif'
+imgBigBlueCir = imgDir + 'big_blue_cir.gif'
+imgEyeRedCir = imgDir + 'eye_red_cir.gif'
+imgEyeBlueCir = imgDir + 'eye_blue_cir.gif'
+imgSmaRedCir = imgDir + 'sma_red_cir.gif'
+imgSmaBlueCir = imgDir + 'sma_blue_cir.gif'
+imgPenRedCir = imgDir + 'pen_red_cir.gif'
+imgPenBlueCir = imgDir + 'pen_blue_cir.gif'
 
 imgSugBigRedCir = imgDir + 'sug_big_red_cir.gif'
 imgSugBigBlueCir = imgDir + 'sug_big_blue_cir.gif'
@@ -942,6 +942,7 @@ class GridWindow(QWidget):
 		self.grid_qframe = []
 		self.grid_gl = []
 		self.grid_qlabelList = []
+		self.sugListForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 		
 		# grid layout
 		for i in range(4):
@@ -1567,7 +1568,11 @@ class GridWindow(QWidget):
 		self.bbet_btn1.clicked.connect(self.connect_bbet_btn1)
 		self.bbet_btn2.clicked.connect(self.connect_bbet_btn2)
 		
-		# initail bet push button area in UIcreate_BetStatus
+		# initail bet inning count area in UIcreate_BetStatus
+		#----------------------------------------------------
+		clickable(self.libet_qframe).connect(self.connect_libet_qframe)
+		
+		# initail push button area in UIcreate_BetStatus
 		#----------------------------------------------------
 		clickable(self.pbet_qlabel1).connect(functools.partial(self.connect_pbet_qlabel, Banker))
 		clickable(self.pbet_qlabel2).connect(functools.partial(self.connect_pbet_qlabel, Tie))
@@ -1668,13 +1673,21 @@ class GridWindow(QWidget):
 	
 	def connect_bbet_btn2(self):
 		print self.bbet_btn2.text().toUtf8()
-		print self.grid_qlabelList[0][0][0].movie().fileName()
-		print self.grid_qlabelList[0][0][0].movie().state()
-		print ''
-		print self.grid_qlabelList[0][1][0].movie().fileName()
-		print self.grid_qlabelList[0][1][0].movie().state()
+	
+	def connect_libet_qframe(self):
+		for i in range(4):
+			row = self.sugListForMovie[i][0]
+			col = self.sugListForMovie[i][1]
+			bet = self.sugListForMovie[i][3]
+			if row >= 0 and col >= 0 and bet > 0:
+				if self.grid_qlabelList[i][row][col].movie().state() == 0:
+					self.grid_qlabelList[i][row][col].movie().start()
+				elif self.grid_qlabelList[i][row][col].movie().state() == 2:
+					self.grid_qlabelList[i][row][col].movie().stop()
+					self.grid_qlabelList[i][row][col].movie().jumpToFrame(0)
 	
 	def connect_pbet_qlabel(self, winner):
+		self.stopGridGif()
 		ret = self.betRecord.bet(winner)
 		if ret.get('status') == 0:
 			lastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
@@ -1691,6 +1704,7 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].movie().stop()
 			
 			showSugList = [ret.get('SugBig'), ret.get('SugEye'), ret.get('SugSma'), ret.get('SugPen')]
+			self.sugListForMovie = copy.deepcopy(showSugList)
 			for i in range(4):
 				row = showSugList[i][0]
 				col = showSugList[i][1]
@@ -1753,6 +1767,7 @@ class GridWindow(QWidget):
 		self.update_ibet()
 	
 	def connect_pbet_btn(self):
+		self.stopGridGif()
 		ret = self.betRecord.backOneStep()
 		if ret.get('status') == 0:
 			removeList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
@@ -1779,6 +1794,7 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].movie().stop()
 			
 			ShowLastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
+			self.sugListForMovie = copy.deepcopy(ShowLastSugList)
 			for i in range(4):
 				row = ShowLastSugList[i][0]
 				col = ShowLastSugList[i][1]
@@ -1975,6 +1991,14 @@ class GridWindow(QWidget):
 			tmp_qframe.setFixedHeight(30)
 			
 			self.rbet_qscrollarea_vl.addWidget(tmp_qframe)
+	
+	def stopGridGif(self):
+		for i in range(4):
+			row = self.sugListForMovie[i][0]
+			col = self.sugListForMovie[i][1]
+			bet = self.sugListForMovie[i][3]
+			if row >= 0 and col >= 0 and bet > 0:
+				self.grid_qlabelList[i][row][col].movie().stop()
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
