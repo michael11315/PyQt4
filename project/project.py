@@ -1,4 +1,6 @@
 import sys
+import threading
+import time
 import functools
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -25,14 +27,14 @@ imgSmaBlueCir = imgDir + 'sma_blue_cir.png'
 imgPenRedCir = imgDir + 'pen_red_cir.png'
 imgPenBlueCir = imgDir + 'pen_blue_cir.png'
 
-imgSugBigRedCir = imgDir + 'sug_big_red_cir.png'
-imgSugBigBlueCir = imgDir + 'sug_big_blue_cir.png'
-imgSugEyeRedCir = imgDir + 'sug_eye_red_cir.png'
-imgSugEyeBlueCir = imgDir + 'sug_eye_blue_cir.png'
-imgSugSmaRedCir = imgDir + 'sug_sma_red_cir.png'
-imgSugSmaBlueCir = imgDir + 'sug_sma_blue_cir.png'
-imgSugPenRedCir = imgDir + 'sug_pen_red_cir.png'
-imgSugPenBlueCir = imgDir + 'sug_pen_blue_cir.png'
+imgSugBigRedCir = imgDir + 'sug_big_red_cir.gif'
+imgSugBigBlueCir = imgDir + 'sug_big_blue_cir.gif'
+imgSugEyeRedCir = imgDir + 'sug_eye_red_cir.gif'
+imgSugEyeBlueCir = imgDir + 'sug_eye_blue_cir.gif'
+imgSugSmaRedCir = imgDir + 'sug_sma_red_cir.gif'
+imgSugSmaBlueCir = imgDir + 'sug_sma_blue_cir.gif'
+imgSugPenRedCir = imgDir + 'sug_pen_red_cir.gif'
+imgSugPenBlueCir = imgDir + 'sug_pen_blue_cir.gif'
 
 imgNextStatusEyeRedCir = imgDir + 'next_eye_red_cir.png'
 imgNextStatusEyeBlueCir = imgDir + 'next_eye_blue_cir.png'
@@ -892,7 +894,7 @@ class GridWindow(QWidget):
 		self.UIcreate()
 		
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-		#self.setFixedSize(1169, 731)
+		self.setFixedSize(1169, 731)
 		print self.sizeHint()
 		self.vline.setFixedHeight(self.sizeHint().height()-10)
 		
@@ -953,10 +955,23 @@ class GridWindow(QWidget):
 				tmprow = []
 				for col in range(30):
 					tmprow.append(QLabel(self.grid_qframe[i]))
-					tmprow[len(tmprow)-1].setStyleSheet('''.QLabel {background-image: url(%s);}'''%imgCell)
+					imgGif = QMovie(imgCell)
+					tmprow[len(tmprow)-1].setMovie(imgGif)
 					tmprow[len(tmprow)-1].setFixedWidth(30)
 					tmprow[len(tmprow)-1].setFixedHeight(25)
+					tmprow[len(tmprow)-1].movie().start()
+					tmprow[len(tmprow)-1].movie().stop()
 					tmprow[len(tmprow)-1].setScaledContents(True)
+					
+					tmprow_hl = QHBoxLayout()
+					tmprow_hl.setMargin(0)
+					tmprow_hl.setSpacing(0)
+					tmprow_qlabel = QLabel()
+					tmprow_qlabel.setAlignment(Qt.AlignCenter)
+					tmprow_qlabel.setStyleSheet('''.QLabel { background: transparent; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+					tmprow[len(tmprow)-1].setLayout(tmprow_hl)
+					tmprow[len(tmprow)-1].layout().addWidget(tmprow_qlabel)
+					
 					self.grid_gl[i].addWidget(tmprow[len(tmprow)-1], row, col)
 				
 				tmp.append(tmprow)
@@ -1633,9 +1648,9 @@ class GridWindow(QWidget):
 				self.betRecord.betCountPen[-1] = 0
 			
 			show = self.betRecord.lastShow(i)
-			style = str(self.grid_qlabelList[i][show[0]][show[1]].styleSheet())
+			style = str(self.grid_qlabelList[i][show[0]][show[1]].layout().itemAt(0).widget().styleSheet())
 			style = style.replace('{', '{ border: 1px solid black;')
-			self.grid_qlabelList[i][show[0]][show[1]].setStyleSheet('''%s'''%style)
+			self.grid_qlabelList[i][show[0]][show[1]].layout().itemAt(0).widget().setStyleSheet('''%s'''%style)
 			
 			self.update_rbar()
 			self.update_nbet(-1, -1)
@@ -1653,6 +1668,11 @@ class GridWindow(QWidget):
 	
 	def connect_bbet_btn2(self):
 		print self.bbet_btn2.text().toUtf8()
+		print self.grid_qlabelList[0][0][0].movie().fileName()
+		print self.grid_qlabelList[0][0][0].movie().state()
+		print ''
+		print self.grid_qlabelList[0][1][0].movie().fileName()
+		print self.grid_qlabelList[0][1][0].movie().state()
 	
 	def connect_pbet_qlabel(self, winner):
 		ret = self.betRecord.bet(winner)
@@ -1665,10 +1685,10 @@ class GridWindow(QWidget):
 				bet = lastSugList[i][3]
 				if row >= 0 and col >= 0:
 					if winner != Tie:
-						self.grid_qlabelList[i][row][col].setText('')
-						self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
-						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																			background-image: url(%s);}'''%imgCell)
+						self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
+						self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
+						self.grid_qlabelList[i][row][col].movie().start()
+						self.grid_qlabelList[i][row][col].movie().stop()
 			
 			showSugList = [ret.get('SugBig'), ret.get('SugEye'), ret.get('SugSma'), ret.get('SugPen')]
 			for i in range(4):
@@ -1679,22 +1699,14 @@ class GridWindow(QWidget):
 				if row >= 0 and col >= 0:
 					if winner != Tie:
 						if bet == 0:
-							self.grid_qlabelList[i][row][col].setText('')
+							self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
+							self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
 						else:
-							#movie = QMovie(imgDir + 'sug_big_red_cir.gif')
-							#self.grid_qlabelList[i][row][col].setMovie(movie)
-							#movie.start()
-							#self.grid_qlabelList[i][row][col].setLayout(QHBoxLayout())
-							
-							#label = QLabel(str(bet))
-							#label.setAlignment(Qt.AlignCenter)
-							#label.setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
-							#self.grid_qlabelList[i][row][col].layout().addWidget(label)
-							
-							self.grid_qlabelList[i][row][col].setText(str(bet))
-							self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
-							self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																				background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
+							self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
+							self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
+						
+						self.grid_qlabelList[i][row][col].movie().start()
+						self.grid_qlabelList[i][row][col].movie().stop()
 			
 			showList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
 			isBet = ret.get('isBet')
@@ -1708,24 +1720,23 @@ class GridWindow(QWidget):
 					if winner != Tie:
 						if isBet[i]:
 							if countBet[i] == 0:
-								self.grid_qlabelList[i][row][col].setText('')
+								self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
 							else:
-								self.grid_qlabelList[i][row][col].setText(str(countBet[i]))
+								self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(countBet[i]))
 							
-							self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
 							if sameBet[i]:
-								self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																					background-image: url(%s); color: black}'''%self.betRecord.imgPath[i][img])
+								self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																														color: black;}''')
 							else:
-								self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																					background-image: url(%s); color: red}'''%self.betRecord.imgPath[i][img])
-						else:
-							self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																					background-image: url(%s); color: black}'''%self.betRecord.imgPath[i][img])
+								self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																														color: red;}''')
+						
+						self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgPath[i][img])
 					else:
-						self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
-						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																			background-image: url(%s);}'''%self.betRecord.imgPath[i][Tie][img])
+						self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgPath[i][Tie][img])
+					
+					self.grid_qlabelList[i][row][col].movie().start()
+					self.grid_qlabelList[i][row][col].movie().stop()
 			
 			self.update_nbet(showSugList[0][2], showSugList[0][3])
 			if winner != Tie:
@@ -1750,10 +1761,10 @@ class GridWindow(QWidget):
 				row = removeList[i][0]
 				col = removeList[i][1]
 				if row >= 0 and col >= 0:
-					self.grid_qlabelList[i][row][col].setText('')
-					self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
-					self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																		background-image: url(%s);}'''%imgCell)
+					self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
+					self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
+					self.grid_qlabelList[i][row][col].movie().start()
+					self.grid_qlabelList[i][row][col].movie().stop()
 			
 			removeSugList = [ret.get('SugBig'), ret.get('SugEye'), ret.get('SugSma'), ret.get('SugPen')]
 			for i in range(4):
@@ -1762,10 +1773,10 @@ class GridWindow(QWidget):
 				img = removeSugList[i][2]
 				bet = removeSugList[i][3]
 				if row >= 0 and col >= 0:
-					self.grid_qlabelList[i][row][col].setText('')
-					self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
-					self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																		background-image: url(%s);}'''%imgCell)
+					self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
+					self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
+					self.grid_qlabelList[i][row][col].movie().start()
+					self.grid_qlabelList[i][row][col].movie().stop()
 			
 			ShowLastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
 			for i in range(4):
@@ -1774,19 +1785,21 @@ class GridWindow(QWidget):
 				img = ShowLastSugList[i][2]
 				bet = ShowLastSugList[i][3]
 				if row >= 0 and col >= 0:
+					self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 					if bet == 0:
-						self.grid_qlabelList[i][row][col].setText('')
+						self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
+						self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
 					else:
-						self.grid_qlabelList[i][row][col].setText(str(bet))
-						self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
-						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																			background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
+						self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
+						self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
+					
+					self.grid_qlabelList[i][row][col].movie().start()
+					self.grid_qlabelList[i][row][col].movie().stop()
 			
 			self.betRecord.principalPopEntry()
-			removeQframe = self.rbet_qscrollarea_vl.takeAt(self.rbet_qscrollarea_vl.count()-1).widget()
-			#self.rbet_qscrollarea_vl.removeWidget(removeQframe)
+			removeQframe = self.rbet_qscrollarea_vl.itemAt(self.rbet_qscrollarea_vl.count()-1).widget()
 			removeQframe.close()
-			self.rbet_qscrollarea_qframe.update()
+			self.rbet_qscrollarea_vl.removeWidget(removeQframe)
 			
 			if removeList[0][0] == 0 and removeList[0][1] == 0:
 				self.update_nbet(-2, -2)
@@ -1799,9 +1812,9 @@ class GridWindow(QWidget):
 			pass
 		elif ret.get('status') == Back_From_Tie:
 			BackBig = ret.get('Big')
-			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].setAlignment(Qt.AlignCenter)
-			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																background-image: url(%s);}'''%self.betRecord.imgPath[0][BackBig[2]])
+			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].movie().setFileName(self.betRecord.imgPath[0][BackBig[2]])
+			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].movie().start()
+			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].movie().stop()
 		
 		self.update_lbar()
 		self.update_rbar()
@@ -1965,7 +1978,7 @@ class GridWindow(QWidget):
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
-		print 'pos in the widget', QMouseEvent.pos()
+		#print 'pos in the widget', QMouseEvent.pos()
 		pass
 	
 	# pos in the windows screen
@@ -1974,19 +1987,6 @@ class GridWindow(QWidget):
 		#print 'pos in the windows screen', cursor.pos()
 	
 	def testFunc(self):
-		#self.status_txt = QLabel(self)
-		#movie = QMovie(imgDir + 'sug_big_red_cir.gif')
-		#self.status_txt.setMovie(movie)
-		#movie.start()
-		#self.status_txt.setLayout(QHBoxLayout())
-		#self.status_txt.layout().addWidget(QLabel('1'))
-		#self.status_txt.setGeometry(QRect(100, 100, 30, 20))
-		
-		#pixmap = QPixmap(imgRedCir)
-		#self.grid_qlabelList[0][0][0].setPixmap(pixmap)
-		#self.grid_qlabelList[0][1][0].setPixmap(pixmap)
-		#self.grid_qlabelList[1][5][0].setPixmap(pixmap)
-		#print self.pbet_qframe.sizeHint()
 		pass
 
 def clickable(widget):
