@@ -744,10 +744,6 @@ class betRecord():
 					rease_col = tmp[1]
 				
 				self.betSugBig.append((row, col, img, bet))
-				
-				SugBig = self.sumBetInSugBig(self.recordBig[-1], self.betSugBig[-1], self.betSugEye[-1], self.betSugSma[-1], self.betSugPen[-1])
-				self.betSugBig_sum.pop()
-				self.betSugBig_sum.append(SugBig)
 		elif i == 1:
 			if len(self.betSugEye) != 0 and self.betSugEye[-1][0] != -1:
 				tmp = self.betSugEye.pop()
@@ -803,7 +799,11 @@ class betRecord():
 				
 				self.betSugPen.append((row, col, img, bet))
 		
-		return (row, col, img, bet), (erase_row, rease_col)
+		SugBig = self.sumBetInSugBig(self.recordBig[-1], self.betSugBig[-1], self.betSugEye[-1], self.betSugSma[-1], self.betSugPen[-1])
+		SugBig_sum_otherimg = self.betSugBig_sum.pop()
+		self.betSugBig_sum.append(SugBig)
+		
+		return (row, col, img, bet), (erase_row, rease_col), SugBig, SugBig_sum_otherimg
 	
 	def gameIsBegin(self):
 		if len(self.recordBig) == 0:
@@ -1295,6 +1295,7 @@ class GridWindow(QWidget):
 			
 			self.lbar_qlineedit[i].setFixedWidth(self.sizeWidth)
 			self.lbar_qlineedit[i].setSizePolicy(self.sizePolicy)
+			self.lbar_qlineedit[i].setReadOnly(True)
 		
 		# right bar
 		#--------------------------
@@ -1497,10 +1498,10 @@ class GridWindow(QWidget):
 		
 		# initail global values of UIcreate_numberInput
 		#----------------------------------------------------
-		self.binp_qframe[0].setGeometry(QRect(550, 27, 140, 150))
-		self.binp_qframe[1].setGeometry(QRect(550, 212, 140, 150))
-		self.binp_qframe[2].setGeometry(QRect(550, 398, 140, 150))
-		self.binp_qframe[3].setGeometry(QRect(550, 583, 140, 150))
+		self.binp_qframe[0].setGeometry(QRect(557, 24, 140, 150))
+		self.binp_qframe[1].setGeometry(QRect(557, 207, 140, 150))
+		self.binp_qframe[2].setGeometry(QRect(557, 390, 140, 150))
+		self.binp_qframe[3].setGeometry(QRect(557, 573, 140, 150))
 		for i in range(4):
 			self.binp_qframe[i].setStyleSheet('''.QFrame {background-color: rgb(230, 230, 230); border: 1px solid gray;}
 												.QPushButton {background-color: rgb(250, 250, 250); font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
@@ -1601,6 +1602,7 @@ class GridWindow(QWidget):
 			self.lbar_qlineedit[i].setText('')
 			self.binp_qframe[i].show()
 		else:
+			self.stopGridGif()
 			self.lbar_btn[i].setText(self.tr('手動'))
 			if self.betRecord.gameIsBegin():
 				if len(self.lbar_qlineedit[i].text()) > 0:
@@ -1611,28 +1613,62 @@ class GridWindow(QWidget):
 					else:
 						img = 1
 					
-					retSug, eraseSug = self.betRecord.manualChangeSug(i, img, bet)
+					retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(i, img, bet)
+					#print retSug, eraseSug, SugBig_sum
 					
 					row = eraseSug[0]
 					col = eraseSug[1]
 					if row >= 0 and col >= 0:
-						self.grid_qlabelList[i][row][col].setText('')
-						self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
-						self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																			background-image: url(%s);}'''%imgCell)
+						self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
+						self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
+						self.grid_qlabelList[i][row][col].movie().start()
+						self.grid_qlabelList[i][row][col].movie().stop()
 					
-					row = retSug[0]
-					col = retSug[1]
-					img = retSug[2]
-					bet = retSug[3]
+					if i != 0:
+						row = retSug[0]
+						col = retSug[1]
+						img = retSug[2]
+						bet = retSug[3]
+						if row >= 0 and col >= 0:
+							if bet == 0:
+								self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
+								self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
+							else:
+								self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
+								self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
+							
+							self.grid_qlabelList[i][row][col].movie().start()
+							self.grid_qlabelList[i][row][col].movie().stop()
+					
+					row = SugBig_sum_otherimg[0]
+					col = SugBig_sum_otherimg[1]
 					if row >= 0 and col >= 0:
-						if img != Tie:
-							self.grid_qlabelList[i][row][col].setText(str(bet))
-							self.grid_qlabelList[i][row][col].setAlignment(Qt.AlignCenter)
-							self.grid_qlabelList[i][row][col].setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
-																				background-image: url(%s);}'''%self.betRecord.imgSugPath[i][img])
-					if i == 0:
-						self.update_nbet(img, bet)
+						self.grid_qlabelList[0][row][col].layout().itemAt(0).widget().setText('')
+						self.grid_qlabelList[0][row][col].movie().setFileName(imgCell)
+						self.grid_qlabelList[0][row][col].movie().start()
+						self.grid_qlabelList[0][row][col].movie().stop()
+					
+					row = SugBig_sum[0]
+					col = SugBig_sum[1]
+					img = SugBig_sum[2]
+					bet = SugBig_sum[3]
+					if row >= 0 and col >= 0:
+						if bet == 0:
+							self.grid_qlabelList[0][row][col].layout().itemAt(0).widget().setText('')
+							self.grid_qlabelList[0][row][col].movie().setFileName(imgCell)
+						else:
+							self.grid_qlabelList[0][row][col].layout().itemAt(0).widget().setText(str(bet))
+							self.grid_qlabelList[0][row][col].movie().setFileName(self.betRecord.imgSugPath[0][img])
+						
+						self.grid_qlabelList[0][row][col].movie().start()
+						self.grid_qlabelList[0][row][col].movie().stop()
+					
+					self.update_nbet(img, bet)
+					if i != 0:
+						self.sugListForMovie.pop(i)
+						self.sugListForMovie.insert(i, retSug)
+					self.sugListForMovie.pop(0)
+					self.sugListForMovie.insert(0, SugBig_sum)
 			
 			self.binp_qframe[i].close()
 	
@@ -1681,6 +1717,8 @@ class GridWindow(QWidget):
 			bet = self.sugListForMovie[i][3]
 			if row >= 0 and col >= 0 and bet > 0:
 				if self.grid_qlabelList[i][row][col].movie().state() == 0:
+					self.grid_qlabelList[i][row][col].movie().jumpToFrame(0)
+					self.grid_qlabelList[i][row][col].movie().stop()
 					self.grid_qlabelList[i][row][col].movie().start()
 				elif self.grid_qlabelList[i][row][col].movie().state() == 2:
 					self.grid_qlabelList[i][row][col].movie().stop()
@@ -1704,23 +1742,23 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].movie().stop()
 			
 			showSugList = [ret.get('SugBig'), ret.get('SugEye'), ret.get('SugSma'), ret.get('SugPen')]
-			self.sugListForMovie = copy.deepcopy(showSugList)
+			if winner != Tie:
+				self.sugListForMovie = copy.deepcopy(showSugList)
 			for i in range(4):
 				row = showSugList[i][0]
 				col = showSugList[i][1]
 				img = showSugList[i][2]
 				bet = showSugList[i][3]
 				if row >= 0 and col >= 0:
-					if winner != Tie:
-						if bet == 0:
-							self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
-							self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
-						else:
-							self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
-							self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
-						
-						self.grid_qlabelList[i][row][col].movie().start()
-						self.grid_qlabelList[i][row][col].movie().stop()
+					if bet == 0:
+						self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
+						self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
+					else:
+						self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
+						self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
+					
+					self.grid_qlabelList[i][row][col].movie().start()
+					self.grid_qlabelList[i][row][col].movie().stop()
 			
 			showList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
 			isBet = ret.get('isBet')
@@ -1851,7 +1889,9 @@ class GridWindow(QWidget):
 	def update_lbar(self):
 		for i in range(4):
 			self.lbar_qlabel[i].setText(self.tr('莊'))
+			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
 			self.lbar_btn[i].setText(self.tr('手動'))
+			self.lbar_qlineedit[i].setText('')
 			self.binp_qframe[i].close()
 	
 	def update_rbar(self):
@@ -1999,6 +2039,7 @@ class GridWindow(QWidget):
 			bet = self.sugListForMovie[i][3]
 			if row >= 0 and col >= 0 and bet > 0:
 				self.grid_qlabelList[i][row][col].movie().stop()
+				self.grid_qlabelList[i][row][col].movie().jumpToFrame(0)
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
