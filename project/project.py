@@ -892,10 +892,9 @@ class GridWindow(QWidget):
 		self.UIcreate()
 		
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-		self.setFixedSize(1251, 917)
-		#self.setFixedSize(1251, 917)
+		self.setFixedSize(1175, 743)
 		print self.sizeHint()
-		self.vline.setFixedHeight(self.sizeHint().height()-50)
+		self.vline.setFixedHeight(self.sizeHint().height()-10)
 		
 		self.betRecord = betRecord()
 		self.testFunc()
@@ -1224,25 +1223,32 @@ class GridWindow(QWidget):
 	def initialGlobalAttribute(self):
 		# initail global values of UIcreate
 		#----------------------------------------------------
-		self.UI_hl.setSpacing(15)
+		self.UI_hl.setSpacing(10)
+		self.UI_hl.setMargin(1)
+		self.left_vl.setSpacing(1)
+		self.left_vl.setMargin(1)
 		
 		# initail global values of UIcreate_GridLayout
 		#----------------------------------------------------
 		for i in range(4):
 			self.grid_qframe[i].setStyleSheet('''.QFrame {background-color: gray;}''')
-			self.grid_qframe[i].setFixedWidth(931)
-			self.grid_qframe[i].setFixedHeight(157)
+			#self.grid_qframe[i].setFixedWidth(931)
+			#self.grid_qframe[i].setFixedHeight(157)
+			#print self.grid_qframe[i].sizeHint()
 			
 			self.grid_gl[i].setSpacing(1)
 			self.grid_gl[i].setMargin(1)
 		
 		# initail global values of UIcreate_BarForGrid
 		#----------------------------------------------------
+		for i in range(4):
+			self.bar_hl[i].setMargin(1)
+		
 		# bar's title
 		#--------------------------
 		for i in range(4):
 			self.tbar_hl[i].setSpacing(1)
-			self.tbar_hl[i].setMargin(1)
+			self.tbar_hl[i].setMargin(0)
 			self.tbar_qlabel[i].setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		
 		self.tbar_qlabel[0].setText(self.tr('下局預測  大路'))
@@ -1257,7 +1263,7 @@ class GridWindow(QWidget):
 			self.lbar_qframe[i].setSizePolicy(self.sizePolicy)
 			
 			self.lbar_hl[i].setSpacing(1)
-			self.lbar_hl[i].setMargin(1)
+			self.lbar_hl[i].setMargin(0)
 			
 			self.lbar_qlabel[i].setText(self.tr('莊'))
 			self.lbar_qlabel[i].setStyleSheet('''.QLabel {color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
@@ -1281,7 +1287,7 @@ class GridWindow(QWidget):
 			self.rbar_qframe[i].setSizePolicy(self.sizePolicy)
 			
 			self.rbar_hl[i].setSpacing(1)
-			self.rbar_hl[i].setMargin(1)
+			self.rbar_hl[i].setMargin(0)
 			
 			self.rbar_qlabel1[i].setText(self.tr('小計 : '))
 			self.rbar_qlabel1[i].setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
@@ -1303,7 +1309,8 @@ class GridWindow(QWidget):
 		
 		# initail global values of UIcreate_BetStatus
 		#----------------------------------------------------
-		self.bet_vl.setSpacing(25)
+		self.bet_vl.setSpacing(10)
+		self.bet_vl.setMargin(1)
 		
 		# bet and print area
 		#--------------------------
@@ -1313,7 +1320,7 @@ class GridWindow(QWidget):
 		self.bbet_qframe.setFixedHeight(80)
 		
 		self.bbet_gl.setSpacing(1)
-		self.bbet_gl.setMargin(1)
+		self.bbet_gl.setMargin(0)
 		
 		self.bbet_btn1.setText(self.tr('本金'))
 		self.bbet_btn1.setStyleSheet('''.QPushButton {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
@@ -1335,13 +1342,13 @@ class GridWindow(QWidget):
 		
 		# next bet area
 		#--------------------------
-		self.nbet_qframe.setStyleSheet('''.QFrame {background-color: gray;} .QLabel {background-color: white;}''')
+		self.nbet_qframe.setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;} .QLabel {background-color: white;}''')
 		self.nbet_qframe.setSizePolicy(self.sizePolicy)
 		self.nbet_qframe.setFixedWidth(215)
 		self.nbet_qframe.setFixedHeight(55)
 		
 		self.nbet_gl.setSpacing(1)
-		self.nbet_gl.setMargin(1)
+		self.nbet_gl.setMargin(0)
 		
 		self.nbet_qlabel1.setText(self.tr('下局注碼'))
 		self.nbet_qlabel1.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
@@ -1362,13 +1369,13 @@ class GridWindow(QWidget):
 		
 		# bet inning count area
 		#--------------------------
-		self.ibet_qframe.setStyleSheet('''.QFrame {background-color: gray;} .QLabel {background-color: white;}''')
+		self.ibet_qframe.setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;} .QLabel {background-color: white;}''')
 		self.ibet_qframe.setSizePolicy(self.sizePolicy)
 		self.ibet_qframe.setFixedWidth(215)
 		self.ibet_qframe.setFixedHeight(80)
 		
 		self.ibet_gl.setSpacing(1)
-		self.ibet_gl.setMargin(1)
+		self.ibet_gl.setMargin(0)
 		
 		self.ibet_qlabel1.setText('0')
 		self.ibet_qlabel1.setAlignment(Qt.AlignCenter)
@@ -1386,10 +1393,10 @@ class GridWindow(QWidget):
 		self.ibet_qlabel4.setStyleSheet('''.QLabel {color: green; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.ibet_qlabel4.setAlignment(Qt.AlignCenter)
 		
-		self.libet_qframe.setStyleSheet('''.QFrame {background-color: white;} .QLabel {background-color: white;}''')
+		self.libet_qframe.setStyleSheet('''.QFrame {background-color: white; border: 0px;} .QLabel {background-color: white;}''')
 		
 		self.libet_gl.setSpacing(2)
-		self.libet_gl.setMargin(2)
+		self.libet_gl.setMargin(0)
 		
 		self.ibet_qlabel_banker1.setText(self.tr('莊'))
 		self.ibet_qlabel_banker1.setStyleSheet('''.QLabel {color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
@@ -1414,12 +1421,12 @@ class GridWindow(QWidget):
 		self.pbet_qframe.setFixedWidth(215)
 		self.pbet_qframe.setFixedHeight(145)
 		
-		self.pbet_gl.setSpacing(1)
-		#self.pbet_gl.setMargin(1)
+		self.pbet_gl.setSpacing(0)
+		self.pbet_gl.setMargin(0)
 		
 		self.pbet_qlabel1.setText(self.tr('莊'))
 		self.pbet_qlabel1.setAlignment(Qt.AlignCenter)
-		self.pbet_qlabel1.setFixedWidth(70)
+		self.pbet_qlabel1.setFixedWidth(71)
 		self.pbet_qlabel1.setFixedHeight(90)
 		self.pbet_qlabel1.setStyleSheet('''.QLabel {font-size: 16pt; font-weight:bold; color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 													border-bottom: 1px solid gray; background-image: url(%s);}'''%imgRedBtn)
@@ -1427,7 +1434,7 @@ class GridWindow(QWidget):
 		
 		self.pbet_qlabel2.setText(self.tr('和'))
 		self.pbet_qlabel2.setAlignment(Qt.AlignCenter)
-		self.pbet_qlabel2.setFixedWidth(70)
+		self.pbet_qlabel2.setFixedWidth(71)
 		self.pbet_qlabel2.setFixedHeight(90)
 		self.pbet_qlabel2.setStyleSheet('''.QLabel {font-size: 16pt; font-weight:bold; color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 													border-bottom: 1px solid gray; background-image: url(%s);}'''%imgGreenBtn)
@@ -1435,7 +1442,7 @@ class GridWindow(QWidget):
 		
 		self.pbet_qlabel3.setText(self.tr('閒'))
 		self.pbet_qlabel3.setAlignment(Qt.AlignCenter)
-		self.pbet_qlabel3.setFixedWidth(70)
+		self.pbet_qlabel3.setFixedWidth(71)
 		self.pbet_qlabel3.setFixedHeight(90)
 		self.pbet_qlabel3.setStyleSheet('''.QLabel {font-size: 16pt; font-weight:bold; color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 													border-bottom: 1px solid gray; background-image: url(%s);}'''%imgBlueBtn)
@@ -1443,7 +1450,6 @@ class GridWindow(QWidget):
 		
 		self.pbet_btn.setText(self.tr('返回'))
 		self.pbet_btn.setStyleSheet('''.QPushButton {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
-		#self.pbet_btn.setAlignment(Qt.AlignCenter)
 		self.pbet_btn.setSizePolicy(self.sizePolicy)
 		self.pbet_btn.setFixedWidth(90)
 		self.pbet_btn.setFixedHeight(30)
@@ -1454,7 +1460,7 @@ class GridWindow(QWidget):
 		self.rbet_qframe.setSizePolicy(self.sizePolicy)
 		
 		self.rbet_vl.setSpacing(0)
-		self.rbet_vl.setMargin(1)
+		self.rbet_vl.setMargin(0)
 		
 		self.rbet_qlabel.setText(self.tr('投注紀錄'))
 		self.rbet_qlabel.setStyleSheet('''.QLabel {background-color: white; border-top: 1px solid gray;
@@ -1466,7 +1472,7 @@ class GridWindow(QWidget):
 		
 		self.rbet_qscrollarea.setStyleSheet('''.QScrollArea {background-color: white;}''')
 		self.rbet_qscrollarea.setFixedWidth(215)
-		self.rbet_qscrollarea.setFixedHeight(380)
+		self.rbet_qscrollarea.setFixedHeight(309)
 		self.rbet_qscrollarea_qframe.setStyleSheet('''.QFrame {background-color: white;}''')
 		self.rbet_qscrollarea_vl.setAlignment(Qt.AlignTop)
 		self.rbet_qscrollarea_vl.setDirection(QBoxLayout.BottomToTop)
@@ -1475,19 +1481,19 @@ class GridWindow(QWidget):
 		
 		# initail global values of UIcreate_numberInput
 		#----------------------------------------------------
-		self.binp_qframe[0].setGeometry(QRect(565, 60, 140, 150))
-		self.binp_qframe[1].setGeometry(QRect(565, 279, 140, 150))
-		self.binp_qframe[2].setGeometry(QRect(565, 498, 140, 150))
-		self.binp_qframe[3].setGeometry(QRect(565, 717, 140, 150))
+		self.binp_qframe[0].setGeometry(QRect(550, 27, 140, 150))
+		self.binp_qframe[1].setGeometry(QRect(550, 212, 140, 150))
+		self.binp_qframe[2].setGeometry(QRect(550, 398, 140, 150))
+		self.binp_qframe[3].setGeometry(QRect(550, 583, 140, 150))
 		for i in range(4):
-			self.binp_qframe[i].setStyleSheet('''.QFrame {background-color: rgb(230, 230, 230); border: 2px solid gray;}
+			self.binp_qframe[i].setStyleSheet('''.QFrame {background-color: rgb(230, 230, 230); border: 1px solid gray;}
 												.QPushButton {background-color: rgb(250, 250, 250); font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			self.binp_qframe[i].setFrameShape(QFrame.StyledPanel)
 			self.binp_qframe[i].setFrameShadow(QFrame.Raised)
 			self.binp_qframe[i].close()
 			
 			self.binp_gl[i].setSpacing(1)
-			self.binp_gl[i].setMargin(1)
+			self.binp_gl[i].setMargin(0)
 			
 			self.binp_btn10[i].setStyleSheet('''.QPushButton {background-color: rgb(255, 47, 61); color: white;}''')
 			self.binp_btn11[i].setStyleSheet('''.QPushButton {background-color: rgb(116, 106, 255); color: white;}''')
@@ -1952,14 +1958,14 @@ class GridWindow(QWidget):
 			tmp_hl.addWidget(qlabel_countBet)
 			tmp_hl.addWidget(qlabel_colorBet)
 			tmp_hl.addWidget(qlabel_pointBet)
-			tmp_qframe.setFixedWidth(205)
+			tmp_qframe.setFixedWidth(200)
 			tmp_qframe.setFixedHeight(30)
 			
 			self.rbet_qscrollarea_vl.addWidget(tmp_qframe)
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
-		#print 'pos in the widget', QMouseEvent.pos()
+		print 'pos in the widget', QMouseEvent.pos()
 		pass
 	
 	# pos in the windows screen
