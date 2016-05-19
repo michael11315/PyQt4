@@ -1716,16 +1716,20 @@ class GridWindow(QWidget):
 		nowPath = nowPath.replace('\\', '/')
 		url = nowPath + '/print/baccarat_print.html'
 		
+		# store screenshot_grid image
 		for i in range(4):
 			screenshot_grid = QPixmap.grabWidget(self.grid_qframe[i])
 			screenshot_grid.save('print/' + filename_list[i] + '.png', 'PNG')
 		
+		# output html file
 		file = open('print/baccarat_print_test.html', 'w')
 		file.write('<!DOCTYPE html>\n<html>\n<head>\n<meta charset="UTF-8">\n</head>\n<body>\n<h1>Baccarat</h1>\n')
 		
 		enum = enumerate(filename_list)
 		for index, filename in enum:
 			file.write('<p>%s</p>\n<img id="%s" src="%s">\n</br>\n' % (image_description[index], filename, filename+'.png'))
+		
+		
 		
 		file.write('</body>\n</html>')
 		file.close()
@@ -2053,6 +2057,8 @@ class GridWindow(QWidget):
 			tmp_qframe.setFixedHeight(30)
 			
 			self.rbet_qscrollarea_vl.addWidget(tmp_qframe)
+			
+			self.storeRecordForHtml(countBet, sameBet, colorBet, pointBet)
 	
 	def stopGridGif(self):
 		for i in range(4):
@@ -2062,6 +2068,12 @@ class GridWindow(QWidget):
 			if row >= 0 and col >= 0 and bet > 0:
 				self.grid_qlabelList[i][row][col].movie().stop()
 				self.grid_qlabelList[i][row][col].movie().jumpToFrame(0)
+	
+	def storeRecordForHtml(self, countBet, sameBet, colorBet, pointBet):
+		pass
+	
+	def popRecordForHtml(self):
+		pass
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
