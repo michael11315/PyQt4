@@ -1,6 +1,8 @@
 import sys
 import copy
 import functools
+import os
+import webbrowser
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -1708,7 +1710,27 @@ class GridWindow(QWidget):
 				pass
 	
 	def connect_bbet_btn2(self):
-		print self.bbet_btn2.text().toUtf8()
+		filename_list = ['gridShot_big', 'gridShot_eye', 'gridShot_sma', 'gridShot_pen']
+		image_description = ['大路', '眼路', '小路', '筆路']
+		nowPath = os.getcwd()
+		nowPath = nowPath.replace('\\', '/')
+		url = nowPath + '/print/baccarat_print.html'
+		
+		for i in range(4):
+			screenshot_grid = QPixmap.grabWidget(self.grid_qframe[i])
+			screenshot_grid.save('print/' + filename_list[i] + '.png', 'PNG')
+		
+		file = open('print/baccarat_print_test.html', 'w')
+		file.write('<!DOCTYPE html>\n<html>\n<head>\n<meta charset="UTF-8">\n</head>\n<body>\n<h1>Baccarat</h1>\n')
+		
+		enum = enumerate(filename_list)
+		for index, filename in enum:
+			file.write('<p>%s</p>\n<img id="%s" src="%s">\n</br>\n' % (image_description[index], filename, filename+'.png'))
+		
+		file.write('</body>\n</html>')
+		file.close()
+		
+		webbrowser.open_new(url)
 	
 	def connect_libet_qframe(self):
 		for i in range(4):
