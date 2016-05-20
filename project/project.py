@@ -895,20 +895,47 @@ class GridWindow(QWidget):
 		self.globalValue()
 		self.sizeDefine()
 		self.UIcreate()
+		self.welcomeBaccarat()
 		
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-		self.setFixedSize(1169, 731)
+		self.setFixedSize(1169, 683)
 		print self.sizeHint()
 		self.vline.setFixedHeight(self.sizeHint().height()-10)
 		
-		self.betRecord = betRecord()
 		self.testFunc()
 	
+	def welcomeBaccarat(self):
+		inputDialog = QInputDialog()
+		gameStart = False
+		while not gameStart:
+			number, ok = inputDialog.getText(None, 'welcome Baccarat', self.tr('請輸入本金後按OK : '))
+			
+			if not ok:
+				sys.exit()
+			
+			try:
+				number = int(number)
+				gameStart = True
+				self.betRecord.enterPrincipal(number)
+				self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %number))
+				self.bbet_qlineedit.setText(str(number))
+				self.bbet_qlineedit.setReadOnly(True)
+			except:
+				continue
+	
 	def globalValue(self):
+		self.betRecord = betRecord()
 		self.sugListForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 		self.recordHtml_list = []
 	
 	def sizeDefine(self):
+		# special size define
+		self.Width_Grid = 30
+		self.Height_Grid = 23
+		self.Width_BetStatus = 215
+		self.Height_BetStatus_rbet_qscroll = 253
+		
+		# general size define
 		self.count = 0
 		self.sizeWidth = 60
 		self.sizeHeight = 25
@@ -964,8 +991,8 @@ class GridWindow(QWidget):
 					tmprow.append(QLabel(self.grid_qframe[i]))
 					imgGif = QMovie(imgCell)
 					tmprow[len(tmprow)-1].setMovie(imgGif)
-					tmprow[len(tmprow)-1].setFixedWidth(30)
-					tmprow[len(tmprow)-1].setFixedHeight(25)
+					tmprow[len(tmprow)-1].setFixedWidth(self.Width_Grid)
+					tmprow[len(tmprow)-1].setFixedHeight(self.Height_Grid)
 					tmprow[len(tmprow)-1].movie().start()
 					tmprow[len(tmprow)-1].movie().stop()
 					tmprow[len(tmprow)-1].setScaledContents(True)
@@ -1340,7 +1367,7 @@ class GridWindow(QWidget):
 		#--------------------------
 		self.bbet_qframe.setStyleSheet('''.QFrame {border: 1px solid gray;}''')
 		self.bbet_qframe.setSizePolicy(self.sizePolicy)
-		self.bbet_qframe.setFixedWidth(215)
+		self.bbet_qframe.setFixedWidth(self.Width_BetStatus)
 		self.bbet_qframe.setFixedHeight(80)
 		
 		self.bbet_gl.setSpacing(1)
@@ -1368,7 +1395,7 @@ class GridWindow(QWidget):
 		#--------------------------
 		self.nbet_qframe.setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;} .QLabel {background-color: white;}''')
 		self.nbet_qframe.setSizePolicy(self.sizePolicy)
-		self.nbet_qframe.setFixedWidth(215)
+		self.nbet_qframe.setFixedWidth(self.Width_BetStatus)
 		self.nbet_qframe.setFixedHeight(55)
 		
 		self.nbet_gl.setSpacing(1)
@@ -1395,7 +1422,7 @@ class GridWindow(QWidget):
 		#--------------------------
 		self.ibet_qframe.setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;} .QLabel {background-color: white;}''')
 		self.ibet_qframe.setSizePolicy(self.sizePolicy)
-		self.ibet_qframe.setFixedWidth(215)
+		self.ibet_qframe.setFixedWidth(self.Width_BetStatus)
 		self.ibet_qframe.setFixedHeight(80)
 		
 		self.ibet_gl.setSpacing(1)
@@ -1442,7 +1469,7 @@ class GridWindow(QWidget):
 		#--------------------------
 		self.pbet_qframe.setStyleSheet('''.QFrame {background-color: white; border: 1px solid gray;}''')
 		self.pbet_qframe.setSizePolicy(self.sizePolicy)
-		self.pbet_qframe.setFixedWidth(215)
+		self.pbet_qframe.setFixedWidth(self.Width_BetStatus)
 		self.pbet_qframe.setFixedHeight(145)
 		
 		self.pbet_gl.setSpacing(0)
@@ -1491,12 +1518,12 @@ class GridWindow(QWidget):
 											border-left: 1px solid gray; border-right: 1px solid gray;
 											font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.rbet_qlabel.setAlignment(Qt.AlignCenter)
-		self.rbet_qlabel.setFixedWidth(215)
+		self.rbet_qlabel.setFixedWidth(self.Width_BetStatus)
 		self.rbet_qlabel.setFixedHeight(30)
 		
 		self.rbet_qscrollarea.setStyleSheet('''.QScrollArea {background-color: white;}''')
-		self.rbet_qscrollarea.setFixedWidth(215)
-		self.rbet_qscrollarea.setFixedHeight(301)
+		self.rbet_qscrollarea.setFixedWidth(self.Width_BetStatus)
+		self.rbet_qscrollarea.setFixedHeight(self.Height_BetStatus_rbet_qscroll)
 		self.rbet_qscrollarea_qframe.setStyleSheet('''.QFrame {background-color: white;}''')
 		self.rbet_qscrollarea_vl.setAlignment(Qt.AlignTop)
 		self.rbet_qscrollarea_vl.setDirection(QBoxLayout.BottomToTop)
@@ -1578,7 +1605,7 @@ class GridWindow(QWidget):
 		
 		# initail bet inning count area in UIcreate_BetStatus
 		#----------------------------------------------------
-		clickable(self.libet_qframe).connect(self.connect_libet_qframe)
+		#clickable(self.libet_qframe).connect(self.connect_libet_qframe)
 		
 		# initail push button area in UIcreate_BetStatus
 		#----------------------------------------------------
@@ -1609,7 +1636,7 @@ class GridWindow(QWidget):
 			self.lbar_qlineedit[i].setText('')
 			self.binp_qframe[i].show()
 		else:
-			self.stopGridGif()
+			self.controlGridGif()
 			self.lbar_btn[i].setText(self.tr('手動'))
 			if self.betRecord.gameIsBegin():
 				if len(self.lbar_qlineedit[i].text()) > 0:
@@ -1678,6 +1705,7 @@ class GridWindow(QWidget):
 					self.sugListForMovie.insert(0, SugBig_sum)
 			
 			self.binp_qframe[i].close()
+			self.controlGridGif(True)
 	
 	# cut stop
 	def connect_rbar_btn(self, i):
@@ -1792,7 +1820,7 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].movie().jumpToFrame(0)
 	
 	def connect_pbet_qlabel(self, winner):
-		self.stopGridGif()
+		self.controlGridGif()
 		ret = self.betRecord.bet(winner)
 		if ret.get('status') == 0:
 			lastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
@@ -1825,7 +1853,7 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
 					
 					self.grid_qlabelList[i][row][col].movie().start()
-					#self.grid_qlabelList[i][row][col].movie().stop()
+					self.grid_qlabelList[i][row][col].movie().stop()
 			
 			showList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
 			isBet = ret.get('isBet')
@@ -1870,9 +1898,10 @@ class GridWindow(QWidget):
 		self.update_rbar()
 		self.update_bbet()
 		self.update_ibet()
+		self.controlGridGif(True)
 	
 	def connect_pbet_btn(self):
-		self.stopGridGif()
+		self.controlGridGif()
 		ret = self.betRecord.backOneStep()
 		if ret.get('status') == 0:
 			removeList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
@@ -1915,7 +1944,7 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
 					
 					self.grid_qlabelList[i][row][col].movie().start()
-					#self.grid_qlabelList[i][row][col].movie().stop()
+					self.grid_qlabelList[i][row][col].movie().stop()
 			
 			self.betRecord.principalPopEntry()
 			self.popRecordForHtml()
@@ -1942,6 +1971,7 @@ class GridWindow(QWidget):
 		self.update_rbar()
 		self.update_bbet()
 		self.update_ibet()
+		self.controlGridGif(True)
 	
 	def connect_binp_btn(self, i, number):
 		if number in range(10):
@@ -1991,7 +2021,7 @@ class GridWindow(QWidget):
 			self.nbet_qlabel3.setStyleSheet('''.QLabel {color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			self.nbet_qlabel4.setText(str(bet))
 		elif img == 1:
-			self.nbet_qlabel3.setText(self.tr('賢'))
+			self.nbet_qlabel3.setText(self.tr('閒'))
 			self.nbet_qlabel3.setStyleSheet('''.QLabel {color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			self.nbet_qlabel4.setText(str(bet))
 		elif img == -1:
@@ -2102,7 +2132,8 @@ class GridWindow(QWidget):
 			
 			self.storeRecordForHtml(countBet, sameBet, colorBet, pointBet)
 	
-	def stopGridGif(self):
+	# control about sug GridGif
+	def controlGridGif(self, control = False):
 		for i in range(4):
 			row = self.sugListForMovie[i][0]
 			col = self.sugListForMovie[i][1]
@@ -2110,6 +2141,9 @@ class GridWindow(QWidget):
 			if row >= 0 and col >= 0 and bet > 0:
 				self.grid_qlabelList[i][row][col].movie().stop()
 				self.grid_qlabelList[i][row][col].movie().jumpToFrame(0)
+				if control:
+					# control = True, set Grid gif to start
+					self.grid_qlabelList[i][row][col].movie().start()
 	
 	def storeRecordForHtml(self, countBet, sameBet, colorBet, pointBet):
 		self.recordHtml_list.append((countBet, sameBet, colorBet, pointBet))
