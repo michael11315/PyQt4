@@ -1011,8 +1011,8 @@ class GridWindow(QWidget):
 			# set relationship
 			self.tbar_hl[i].addWidget(self.tbar_qlabel[i])
 			self.tbar_qframe[i].setLayout(self.tbar_hl[i])
-			self.bar_hl[i].addWidget(self.tbar_qframe[i])
 			self.bar_hl[i].addWidget(QFrame())
+			self.bar_hl[i].addWidget(self.tbar_qframe[i])
 		
 		# left bar's global data
 		#----------------------------------------------------
@@ -1272,6 +1272,7 @@ class GridWindow(QWidget):
 			self.tbar_hl[i].setSpacing(1)
 			self.tbar_hl[i].setMargin(0)
 			self.tbar_qlabel[i].setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+			self.tbar_qlabel[i].setAlignment(Qt.AlignRight | Qt.AlignVCenter)
 		
 		self.tbar_qlabel[0].setText(self.tr('下局預測  大路'))
 		self.tbar_qlabel[1].setText(self.tr('下局預測  眼路'))
@@ -1824,7 +1825,7 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
 					
 					self.grid_qlabelList[i][row][col].movie().start()
-					self.grid_qlabelList[i][row][col].movie().stop()
+					#self.grid_qlabelList[i][row][col].movie().stop()
 			
 			showList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
 			isBet = ret.get('isBet')
@@ -1914,7 +1915,7 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
 					
 					self.grid_qlabelList[i][row][col].movie().start()
-					self.grid_qlabelList[i][row][col].movie().stop()
+					#self.grid_qlabelList[i][row][col].movie().stop()
 			
 			self.betRecord.principalPopEntry()
 			self.popRecordForHtml()
