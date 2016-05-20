@@ -892,6 +892,7 @@ class GridWindow(QWidget):
 		self.bet_qframe = QFrame(self)
 		self.bet_vl = QVBoxLayout(self.bet_qframe)
 		
+		self.globalValue()
 		self.sizeDefine()
 		self.UIcreate()
 		
@@ -902,6 +903,10 @@ class GridWindow(QWidget):
 		
 		self.betRecord = betRecord()
 		self.testFunc()
+	
+	def globalValue(self):
+		self.sugListForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
+		self.recordHtml_list = []
 	
 	def sizeDefine(self):
 		self.count = 0
@@ -944,7 +949,6 @@ class GridWindow(QWidget):
 		self.grid_qframe = []
 		self.grid_gl = []
 		self.grid_qlabelList = []
-		self.sugListForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 		
 		# grid layout
 		for i in range(4):
@@ -1715,6 +1719,10 @@ class GridWindow(QWidget):
 		nowPath = os.getcwd()
 		nowPath = nowPath.replace('\\', '/')
 		url = nowPath + '/print/baccarat_print.html'
+		fontFamily = 'font-family: Arial, Microsoft JhengHei, serif, sans-serif;'
+		
+		if not os.path.isdir(os.path.join(os.getcwd(), 'print')):
+			os.mkdir(os.path.join(os.getcwd(), 'print'))
 		
 		# store screenshot_grid image
 		for i in range(4):
@@ -1722,14 +1730,46 @@ class GridWindow(QWidget):
 			screenshot_grid.save('print/' + filename_list[i] + '.png', 'PNG')
 		
 		# output html file
-		file = open('print/baccarat_print_test.html', 'w')
-		file.write('<!DOCTYPE html>\n<html>\n<head>\n<meta charset="UTF-8">\n</head>\n<body>\n<h1>Baccarat</h1>\n')
+		file = open('print/baccarat_print.html', 'w')
+		file.write('<!DOCTYPE html>\n<html>\n<head>\n<meta charset="UTF-8">\n</head>\n<body>\n<h1><span style="%s">Baccarat</span></h1>\n' % fontFamily)
 		
 		enum = enumerate(filename_list)
 		for index, filename in enum:
-			file.write('<p>%s</p>\n<img id="%s" src="%s">\n</br>\n' % (image_description[index], filename, filename+'.png'))
+			file.write('<p><span style="%s">%s</span></p>\n<img id="%s" src="%s">\n</br>\n' % (fontFamily, image_description[index], filename, filename+'.png'))
 		
-		
+		if len(self.recordHtml_list) > 0:
+			file.write('<p><span style="%s">投注紀錄</span></p>\n' % fontFamily)
+			file.write('<table border="1">\n')
+			
+			enum = enumerate(self.recordHtml_list)
+			for index, recordHtml in enum:
+				countBet = recordHtml[0]
+				sameBet = recordHtml[1]
+				colorBet = recordHtml[2]
+				pointBet = recordHtml[3]
+				
+				file.write('<tr>\n')
+				file.write('<td><span style="color: gray; %s">%d</span></td>\n' %(fontFamily, index))
+				
+				if countBet == 0:
+					file.write('<td><span style="%s">%d</span></td>\n' % (fontFamily, countBet))
+				else:
+					if sameBet:
+						file.write('<td><span style="color: blue; %s">+%d</span></td>\n' % (fontFamily, countBet))
+					else:
+						file.write('<td><span style="color: red; %s">-%d</span></td>\n' % (fontFamily, countBet))
+				
+				if colorBet == 0:
+					file.write('<td><span style="color: red; %s">莊</span></td>\n' % fontFamily)
+				# colorBet == 1
+				else:
+					file.write('<td><span style="color: blue; %s">閒</span></td>\n' % fontFamily)
+				
+				file.write('<td><span style="color: gray; %s">%.2f</span></td>\n' % (fontFamily, pointBet))
+				
+				file.write('</tr>\n')
+			
+			file.write('</table>\n')
 		
 		file.write('</body>\n</html>')
 		file.close()
@@ -1877,6 +1917,7 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].movie().stop()
 			
 			self.betRecord.principalPopEntry()
+			self.popRecordForHtml()
 			removeQframe = self.rbet_qscrollarea_vl.itemAt(self.rbet_qscrollarea_vl.count()-1).widget()
 			removeQframe.close()
 			self.rbet_qscrollarea_vl.removeWidget(removeQframe)
@@ -2070,10 +2111,10 @@ class GridWindow(QWidget):
 				self.grid_qlabelList[i][row][col].movie().jumpToFrame(0)
 	
 	def storeRecordForHtml(self, countBet, sameBet, colorBet, pointBet):
-		pass
+		self.recordHtml_list.append((countBet, sameBet, colorBet, pointBet))
 	
 	def popRecordForHtml(self):
-		pass
+		self.recordHtml_list.pop()
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
