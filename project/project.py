@@ -109,6 +109,11 @@ class betRecord():
 		self.betSugEye = []
 		self.betSugSma = []
 		self.betSugPen = []
+		# for manualChangeSug, neet betSug*_origin to record origin betSug
+		self.betSugBig_origin = []
+		self.betSugEye_origin = []
+		self.betSugSma_origin = []
+		self.betSugPen_origin = []
 		self.betCountBig = []
 		self.betCountEye = []
 		self.betCountSma = []
@@ -180,10 +185,12 @@ class betRecord():
 				self.betSugEye.append(SugEye)
 				self.betSugSma.append(SugSma)
 				self.betSugPen.append(SugPen)
+				self.betSugBig_origin.append(SugBig)
+				self.betSugEye_origin.append(SugEye)
+				self.betSugSma_origin.append(SugSma)
+				self.betSugPen_origin.append(SugPen)
 				
 				if not isPredict:
-					# if SugBig want to show sum, edit SugBig_sum to SugBig
-					# or just return SugBig_sum replace SugBig
 					SugBig_sum = self.sumBetInSugBig(Big, SugBig, SugEye, SugSma, SugPen)
 					self.betSugBig_sum.append(SugBig_sum)
 				else:
@@ -203,8 +210,9 @@ class betRecord():
 				countBet = retResult.get('countBet')
 				
 				return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen,
-						'SugBig': SugBig_sum, 'SugEye': SugEye, 'SugSma': SugSma, 'SugPen': SugPen,
-						'lastSugBig': lastSugBig_sum, 'lastSugEye': lastSugEye, 'lastSugSma': lastSugSma, 'lastSugPen': lastSugPen,
+						'SugBig_sum':SugBig_sum, 'lastSugBig_sum':lastSugBig_sum,
+						'SugBig': SugBig, 'SugEye': SugEye, 'SugSma': SugSma, 'SugPen': SugPen,
+						'lastSugBig': lastSugBig, 'lastSugEye': lastSugEye, 'lastSugSma': lastSugSma, 'lastSugPen': lastSugPen,
 						'isBet': isBet, 'sameBet': sameBet, 'countBet': countBet}
 		else:
 			# TODO : handle first record is Tie
@@ -357,10 +365,14 @@ class betRecord():
 				lastSugPen = lastSug.get('lastSugPen')
 				
 				SugBig = self.betSugBig.pop()
-				SugBig = self.betSugBig_sum.pop()
+				SugBig_sum = self.betSugBig_sum.pop()
 				SugEye = self.betSugEye.pop()
 				SugSma = self.betSugSma.pop()
 				SugPen = self.betSugPen.pop()
+				self.betSugBig_origin.pop()
+				self.betSugEye_origin.pop()
+				self.betSugSma_origin.pop()
+				self.betSugPen_origin.pop()
 				self.betCountBig.pop()
 				self.betCountEye.pop()
 				self.betCountSma.pop()
@@ -375,8 +387,9 @@ class betRecord():
 				self.betStatusPen.pop()
 				
 				return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen,
+						'SugBig_sum':SugBig_sum, 'lastSugBig_sum':lastSugBig_sum,
 						'SugBig': SugBig, 'SugEye': SugEye, 'SugSma': SugSma, 'SugPen': SugPen,
-						'lastSugBig': lastSugBig_sum, 'lastSugEye': lastSugEye, 'lastSugSma': lastSugSma, 'lastSugPen': lastSugPen}
+						'lastSugBig': lastSugBig, 'lastSugEye': lastSugEye, 'lastSugSma': lastSugSma, 'lastSugPen': lastSugPen}
 			else:
 				if self.recordAll[-1] == Tie:
 					return {'status': Still_Tie}
@@ -412,7 +425,7 @@ class betRecord():
 			self.betCountBig.append(self.betCountBig[-1])
 		elif Big[2] == self.betSugBig[-1][2] and self.betSugBig[-1][3] != 0:
 			self.betStatusBig.append(0)
-			self.betCountBig.append(self.betCountBig[-1] + self.betSugBig[-1][3]*2)
+			self.betCountBig.append(self.betCountBig[-1] + self.betSugBig[-1][3])
 		elif Big[2] != self.betSugBig[-1][2] and self.betSugBig[-1][3] != 0:
 			self.betStatusBig.append(1)
 			self.betCountBig.append(self.betCountBig[-1] - self.betSugBig[-1][3])
@@ -432,7 +445,7 @@ class betRecord():
 			self.betCountEye.append(self.betCountEye[-1])
 		elif Eye[2] == self.betSugEye[-1][2] and self.betSugEye[-1][3] != 0:
 			self.betStatusEye.append(0)
-			self.betCountEye.append(self.betCountEye[-1] + self.betSugEye[-1][3]*2)
+			self.betCountEye.append(self.betCountEye[-1] + self.betSugEye[-1][3])
 		elif Eye[2] != self.betSugEye[-1][2] and self.betSugEye[-1][3] != 0:
 			self.betStatusEye.append(1)
 			self.betCountEye.append(self.betCountEye[-1] - self.betSugEye[-1][3])
@@ -452,7 +465,7 @@ class betRecord():
 			self.betCountSma.append(self.betCountSma[-1])
 		elif Sma[2] == self.betSugSma[-1][2] and self.betSugSma[-1][3] != 0:
 			self.betStatusSma.append(0)
-			self.betCountSma.append(self.betCountSma[-1] + self.betSugSma[-1][3]*2)
+			self.betCountSma.append(self.betCountSma[-1] + self.betSugSma[-1][3])
 		elif Sma[2] != self.betSugSma[-1][2] and self.betSugSma[-1][3] != 0:
 			self.betStatusSma.append(1)
 			self.betCountSma.append(self.betCountSma[-1] - self.betSugSma[-1][3])
@@ -472,7 +485,7 @@ class betRecord():
 			self.betCountPen.append(self.betCountPen[-1])
 		elif Pen[2] == self.betSugPen[-1][2] and self.betSugPen[-1][3] != 0:
 			self.betStatusPen.append(0)
-			self.betCountPen.append(self.betCountPen[-1] + self.betSugPen[-1][3]*2)
+			self.betCountPen.append(self.betCountPen[-1] + self.betSugPen[-1][3])
 		elif Pen[2] != self.betSugPen[-1][2] and self.betSugPen[-1][3] != 0:
 			self.betStatusPen.append(1)
 			self.betCountPen.append(self.betCountPen[-1] - self.betSugPen[-1][3])
@@ -520,25 +533,15 @@ class betRecord():
 			SugBig = (tmpBig[0], tmpBig[1], tmpBig[2], sugBigBet)
 		elif self.betStatusBig[-1] == 0:
 			lastBet = self.recordBig[-1]
-			sugBigBet = self.betSugBig[-1][3] + 1
+			sugBigBet = self.betSugBig_origin[-1][3] + 1
+			#sugBigBet = self.betSugBig[-1][3] + 1
 			tmpBig = self.PosNext(self.mapBig, lastBet[0], lastBet[1], lastBet[2])
 			SugBig = (tmpBig[0], tmpBig[1], tmpBig[2], sugBigBet)
 		elif self.betStatusBig[-1] == 1:
 			lastBet = self.recordBig[-1]
-			'''
-			if self.betCountBig[-1] > 0:
-				sugBigBet = self.betSugBig[-1][3] - 1
-				if sugBigBet <= 0:
-					sugBigBet = 1
-				tmpBig = self.PosChangeCol(self.mapBig, lastBet[2])
-				SugBig = (tmpBig[0], tmpBig[1], tmpBig[2], sugBigBet)
-			else:
-				sugBigBet = 1
-				tmpBig = self.PosNext(self.mapBig, lastBet[0], lastBet[1], lastBet[2])
-				SugBig = (tmpBig[0], tmpBig[1], tmpBig[2], sugBigBet)
-			'''
 			if self.betSugBig[-1][3] > 1:
-				sugBigBet = self.betSugBig[-1][3] - 1
+				sugBigBet = self.betSugBig_origin[-1][3] - 1
+				#sugBigBet = self.betSugBig[-1][3] - 1
 				tmpBig = self.PosChangeCol(self.mapBig, lastBet[2])
 				SugBig = (tmpBig[0], tmpBig[1], tmpBig[2], sugBigBet)
 			else:
@@ -555,25 +558,13 @@ class betRecord():
 			SugEye = (tmpEye[0], tmpEye[1], tmpEye[2], sugEyeBet)
 		elif self.betStatusEye[-1] == 0:
 			lastBet = self.recordEye[-1]
-			sugEyeBet = self.betSugEye[-1][3] + 1
+			sugEyeBet = self.betSugEye_origin[-1][3] + 1
 			tmpEye = self.PosNext(self.mapEye, lastBet[0], lastBet[1], lastBet[2])
 			SugEye = (tmpEye[0], tmpEye[1], tmpEye[2], sugEyeBet)
 		elif self.betStatusEye[-1] == 1:
 			lastBet = self.recordEye[-1]
-			'''
-			if self.betCountEye[-1] > 0:
-				sugEyeBet = self.betSugEye[-1][3] - 1
-				if sugEyeBet <= 0:
-					sugEyeBet = 1
-				tmpEye = self.PosChangeCol(self.mapEye, lastBet[2])
-				SugEye = (tmpEye[0], tmpEye[1], tmpEye[2], sugEyeBet)
-			else:
-				sugEyeBet = 1
-				tmpEye = self.PosNext(self.mapEye, lastBet[0], lastBet[1], lastBet[2])
-				SugEye = (tmpEye[0], tmpEye[1], tmpEye[2], sugEyeBet)
-			'''
 			if self.betSugEye[-1][3] > 1:
-				sugEyeBet = self.betSugEye[-1][3] - 1
+				sugEyeBet = self.betSugEye_origin[-1][3] - 1
 				tmpEye = self.PosChangeCol(self.mapEye, lastBet[2])
 				SugEye = (tmpEye[0], tmpEye[1], tmpEye[2], sugEyeBet)
 			else:
@@ -590,25 +581,13 @@ class betRecord():
 			SugSma = (tmpSma[0], tmpSma[1], tmpSma[2], sugSmaBet)
 		elif self.betStatusSma[-1] == 0:
 			lastBet = self.recordSma[-1]
-			sugSmaBet = self.betSugSma[-1][3] + 1
+			sugSmaBet = self.betSugSma_origin[-1][3] + 1
 			tmpSma = self.PosNext(self.mapSma, lastBet[0], lastBet[1], lastBet[2])
 			SugSma = (tmpSma[0], tmpSma[1], tmpSma[2], sugSmaBet)
 		elif self.betStatusSma[-1] == 1:
 			lastBet = self.recordSma[-1]
-			'''
-			if self.betCountSma[-1] > 0:
-				sugSmaBet = self.betSugSma[-1][3] - 1
-				if sugSmaBet <= 0:
-					sugSmaBet = 1
-				tmpSma = self.PosChangeCol(self.mapSma, lastBet[2])
-				SugSma = (tmpSma[0], tmpSma[1], tmpSma[2], sugSmaBet)
-			else:
-				sugSmaBet = 1
-				tmpSma = self.PosNext(self.mapSma, lastBet[0], lastBet[1], lastBet[2])
-				SugSma = (tmpSma[0], tmpSma[1], tmpSma[2], sugSmaBet)
-			'''
 			if self.betSugSma[-1][3] > 1:
-				sugSmaBet = self.betSugSma[-1][3] - 1
+				sugSmaBet = self.betSugSma_origin[-1][3] - 1
 				tmpSma = self.PosChangeCol(self.mapSma, lastBet[2])
 				SugSma = (tmpSma[0], tmpSma[1], tmpSma[2], sugSmaBet)
 			else:
@@ -625,25 +604,13 @@ class betRecord():
 			SugPen = (tmpPen[0], tmpPen[1], tmpPen[2], sugPenBet)
 		elif self.betStatusPen[-1] == 0:
 			lastBet = self.recordPen[-1]
-			sugPenBet = self.betSugPen[-1][3] + 1
+			sugPenBet = self.betSugPen_origin[-1][3] + 1
 			tmpPen = self.PosNext(self.mapPen, lastBet[0], lastBet[1], lastBet[2])
 			SugPen = (tmpPen[0], tmpPen[1], tmpPen[2], sugPenBet)
 		elif self.betStatusPen[-1] == 1:
 			lastBet = self.recordPen[-1]
-			'''
-			if self.betCountPen[-1] > 0:
-				sugPenBet = self.betSugPen[-1][3] - 1
-				if sugPenBet <= 0:
-					sugPenBet = 1
-				tmpPen = self.PosChangeCol(self.mapPen, lastBet[2])
-				SugPen = (tmpPen[0], tmpPen[1], tmpPen[2], sugPenBet)
-			else:
-				sugPenBet = 1
-				tmpPen = self.PosNext(self.mapPen, lastBet[0], lastBet[1], lastBet[2])
-				SugPen = (tmpPen[0], tmpPen[1], tmpPen[2], sugPenBet)
-			'''
 			if self.betSugPen[-1][3] > 1:
-				sugPenBet = self.betSugPen[-1][3] - 1
+				sugPenBet = self.betSugPen_origin[-1][3] - 1
 				tmpPen = self.PosChangeCol(self.mapPen, lastBet[2])
 				SugPen = (tmpPen[0], tmpPen[1], tmpPen[2], sugPenBet)
 			else:
@@ -713,15 +680,19 @@ class betRecord():
 				if showList[i][2] == lastSugList[i][2]:
 					sameBet[i] = True
 				
+				# for sum in big
+				'''
 				if i != 0:
 					if sameBet[0] == sameBet[i]:
 						countBet[0] += countBet[i]
 					else:
 						countBet[0] -= countBet[i]
-		
+				'''
+		'''
 		if countBet[0] < 0:
 			countBet[0] = countBet[0] * -1
 			sameBet[0] = not sameBet[0]
+		'''
 		
 		return {'isBet': isBet, 'sameBet': sameBet, 'countBet': countBet}
 	
@@ -881,6 +852,9 @@ class betRecord():
 				sum += entry
 		
 		return sum
+	
+	def getLastSugList(self):
+		return [self.betSugBig[-1], self.betSugEye[-1], self.betSugSma[-1], self.betSugPen[-1]]
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -1309,13 +1283,13 @@ class GridWindow(QWidget):
 		# left bar
 		#--------------------------
 		for i in range(4):
-			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;}''')
 			self.lbar_qframe[i].setSizePolicy(self.sizePolicy)
 			
 			self.lbar_hl[i].setSpacing(1)
 			self.lbar_hl[i].setMargin(0)
 			
-			self.lbar_qlabel[i].setText(self.tr('莊'))
+			self.lbar_qlabel[i].setText('')
 			self.lbar_qlabel[i].setStyleSheet('''.QLabel {color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			self.lbar_qlabel[i].setAlignment(Qt.AlignCenter)
 			self.lbar_qlabel[i].setSizePolicy(self.sizePolicy)
@@ -1533,9 +1507,9 @@ class GridWindow(QWidget):
 		# initail global values of UIcreate_numberInput
 		#----------------------------------------------------
 		self.binp_qframe[0].setGeometry(QRect(557, 24, 140, 150))
-		self.binp_qframe[1].setGeometry(QRect(557, 207, 140, 150))
-		self.binp_qframe[2].setGeometry(QRect(557, 390, 140, 150))
-		self.binp_qframe[3].setGeometry(QRect(557, 573, 140, 150))
+		self.binp_qframe[1].setGeometry(QRect(557, 195, 140, 150))
+		self.binp_qframe[2].setGeometry(QRect(557, 366, 140, 150))
+		self.binp_qframe[3].setGeometry(QRect(557, 537, 140, 150))
 		for i in range(4):
 			self.binp_qframe[i].setStyleSheet('''.QFrame {background-color: rgb(230, 230, 230); border: 1px solid gray;}
 												.QPushButton {background-color: rgb(250, 250, 250); font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
@@ -1647,8 +1621,12 @@ class GridWindow(QWidget):
 					else:
 						img = 1
 					
+					if i != 0:
+						ret = self.betRecord.predictNextStatus()
+						if ret.get('status') == 0:
+							img = ret['nextStatus'][img][i]
+					
 					retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(i, img, bet)
-					#print retSug, eraseSug, SugBig_sum
 					
 					row = eraseSug[0]
 					col = eraseSug[1]
@@ -1658,54 +1636,31 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].movie().start()
 						self.grid_qlabelList[i][row][col].movie().stop()
 					
-					if i != 0:
-						row = retSug[0]
-						col = retSug[1]
-						img = retSug[2]
-						bet = retSug[3]
-						if row >= 0 and col >= 0:
-							if bet == 0:
-								self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
-								self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
-							else:
-								self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
-								self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
-							
-							self.grid_qlabelList[i][row][col].movie().start()
-							self.grid_qlabelList[i][row][col].movie().stop()
-					
-					row = SugBig_sum_otherimg[0]
-					col = SugBig_sum_otherimg[1]
-					if row >= 0 and col >= 0:
-						self.grid_qlabelList[0][row][col].layout().itemAt(0).widget().setText('')
-						self.grid_qlabelList[0][row][col].movie().setFileName(imgCell)
-						self.grid_qlabelList[0][row][col].movie().start()
-						self.grid_qlabelList[0][row][col].movie().stop()
-					
-					row = SugBig_sum[0]
-					col = SugBig_sum[1]
-					img = SugBig_sum[2]
-					bet = SugBig_sum[3]
+					row = retSug[0]
+					col = retSug[1]
+					img = retSug[2]
+					bet = retSug[3]
 					if row >= 0 and col >= 0:
 						if bet == 0:
-							self.grid_qlabelList[0][row][col].layout().itemAt(0).widget().setText('')
-							self.grid_qlabelList[0][row][col].movie().setFileName(imgCell)
+							self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
+							self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
 						else:
-							self.grid_qlabelList[0][row][col].layout().itemAt(0).widget().setText(str(bet))
-							self.grid_qlabelList[0][row][col].movie().setFileName(self.betRecord.imgSugPath[0][img])
+							self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
+							self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
 						
-						self.grid_qlabelList[0][row][col].movie().start()
-						self.grid_qlabelList[0][row][col].movie().stop()
+						self.grid_qlabelList[i][row][col].movie().start()
+						self.grid_qlabelList[i][row][col].movie().stop()
 					
+					img = SugBig_sum[2]
+					bet = SugBig_sum[3]
 					self.update_nbet(img, bet)
-					if i != 0:
-						self.sugListForMovie.pop(i)
-						self.sugListForMovie.insert(i, retSug)
-					self.sugListForMovie.pop(0)
-					self.sugListForMovie.insert(0, SugBig_sum)
+					
+					self.sugListForMovie.pop(i)
+					self.sugListForMovie.insert(i, retSug)
 			
 			self.binp_qframe[i].close()
 			self.controlGridGif(True)
+			self.restartGridGif()
 	
 	# cut stop
 	def connect_rbar_btn(self, i):
@@ -1885,7 +1840,11 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].movie().start()
 					self.grid_qlabelList[i][row][col].movie().stop()
 			
-			self.update_nbet(showSugList[0][2], showSugList[0][3])
+			# update next bet area (sum of 4 road)
+			Sugsum = ret.get('SugBig_sum')
+			self.update_nbet(Sugsum[2], Sugsum[3])
+			
+			# add a record in record area
 			if winner != Tie:
 				self.update_rbet(countBet[0], sameBet[0], showList[0][2])
 			
@@ -1952,10 +1911,14 @@ class GridWindow(QWidget):
 			removeQframe.close()
 			self.rbet_qscrollarea_vl.removeWidget(removeQframe)
 			
+			lastSugBig_sum = ret.get('lastSugBig_sum')
 			if removeList[0][0] == 0 and removeList[0][1] == 0:
 				self.update_nbet(-2, -2)
 			else:
-				self.update_nbet(ShowLastSugList[0][2], ShowLastSugList[0][3])
+				self.update_nbet(lastSugBig_sum[2], lastSugBig_sum[3])
+			
+			# handle cut stop
+			self.backFromCutStop(ShowLastSugList)
 			
 		elif ret.get('status') == No_Back:
 			pass
@@ -1985,12 +1948,36 @@ class GridWindow(QWidget):
 			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 	
 	def update_lbar(self):
+		lbar_color = []
+		try:
+			img = self.betRecord.getLastSugList()[0][2]
+			if img != -1:
+				# predict next status
+				ret = self.betRecord.predictNextStatus()
+				
+				lbar_color.append(img)
+				lbar_color.append(ret['nextStatus'][img][0])
+				lbar_color.append(ret['nextStatus'][img][1])
+				lbar_color.append(ret['nextStatus'][img][2])
+			else:
+				lbar_color = [-1, -1, -1, -1]
+		except:
+			lbar_color = [-1, -1, -1, -1]
+		
 		for i in range(4):
-			self.lbar_qlabel[i].setText(self.tr('莊'))
-			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
 			self.lbar_btn[i].setText(self.tr('手動'))
 			self.lbar_qlineedit[i].setText('')
 			self.binp_qframe[i].close()
+			
+			if lbar_color[i] == 0:
+				self.lbar_qlabel[i].setText(self.tr('莊'))
+				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+			elif lbar_color[i] == 1:
+				self.lbar_qlabel[i].setText(self.tr('閒'))
+				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
+			else:
+				self.lbar_qlabel[i].setText('')
+				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;}''')
 	
 	def update_rbar(self):
 		if len(self.betRecord.betCountBig) > 0:
@@ -2145,11 +2132,40 @@ class GridWindow(QWidget):
 					# control = True, set Grid gif to start
 					self.grid_qlabelList[i][row][col].movie().start()
 	
+	# reset all sug gif to sync the flicker
+	def restartGridGif(self):
+		self.controlGridGif()
+		
+		for i in range(4):
+			row = self.sugListForMovie[i][0]
+			col = self.sugListForMovie[i][1]
+			img = self.sugListForMovie[i][2]
+			bet = self.sugListForMovie[i][3]
+			if row >= 0 and col >= 0:
+				self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+				if bet == 0:
+					self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
+					self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
+				else:
+					self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
+					self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
+				
+				self.grid_qlabelList[i][row][col].movie().start()
+				self.grid_qlabelList[i][row][col].movie().stop()
+		
+		self.controlGridGif(True)
+	
 	def storeRecordForHtml(self, countBet, sameBet, colorBet, pointBet):
 		self.recordHtml_list.append((countBet, sameBet, colorBet, pointBet))
 	
 	def popRecordForHtml(self):
 		self.recordHtml_list.pop()
+	
+	def backFromCutStop(self, ShowLastSugList):
+		for i in range(4):
+			style = str(self.grid_qlabelList[i][ShowLastSugList[i][0]][ShowLastSugList[i][1]].layout().itemAt(0).widget().styleSheet())
+			style = style.replace('{ border: 1px solid black;','{')
+			self.grid_qlabelList[i][ShowLastSugList[i][0]][ShowLastSugList[i][1]].layout().itemAt(0).widget().setStyleSheet('''%s'''%style)
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
