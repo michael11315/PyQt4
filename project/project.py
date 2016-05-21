@@ -700,7 +700,7 @@ class betRecord():
 		row, col = -1, -1
 		erase_row, rease_col = -1, -1
 		if i == 0:
-			if len(self.betSugBig) != 0 and self.betSugBig[-1][0] != -1:
+			if len(self.betSugBig) != 0 and self.betSugBig[-1][3] != -1:
 				tmp = self.betSugBig.pop()
 				lastBet = self.recordBig[-1]
 				if img == lastBet[2]:
@@ -718,7 +718,7 @@ class betRecord():
 				
 				self.betSugBig.append((row, col, img, bet))
 		elif i == 1:
-			if len(self.betSugEye) != 0 and self.betSugEye[-1][0] != -1:
+			if len(self.betSugEye) != 0 and self.betSugEye[-1][3] != -1:
 				tmp = self.betSugEye.pop()
 				lastBet = self.recordEye[-1]
 				if img == lastBet[2]:
@@ -736,7 +736,7 @@ class betRecord():
 				
 				self.betSugEye.append((row, col, img, bet))
 		elif i == 2:
-			if len(self.betSugSma) != 0 and self.betSugSma[-1][0] != -1:
+			if len(self.betSugSma) != 0 and self.betSugSma[-1][3] != -1:
 				tmp = self.betSugSma.pop()
 				lastBet = self.recordSma[-1]
 				if img == lastBet[2]:
@@ -754,7 +754,7 @@ class betRecord():
 				
 				self.betSugSma.append((row, col, img, bet))
 		else:
-			if len(self.betSugPen) != 0 and self.betSugPen[-1][0] != -1:
+			if len(self.betSugPen) != 0 and self.betSugPen[-1][3] != -1:
 				tmp = self.betSugPen.pop()
 				lastBet = self.recordPen[-1]
 				if img == lastBet[2]:
@@ -880,6 +880,7 @@ class GridWindow(QWidget):
 	
 	def welcomeBaccarat(self):
 		inputDialog = QInputDialog()
+		inputDialog.setOkButtonText('aaa')
 		gameStart = False
 		while not gameStart:
 			number, ok = inputDialog.getText(None, 'welcome Baccarat', self.tr('請輸入本金後按OK : '))
@@ -1624,7 +1625,7 @@ class GridWindow(QWidget):
 					if i != 0:
 						ret = self.betRecord.predictNextStatus()
 						if ret.get('status') == 0:
-							img = ret['nextStatus'][img][i]
+							img = ret['nextStatus'][img][i-1]
 					
 					retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(i, img, bet)
 					
@@ -1846,7 +1847,10 @@ class GridWindow(QWidget):
 			
 			# add a record in record area
 			if winner != Tie:
-				self.update_rbet(countBet[0], sameBet[0], showList[0][2])
+				recordEntry = ret.get('lastSugBig_sum')
+				if recordEntry == (-1, -1, -1, -1):
+					recordEntry = (0, 0, winner, 0)
+				self.update_rbet(recordEntry[3], recordEntry[2] and self.betRecord.recordAll[-1], recordEntry[2])
 			
 		elif ret.get('status') == Still_Tie:
 			pass
@@ -1937,15 +1941,34 @@ class GridWindow(QWidget):
 		self.controlGridGif(True)
 	
 	def connect_binp_btn(self, i, number):
+		ret = self.betRecord.predictNextStatus()
+		nextStatus = ret['nextStatus']
 		if number in range(10):
 			tmp = self.lbar_qlineedit[i].text() + str(number)
 			self.lbar_qlineedit[i].setText(tmp)
 		elif number == 10:
 			self.lbar_qlabel[i].setText(self.tr('莊'))
-			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+			
+			if i == 0:
+				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+			else:
+				if nextStatus[0][i-1] == 0:
+					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+				elif nextStatus[0][i-1] == 1:
+					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
+				else:
+					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
 		elif number == 11:
 			self.lbar_qlabel[i].setText(self.tr('閒'))
-			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
+			if i == 0:
+				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
+			else:
+				if nextStatus[1][i-1] == 0:
+					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+				elif nextStatus[1][i-1] == 1:
+					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
+				else:
+					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 	
 	def update_lbar(self):
 		lbar_color = []
@@ -1965,19 +1988,32 @@ class GridWindow(QWidget):
 			lbar_color = [-1, -1, -1, -1]
 		
 		for i in range(4):
+			# reset lbar
 			self.lbar_btn[i].setText(self.tr('手動'))
 			self.lbar_qlineedit[i].setText('')
 			self.binp_qframe[i].close()
 			
-			if lbar_color[i] == 0:
+			# change lbar color and text
+			if lbar_color[0] == 0:
 				self.lbar_qlabel[i].setText(self.tr('莊'))
+			else:
+				self.lbar_qlabel[i].setText(self.tr('閒'))
+			
+			if lbar_color[i] == 0:
 				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
 			elif lbar_color[i] == 1:
-				self.lbar_qlabel[i].setText(self.tr('閒'))
 				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 			else:
 				self.lbar_qlabel[i].setText('')
 				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;}''')
+			
+			# change number input color
+			if lbar_color[0] == lbar_color[i]:
+				self.binp_btn10[i].setStyleSheet('''.QPushButton {background-color: rgb(255, 47, 61); color: white;}''')
+				self.binp_btn11[i].setStyleSheet('''.QPushButton {background-color: rgb(116, 106, 255); color: white;}''')
+			else:
+				self.binp_btn10[i].setStyleSheet('''.QPushButton {background-color: rgb(116, 106, 255); color: white;}''')
+				self.binp_btn11[i].setStyleSheet('''.QPushButton {background-color: rgb(255, 47, 61); color: white;}''')
 	
 	def update_rbar(self):
 		if len(self.betRecord.betCountBig) > 0:
