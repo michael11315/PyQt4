@@ -152,6 +152,11 @@ class betRecord():
 		self.principal = 0
 		self.startGame = False
 		self.principalEntryList = []
+		
+		self.cutStopStatusBig = []
+		self.cutStopStatusEye = []
+		self.cutStopStatusSma = []
+		self.cutStopStatusPen = []
 	
 	def bet(self, winner, isPredict = False):
 		if self.startGame == False:
@@ -175,7 +180,11 @@ class betRecord():
 				self.mapPen[Pen[0]][Pen[1]] = Pen[2]
 				self.recordAll.append(winner)
 				
+				# handle about cut stop
+				for i in range(4):
+					self.cutStopStatusUpdate(i)
 				self.storeBetStatus(Big, Eye, Sma, Pen)
+				
 				retSug = self.suggestNextBet(Big, Eye, Sma, Pen)
 				SugBig = retSug.get('SugBig')
 				SugEye = retSug.get('SugEye')
@@ -385,6 +394,10 @@ class betRecord():
 				self.betStatusEye.pop()
 				self.betStatusSma.pop()
 				self.betStatusPen.pop()
+				self.cutStopStatusBig.pop()
+				self.cutStopStatusEye.pop()
+				self.cutStopStatusSma.pop()
+				self.cutStopStatusPen.pop()
 				
 				return {'status': 0, 'Big': Big, 'Eye': Eye, 'Sma': Sma, 'Pen': Pen,
 						'SugBig_sum':SugBig_sum, 'lastSugBig_sum':lastSugBig_sum,
@@ -412,7 +425,10 @@ class betRecord():
 		
 		return {'status': 0, 'nextStatus': nextStatus}
 	
+	# handle small count and all count
 	def storeBetStatus(self, Big, Eye, Sma, Pen):
+		LastCutStopStatus = self.getLastCutStopStatus()
+		
 		# bet count Big
 		if len(self.betSugBig) == 0:
 			self.betStatusBig.append(-1)
@@ -425,10 +441,16 @@ class betRecord():
 			self.betCountBig.append(self.betCountBig[-1])
 		elif Big[2] == self.betSugBig[-1][2] and self.betSugBig[-1][3] != 0:
 			self.betStatusBig.append(0)
-			self.betCountBig.append(self.betCountBig[-1] + self.betSugBig[-1][3])
+			if LastCutStopStatus[0]:
+				self.betCountBig.append(0)
+			else:
+				self.betCountBig.append(self.betCountBig[-1] + self.betSugBig[-1][3])
 		elif Big[2] != self.betSugBig[-1][2] and self.betSugBig[-1][3] != 0:
 			self.betStatusBig.append(1)
-			self.betCountBig.append(self.betCountBig[-1] - self.betSugBig[-1][3])
+			if LastCutStopStatus[0]:
+				self.betCountBig.append(0)
+			else:
+				self.betCountBig.append(self.betCountBig[-1] - self.betSugBig[-1][3])
 		else:
 			self.betStatusBig.append(-1)
 			self.betCountBig.append(self.betCountBig[-1])
@@ -445,10 +467,16 @@ class betRecord():
 			self.betCountEye.append(self.betCountEye[-1])
 		elif Eye[2] == self.betSugEye[-1][2] and self.betSugEye[-1][3] != 0:
 			self.betStatusEye.append(0)
-			self.betCountEye.append(self.betCountEye[-1] + self.betSugEye[-1][3])
+			if LastCutStopStatus[1]:
+				self.betCountEye.append(0)
+			else:
+				self.betCountEye.append(self.betCountEye[-1] + self.betSugEye[-1][3])
 		elif Eye[2] != self.betSugEye[-1][2] and self.betSugEye[-1][3] != 0:
 			self.betStatusEye.append(1)
-			self.betCountEye.append(self.betCountEye[-1] - self.betSugEye[-1][3])
+			if LastCutStopStatus[1]:
+				self.betCountEye.append(0)
+			else:
+				self.betCountEye.append(self.betCountEye[-1] - self.betSugEye[-1][3])
 		else:
 			self.betStatusEye.append(-1)
 			self.betCountEye.append(self.betCountEye[-1])
@@ -465,10 +493,16 @@ class betRecord():
 			self.betCountSma.append(self.betCountSma[-1])
 		elif Sma[2] == self.betSugSma[-1][2] and self.betSugSma[-1][3] != 0:
 			self.betStatusSma.append(0)
-			self.betCountSma.append(self.betCountSma[-1] + self.betSugSma[-1][3])
+			if LastCutStopStatus[2]:
+				self.betCountSma.append(0)
+			else:
+				self.betCountSma.append(self.betCountSma[-1] + self.betSugSma[-1][3])
 		elif Sma[2] != self.betSugSma[-1][2] and self.betSugSma[-1][3] != 0:
 			self.betStatusSma.append(1)
-			self.betCountSma.append(self.betCountSma[-1] - self.betSugSma[-1][3])
+			if LastCutStopStatus[2]:
+				self.betCountSma.append(0)
+			else:
+				self.betCountSma.append(self.betCountSma[-1] - self.betSugSma[-1][3])
 		else:
 			self.betStatusSma.append(-1)
 			self.betCountSma.append(self.betCountSma[-1])
@@ -485,10 +519,16 @@ class betRecord():
 			self.betCountPen.append(self.betCountPen[-1])
 		elif Pen[2] == self.betSugPen[-1][2] and self.betSugPen[-1][3] != 0:
 			self.betStatusPen.append(0)
-			self.betCountPen.append(self.betCountPen[-1] + self.betSugPen[-1][3])
+			if LastCutStopStatus[3]:
+				self.betCountPen.append(0)
+			else:
+				self.betCountPen.append(self.betCountPen[-1] + self.betSugPen[-1][3])
 		elif Pen[2] != self.betSugPen[-1][2] and self.betSugPen[-1][3] != 0:
 			self.betStatusPen.append(1)
-			self.betCountPen.append(self.betCountPen[-1] - self.betSugPen[-1][3])
+			if LastCutStopStatus[3]:
+				self.betCountPen.append(0)
+			else:
+				self.betCountPen.append(self.betCountPen[-1] - self.betSugPen[-1][3])
 		else:
 			self.betStatusPen.append(-1)
 			self.betCountPen.append(self.betCountPen[-1])
@@ -785,34 +825,35 @@ class betRecord():
 			return True
 	
 	def cutStop(self, i):
-		if i == 0:
-			if len(self.betSumCountBig) == 0:
-				return False
+		betSumCount = [self.betSumCountBig, self.betSumCountEye, self.betSumCountSma, self.betSumCountPen]
+		betCount = [self.betCountBig, self.betCountEye, self.betCountSma, self.betCountPen]
+		
+		# check start game or not
+		if len(self.betCountBig) > 0:
+			betSumCount[i][-1] += betCount[i][-1]
+			betCount[i][-1] = 0
+			
+			self.cutStopStatusUpdate(i, True)
+			
+			return True
+		
+		return False
+	
+	def cutStopStatusUpdate(self, i, change = False):
+		cutStopStatus = [self.cutStopStatusBig, self.cutStopStatusEye, self.cutStopStatusSma, self.cutStopStatusPen]
+		
+		if len(cutStopStatus[i]) == 0:
+			cutStopStatus[i].append(False)
+		else:
+			# this is a trigger for cut stop, so just change the last cut stop status
+			if change:
+				tmpStopStatus = cutStopStatus[i].pop()
+				cutStopStatus[i].append(not tmpStopStatus)
 			else:
-				self.betSumCountBig[-1] += self.betCountBig[-1]
-				self.betCountBig[-1] = 0
-				return True
-		elif i == 1:
-			if len(self.betSumCountEye) == 0:
-				return False
-			else:
-				self.betSumCountEye[-1] += self.betCountEye[-1]
-				self.betCountEye[-1] = 0
-				return True
-		elif i == 2:
-			if len(self.betSumCountSma) == 0:
-				return False
-			else:
-				self.betSumCountSma[-1] += self.betCountSma[-1]
-				self.betCountSma[-1] = 0
-				return True
-		elif i == 3:
-			if len(self.betSumCountPen) == 0:
-				return False
-			else:
-				self.betSumCountPen[-1] += self.betCountPen[-1]
-				self.betCountPen[-1] = 0
-				return True
+				cutStopStatus[i].append(cutStopStatus[i][-1])
+	
+	def getLastCutStopStatus(self):
+		return (self.cutStopStatusBig[-1], self.cutStopStatusEye[-1], self.cutStopStatusSma[-1], self.cutStopStatusPen[-1])
 	
 	def lastShow(self, i):
 		return self.record[i][-1]
@@ -1665,24 +1706,19 @@ class GridWindow(QWidget):
 	
 	# cut stop
 	def connect_rbar_btn(self, i):
-		if len(self.betRecord.betCountBig) > 0:
-			if i == 0:
-				self.betRecord.betSumCountBig[-1] += self.betRecord.betCountBig[-1]
-				self.betRecord.betCountBig[-1] = 0
-			elif i == 1:
-				self.betRecord.betSumCountEye[-1] += self.betRecord.betCountEye[-1]
-				self.betRecord.betCountEye[-1] = 0
-			elif i == 2:
-				self.betRecord.betSumCountSma[-1] += self.betRecord.betCountSma[-1]
-				self.betRecord.betCountSma[-1] = 0
-			elif i == 3:
-				self.betRecord.betSumCountPen[-1] += self.betRecord.betCountPen[-1]
-				self.betRecord.betCountPen[-1] = 0
-			
-			show = self.betRecord.lastShow(i)
-			style = str(self.grid_qlabelList[i][show[0]][show[1]].layout().itemAt(0).widget().styleSheet())
-			style = style.replace('{', '{ border: 1px solid black;')
-			self.grid_qlabelList[i][show[0]][show[1]].layout().itemAt(0).widget().setStyleSheet('''%s'''%style)
+		ret = self.betRecord.cutStop(i)
+		if ret:
+			if self.rbar_btn[i].text().toUtf8() == '切停':
+				self.rbar_btn[i].setText(self.tr('開始'))
+				
+				# add black border on the grid
+				show = self.betRecord.lastShow(i)
+				if show[0] != -1 and show[1] != -1:
+					style = str(self.grid_qlabelList[i][show[0]][show[1]].layout().itemAt(0).widget().styleSheet())
+					style = style.replace('{', '{ border: 1px solid black;')
+					self.grid_qlabelList[i][show[0]][show[1]].layout().itemAt(0).widget().setStyleSheet('''%s'''%style)
+			else:
+				self.rbar_btn[i].setText(self.tr('切停'))
 			
 			self.update_rbar()
 			self.update_nbet(-1, -1)
@@ -1841,12 +1877,12 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].movie().start()
 					self.grid_qlabelList[i][row][col].movie().stop()
 			
-			# update next bet area (sum of 4 road)
-			Sugsum = ret.get('SugBig_sum')
-			self.update_nbet(Sugsum[2], Sugsum[3])
-			
-			# add a record in record area
 			if winner != Tie:
+				# update next bet area (sum of 4 road)
+				Sugsum = ret.get('SugBig_sum')
+				self.update_nbet(Sugsum[2], Sugsum[3])
+				
+				# add a record in record area
 				recordEntry = ret.get('lastSugBig_sum')
 				if recordEntry == (-1, -1, -1, -1):
 					recordEntry = (0, 0, winner, 0)
@@ -1922,7 +1958,7 @@ class GridWindow(QWidget):
 				self.update_nbet(lastSugBig_sum[2], lastSugBig_sum[3])
 			
 			# handle cut stop
-			self.backFromCutStop(ShowLastSugList)
+			self.backFromCutStop(removeList)
 			
 		elif ret.get('status') == No_Back:
 			pass
@@ -2197,11 +2233,17 @@ class GridWindow(QWidget):
 	def popRecordForHtml(self):
 		self.recordHtml_list.pop()
 	
-	def backFromCutStop(self, ShowLastSugList):
+	def backFromCutStop(self, removeList):
+		LastCutStopStatus = self.betRecord.getLastCutStopStatus()
 		for i in range(4):
-			style = str(self.grid_qlabelList[i][ShowLastSugList[i][0]][ShowLastSugList[i][1]].layout().itemAt(0).widget().styleSheet())
+			if LastCutStopStatus[i]:
+				self.rbar_btn[i].setText(self.tr('開始'))
+			else:
+				self.rbar_btn[i].setText(self.tr('切停'))
+			
+			style = str(self.grid_qlabelList[i][removeList[i][0]][removeList[i][1]].layout().itemAt(0).widget().styleSheet())
 			style = style.replace('{ border: 1px solid black;','{')
-			self.grid_qlabelList[i][ShowLastSugList[i][0]][ShowLastSugList[i][1]].layout().itemAt(0).widget().setStyleSheet('''%s'''%style)
+			self.grid_qlabelList[i][removeList[i][0]][removeList[i][1]].layout().itemAt(0).widget().setStyleSheet('''%s'''%style)
 	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
