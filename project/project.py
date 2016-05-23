@@ -958,7 +958,7 @@ class GridWindow(QWidget):
 		self.Width_Grid = 30
 		self.Height_Grid = 23
 		self.Width_BetStatus = 215
-		self.Height_BetStatus_rbet_qscroll = 253
+		self.Height_BetStatus_rbet_qscroll = 223
 		
 		# general size define
 		self.count = 0
@@ -1237,14 +1237,30 @@ class GridWindow(QWidget):
 		self.rbet_qscrollarea_qframe = QFrame(self.rbet_qscrollarea)
 		self.rbet_qscrollarea_vl = QVBoxLayout(self.rbet_qscrollarea_qframe)
 		
+		self.trbet_qframe = QFrame(self.rbet_qframe)
+		self.trbet_hl = QHBoxLayout(self.trbet_qframe)
+		self.trbet_qlabel1 = QLabel(self.trbet_qframe)
+		self.trbet_qlabel2 = QLabel(self.trbet_qframe)
+		self.trbet_qlabel3 = QLabel(self.trbet_qframe)
+		self.trbet_qlabel4 = QLabel(self.trbet_qframe)
+		self.trbet_qlabelspace = QLabel(self.trbet_qframe)
+		
 		# set relationship
 		self.rbet_qframe.setLayout(self.rbet_vl)
 		self.rbet_vl.addWidget(self.rbet_qlabel)
+		self.rbet_vl.addWidget(self.trbet_qframe)
 		self.rbet_vl.addWidget(self.rbet_qscrollarea)
 		self.bet_vl.addWidget(self.rbet_qframe)
 		self.rbet_qscrollarea.setWidget(self.rbet_qscrollarea_qframe)
 		self.rbet_qscrollarea.setWidgetResizable(True)
 		#self.rbet_qscrollarea_qframe.setLayout(self.rbet_qscrollarea_vl)
+		
+		self.trbet_qframe.setLayout(self.trbet_hl)
+		self.trbet_hl.addWidget(self.trbet_qlabel1)
+		self.trbet_hl.addWidget(self.trbet_qlabel2)
+		self.trbet_hl.addWidget(self.trbet_qlabel3)
+		self.trbet_hl.addWidget(self.trbet_qlabel4)
+		self.trbet_hl.addWidget(self.trbet_qlabelspace)
 	
 	def UIcreate_numberInput(self):
 		self.binp_qframe = []
@@ -1554,6 +1570,24 @@ class GridWindow(QWidget):
 		self.rbet_qscrollarea_vl.setDirection(QBoxLayout.BottomToTop)
 		self.rbet_qscrollarea_vl.setSpacing(0)
 		self.rbet_qscrollarea_vl.setMargin(0)
+		
+		self.trbet_qframe.setStyleSheet('''.QFrame {background-color: gray; border-top: 1px solid gray;
+											border-left: 1px solid gray; border-right: 1px solid gray;}''')
+		self.trbet_qframe.setFixedWidth(self.Width_BetStatus)
+		self.trbet_qframe.setFixedHeight(30)
+		self.trbet_qlabel1.setText(self.tr('局'))
+		self.trbet_qlabel1.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		self.trbet_qlabel1.setAlignment(Qt.AlignCenter)
+		self.trbet_qlabel2.setText(self.tr('注碼'))
+		self.trbet_qlabel2.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		self.trbet_qlabel3.setText(self.tr('莊/閒'))
+		self.trbet_qlabel3.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		self.trbet_qlabel4.setText(self.tr('實得分'))
+		self.trbet_qlabel4.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		self.trbet_qlabel4.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+		self.trbet_qlabelspace.setFixedWidth(15)
+		self.trbet_hl.setSpacing(0)
+		self.trbet_hl.setMargin(0)
 		
 		# initail global values of UIcreate_numberInput
 		#----------------------------------------------------
@@ -2313,7 +2347,7 @@ def onTrail():
 	
 	print yearNow, monthNow, dayNow
 	
-	if yearNow == 2016 and monthNow == 5 and dayNow <= 27 and dayNow >= 23:
+	if yearNow == 2016 and monthNow == 5 and dayNow <= 27 and dayNow >= 24:
 		return True
 	else:
 		return False
