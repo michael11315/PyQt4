@@ -3,6 +3,7 @@ import copy
 import functools
 import os
 import webbrowser
+import time
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -853,7 +854,10 @@ class betRecord():
 				cutStopStatus[i].append(cutStopStatus[i][-1])
 	
 	def getLastCutStopStatus(self):
-		return (self.cutStopStatusBig[-1], self.cutStopStatusEye[-1], self.cutStopStatusSma[-1], self.cutStopStatusPen[-1])
+		if len(self.cutStopStatusBig) > 0:
+			return (self.cutStopStatusBig[-1], self.cutStopStatusEye[-1], self.cutStopStatusSma[-1], self.cutStopStatusPen[-1])
+		else:
+			return (False, False, False, False)
 	
 	def lastShow(self, i):
 		return self.record[i][-1]
@@ -906,6 +910,11 @@ class GridWindow(QWidget):
 		self.left_vl = QVBoxLayout(self.left_qframe)
 		self.bet_qframe = QFrame(self)
 		self.bet_vl = QVBoxLayout(self.bet_qframe)
+		
+		# on trail version
+		ret = onTrail()
+		if not ret:
+			sys.exit()
 		
 		self.globalValue()
 		self.sizeDefine()
@@ -2295,6 +2304,19 @@ def pressed(widget):
 	filter = Filter(widget)
 	widget.installEventFilter(filter)
 	return filter.clicked
+
+def onTrail():
+	timeNow = time.strftime("%Y %m %d", time.gmtime(time.time())).split()
+	yearNow = int(timeNow[0])
+	monthNow = int(timeNow[1])
+	dayNow = int(timeNow[2])
+	
+	print yearNow, monthNow, dayNow
+	
+	if yearNow == 2016 and monthNow == 5 and dayNow <= 27 and dayNow >= 23:
+		return True
+	else:
+		return False
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
