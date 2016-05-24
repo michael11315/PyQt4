@@ -958,7 +958,7 @@ class GridWindow(QWidget):
 		self.Width_Grid = 30
 		self.Height_Grid = 23
 		self.Width_BetStatus = 215
-		self.Height_BetStatus_rbet_qscroll = 223
+		self.Height_BetStatus_rbet_qscroll = 243
 		
 		# general size define
 		self.count = 0
@@ -1511,7 +1511,7 @@ class GridWindow(QWidget):
 		self.pbet_qframe.setStyleSheet('''.QFrame {background-color: white; border: 1px solid gray;}''')
 		self.pbet_qframe.setSizePolicy(self.sizePolicy)
 		self.pbet_qframe.setFixedWidth(self.Width_BetStatus)
-		self.pbet_qframe.setFixedHeight(145)
+		self.pbet_qframe.setFixedHeight(125)
 		
 		self.pbet_gl.setSpacing(0)
 		self.pbet_gl.setMargin(0)
@@ -1929,7 +1929,8 @@ class GridWindow(QWidget):
 				recordEntry = ret.get('lastSugBig_sum')
 				if recordEntry == (-1, -1, -1, -1):
 					recordEntry = (0, 0, winner, 0)
-				self.update_rbet(recordEntry[3], recordEntry[2] and self.betRecord.recordAll[-1], recordEntry[2])
+				print recordEntry
+				self.update_rbet(recordEntry[3], (recordEntry[2] == winner), recordEntry[2])
 			
 		elif ret.get('status') == Still_Tie:
 			pass
@@ -2340,12 +2341,16 @@ def pressed(widget):
 	return filter.clicked
 
 def onTrail():
-	timeNow = time.strftime("%Y %m %d", time.gmtime(time.time())).split()
+	timeNow = time.strftime("%Y %m %d %H", time.gmtime(time.time())).split()
 	yearNow = int(timeNow[0])
 	monthNow = int(timeNow[1])
 	dayNow = int(timeNow[2])
+	hourNow = int(timeNow[3])
 	
-	print yearNow, monthNow, dayNow
+	print yearNow, monthNow, dayNow, hourNow
+	
+	if hourNow >= 16:
+		dayNow += 1
 	
 	if yearNow == 2016 and monthNow == 5 and dayNow <= 27 and dayNow >= 24:
 		return True
