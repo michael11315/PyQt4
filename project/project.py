@@ -1565,6 +1565,7 @@ class GridWindow(QWidget):
 		self.rbet_qscrollarea.setStyleSheet('''.QScrollArea {background-color: white;}''')
 		self.rbet_qscrollarea.setFixedWidth(self.Width_BetStatus)
 		self.rbet_qscrollarea.setFixedHeight(self.Height_BetStatus_rbet_qscroll)
+		self.rbet_qscrollarea.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 		self.rbet_qscrollarea_qframe.setStyleSheet('''.QFrame {background-color: white;}''')
 		self.rbet_qscrollarea_vl.setAlignment(Qt.AlignTop)
 		self.rbet_qscrollarea_vl.setDirection(QBoxLayout.BottomToTop)
