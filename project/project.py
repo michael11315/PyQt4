@@ -2342,7 +2342,7 @@ def pressed(widget):
 	return filter.clicked
 
 def onTrail():
-	timeNow = time.strftime("%Y %m %d %H", time.gmtime(time.time())).split()
+	timeNow = time.strftime("%Y %m %d %H", time.localtime(time.time())).split()
 	yearNow = int(timeNow[0])
 	monthNow = int(timeNow[1])
 	dayNow = int(timeNow[2])
@@ -2350,10 +2350,9 @@ def onTrail():
 	
 	print yearNow, monthNow, dayNow, hourNow
 	
-	if hourNow >= 16:
-		dayNow += 1
-	
-	if yearNow == 2016 and monthNow == 5 and dayNow <= 27 and dayNow >= 24:
+	if yearNow == 2016 and monthNow == 5 and dayNow <= 31 and dayNow >= 28:
+		return True
+	elif yearNow == 2016 and monthNow == 6 and dayNow <= 3 and dayNow >= 1:
 		return True
 	else:
 		return False
