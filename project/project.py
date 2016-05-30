@@ -2205,13 +2205,11 @@ class GridWindow(QWidget):
 			qlabel_countBet = QLabel()
 			if countBet == 0:
 				qlabel_countBet.setText(str(countBet))
-				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: black; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			elif sameBet:
 				qlabel_countBet.setText('+' + str(countBet))
-				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			else:
 				qlabel_countBet.setText('-' + str(countBet))
-				qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+			qlabel_countBet.setStyleSheet('''.QLabel {background-color: white; color: gray; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			
 			qlabel_colorBet = QLabel()
 			if colorBet == 0:
@@ -2222,14 +2220,23 @@ class GridWindow(QWidget):
 				qlabel_colorBet.setStyleSheet('''.QLabel {background-color: white; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			
 			qlabel_pointBet = QLabel()
-			qlabel_pointBet.setText(str(pointBet))
-			qlabel_pointBet.setStyleSheet('''.QLabel {background-color: white; color: gray; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+			if sameBet:
+				qlabel_pointBet.setText(str(pointBet))
+				qlabel_pointBet.setStyleSheet('''.QLabel {background-color: white; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+			else:
+				qlabel_pointBet.setText(str(pointBet))
+				qlabel_pointBet.setStyleSheet('''.QLabel {background-color: white; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+			
+			qlabel_space = QLabel()
+			qlabel_space.setStyleSheet('''.QLabel {background-color: white; color: gray; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+			qlabel_space.setFixedWidth(15)
 			
 			tmp_hl.addWidget(qlabel_no)
 			tmp_hl.addWidget(qlabel_countBet)
 			tmp_hl.addWidget(qlabel_colorBet)
 			tmp_hl.addWidget(qlabel_pointBet)
-			tmp_qframe.setFixedWidth(200)
+			tmp_hl.addWidget(qlabel_space)
+			tmp_qframe.setFixedWidth(215)
 			tmp_qframe.setFixedHeight(30)
 			
 			self.rbet_qscrollarea_vl.addWidget(tmp_qframe)
@@ -2350,9 +2357,9 @@ def onTrail():
 	
 	print yearNow, monthNow, dayNow, hourNow
 	
-	if yearNow == 2016 and monthNow == 5 and dayNow <= 31 and dayNow >= 28:
+	if yearNow == 2016 and monthNow == 5 and dayNow <= 31 and dayNow >= 30:
 		return True
-	elif yearNow == 2016 and monthNow == 6 and dayNow <= 3 and dayNow >= 1:
+	elif yearNow == 2016 and monthNow == 6 and dayNow <= 12 and dayNow >= 1:
 		return True
 	else:
 		return False
