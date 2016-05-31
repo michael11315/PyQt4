@@ -1886,6 +1886,8 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
 					else:
 						self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
+						self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																														color: black;}''')
 						self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
 					
 					self.grid_qlabelList[i][row][col].movie().start()
@@ -1930,7 +1932,6 @@ class GridWindow(QWidget):
 				recordEntry = ret.get('lastSugBig_sum')
 				if recordEntry == (-1, -1, -1, -1):
 					recordEntry = (0, 0, winner, 0)
-				print recordEntry
 				self.update_rbet(recordEntry[3], (recordEntry[2] == winner), recordEntry[2])
 			
 		elif ret.get('status') == Still_Tie:
@@ -2354,8 +2355,6 @@ def onTrail():
 	monthNow = int(timeNow[1])
 	dayNow = int(timeNow[2])
 	hourNow = int(timeNow[3])
-	
-	print yearNow, monthNow, dayNow, hourNow
 	
 	if yearNow == 2016 and monthNow == 5 and dayNow <= 31 and dayNow >= 30:
 		return True
