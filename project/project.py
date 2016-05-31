@@ -440,13 +440,13 @@ class betRecord():
 		elif self.betSugBig[-1][2] == -1:
 			self.betStatusBig.append(-1)
 			self.betCountBig.append(self.betCountBig[-1])
-		elif Big[2] == self.betSugBig[-1][2] and self.betSugBig[-1][3] != 0:
+		elif Big[2] == self.betSugBig_origin[-1][2] and self.betSugBig_origin[-1][3] != 0:
 			self.betStatusBig.append(0)
 			if LastCutStopStatus[0]:
 				self.betCountBig.append(0)
 			else:
 				self.betCountBig.append(self.betCountBig[-1] + self.betSugBig[-1][3])
-		elif Big[2] != self.betSugBig[-1][2] and self.betSugBig[-1][3] != 0:
+		elif Big[2] != self.betSugBig_origin[-1][2] and self.betSugBig_origin[-1][3] != 0:
 			self.betStatusBig.append(1)
 			if LastCutStopStatus[0]:
 				self.betCountBig.append(0)
@@ -466,13 +466,13 @@ class betRecord():
 		elif self.betSugEye[-1][2] == -1:
 			self.betStatusEye.append(-1)
 			self.betCountEye.append(self.betCountEye[-1])
-		elif Eye[2] == self.betSugEye[-1][2] and self.betSugEye[-1][3] != 0:
+		elif Eye[2] == self.betSugEye_origin[-1][2] and self.betSugEye_origin[-1][3] != 0:
 			self.betStatusEye.append(0)
 			if LastCutStopStatus[1]:
 				self.betCountEye.append(0)
 			else:
 				self.betCountEye.append(self.betCountEye[-1] + self.betSugEye[-1][3])
-		elif Eye[2] != self.betSugEye[-1][2] and self.betSugEye[-1][3] != 0:
+		elif Eye[2] != self.betSugEye_origin[-1][2] and self.betSugEye_origin[-1][3] != 0:
 			self.betStatusEye.append(1)
 			if LastCutStopStatus[1]:
 				self.betCountEye.append(0)
@@ -492,13 +492,13 @@ class betRecord():
 		elif self.betSugSma[-1][2] == -1:
 			self.betStatusSma.append(-1)
 			self.betCountSma.append(self.betCountSma[-1])
-		elif Sma[2] == self.betSugSma[-1][2] and self.betSugSma[-1][3] != 0:
+		elif Sma[2] == self.betSugSma_origin[-1][2] and self.betSugSma_origin[-1][3] != 0:
 			self.betStatusSma.append(0)
 			if LastCutStopStatus[2]:
 				self.betCountSma.append(0)
 			else:
 				self.betCountSma.append(self.betCountSma[-1] + self.betSugSma[-1][3])
-		elif Sma[2] != self.betSugSma[-1][2] and self.betSugSma[-1][3] != 0:
+		elif Sma[2] != self.betSugSma_origin[-1][2] and self.betSugSma_origin[-1][3] != 0:
 			self.betStatusSma.append(1)
 			if LastCutStopStatus[2]:
 				self.betCountSma.append(0)
@@ -518,13 +518,13 @@ class betRecord():
 		elif self.betSugPen[-1][2] == -1:
 			self.betStatusPen.append(-1)
 			self.betCountPen.append(self.betCountPen[-1])
-		elif Pen[2] == self.betSugPen[-1][2] and self.betSugPen[-1][3] != 0:
+		elif Pen[2] == self.betSugPen_origin[-1][2] and self.betSugPen_origin[-1][3] != 0:
 			self.betStatusPen.append(0)
 			if LastCutStopStatus[3]:
 				self.betCountPen.append(0)
 			else:
 				self.betCountPen.append(self.betCountPen[-1] + self.betSugPen[-1][3])
-		elif Pen[2] != self.betSugPen[-1][2] and self.betSugPen[-1][3] != 0:
+		elif Pen[2] != self.betSugPen_origin[-1][2] and self.betSugPen_origin[-1][3] != 0:
 			self.betStatusPen.append(1)
 			if LastCutStopStatus[3]:
 				self.betCountPen.append(0)
@@ -575,14 +575,12 @@ class betRecord():
 		elif self.betStatusBig[-1] == 0:
 			lastBet = self.recordBig[-1]
 			sugBigBet = self.betSugBig_origin[-1][3] + 1
-			#sugBigBet = self.betSugBig[-1][3] + 1
 			tmpBig = self.PosNext(self.mapBig, lastBet[0], lastBet[1], lastBet[2])
 			SugBig = (tmpBig[0], tmpBig[1], tmpBig[2], sugBigBet)
 		elif self.betStatusBig[-1] == 1:
 			lastBet = self.recordBig[-1]
-			if self.betSugBig[-1][3] > 1:
+			if self.betSugBig_origin[-1][3] > 1:
 				sugBigBet = self.betSugBig_origin[-1][3] - 1
-				#sugBigBet = self.betSugBig[-1][3] - 1
 				tmpBig = self.PosChangeCol(self.mapBig, lastBet[2])
 				SugBig = (tmpBig[0], tmpBig[1], tmpBig[2], sugBigBet)
 			else:
@@ -604,7 +602,7 @@ class betRecord():
 			SugEye = (tmpEye[0], tmpEye[1], tmpEye[2], sugEyeBet)
 		elif self.betStatusEye[-1] == 1:
 			lastBet = self.recordEye[-1]
-			if self.betSugEye[-1][3] > 1:
+			if self.betSugEye_origin[-1][3] > 1:
 				sugEyeBet = self.betSugEye_origin[-1][3] - 1
 				tmpEye = self.PosChangeCol(self.mapEye, lastBet[2])
 				SugEye = (tmpEye[0], tmpEye[1], tmpEye[2], sugEyeBet)
@@ -627,7 +625,7 @@ class betRecord():
 			SugSma = (tmpSma[0], tmpSma[1], tmpSma[2], sugSmaBet)
 		elif self.betStatusSma[-1] == 1:
 			lastBet = self.recordSma[-1]
-			if self.betSugSma[-1][3] > 1:
+			if self.betSugSma_origin[-1][3] > 1:
 				sugSmaBet = self.betSugSma_origin[-1][3] - 1
 				tmpSma = self.PosChangeCol(self.mapSma, lastBet[2])
 				SugSma = (tmpSma[0], tmpSma[1], tmpSma[2], sugSmaBet)
@@ -650,7 +648,7 @@ class betRecord():
 			SugPen = (tmpPen[0], tmpPen[1], tmpPen[2], sugPenBet)
 		elif self.betStatusPen[-1] == 1:
 			lastBet = self.recordPen[-1]
-			if self.betSugPen[-1][3] > 1:
+			if self.betSugPen_origin[-1][3] > 1:
 				sugPenBet = self.betSugPen_origin[-1][3] - 1
 				tmpPen = self.PosChangeCol(self.mapPen, lastBet[2])
 				SugPen = (tmpPen[0], tmpPen[1], tmpPen[2], sugPenBet)
