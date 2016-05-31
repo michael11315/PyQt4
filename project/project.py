@@ -1361,7 +1361,7 @@ class GridWindow(QWidget):
 			self.lbar_qlabel[i].setFixedWidth(self.sizeWidth)
 			
 			self.lbar_btn[i].setText(self.tr('手動'))
-			self.lbar_btn[i].setStyleSheet('''.QPushButton {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+			self.lbar_btn[i].setStyleSheet('''.QPushButton {font-size: 8pt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			self.lbar_btn[i].setSizePolicy(self.sizePolicy)
 			self.lbar_btn[i].setFixedWidth(self.sizeWidth_btn)
 			self.lbar_btn[i].setFixedHeight(self.sizeHeight_btn)
@@ -1380,20 +1380,20 @@ class GridWindow(QWidget):
 			self.rbar_hl[i].setMargin(0)
 			
 			self.rbar_qlabel1[i].setText(self.tr('小計 : '))
-			self.rbar_qlabel1[i].setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
-			self.rbar_qlabel1[i].setAlignment(Qt.AlignCenter)
+			self.rbar_qlabel1[i].setStyleSheet('''.QLabel {font-size: 8pt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+			self.rbar_qlabel1[i].setAlignment(Qt.AlignLeft)
 			self.rbar_qlabel1[i].setSizePolicy(self.sizePolicy)
 			self.rbar_qlabel1[i].setFixedWidth(self.sizeWidth)
 			
 			self.rbar_btn[i].setText(self.tr('切停'))
-			self.rbar_btn[i].setStyleSheet('''.QPushButton {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+			self.rbar_btn[i].setStyleSheet('''.QPushButton {font-size: 8pt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			self.rbar_btn[i].setSizePolicy(self.sizePolicy)
 			self.rbar_btn[i].setFixedWidth(self.sizeWidth_btn)
 			self.rbar_btn[i].setFixedHeight(self.sizeHeight_btn)
 			
 			self.rbar_qlabel2[i].setText(self.tr('合計 : '))
-			self.rbar_qlabel2[i].setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
-			self.rbar_qlabel2[i].setAlignment(Qt.AlignCenter)
+			self.rbar_qlabel2[i].setStyleSheet('''.QLabel {font-size: 8pt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+			self.rbar_qlabel2[i].setAlignment(Qt.AlignLeft)
 			self.rbar_qlabel2[i].setSizePolicy(self.sizePolicy)
 			self.rbar_qlabel2[i].setFixedWidth(self.sizeWidth)
 		
@@ -1423,11 +1423,11 @@ class GridWindow(QWidget):
 		self.bbet_btn2.setSizePolicy(self.sizePolicy)
 		
 		self.bbet_qlabel1.setText(self.tr('檯面數 : '))
-		self.bbet_qlabel1.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		self.bbet_qlabel1.setStyleSheet('''.QLabel {font-size: 8pt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.bbet_qlabel1.setSizePolicy(self.sizePolicy)
 		
 		self.bbet_qlabel2.setText(self.tr('轉碼 : '))
-		self.bbet_qlabel2.setStyleSheet('''.QLabel {font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+		self.bbet_qlabel2.setStyleSheet('''.QLabel {font-size: 8pt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		self.bbet_qlabel2.setSizePolicy(self.sizePolicy)
 		
 		# next bet area
@@ -2221,10 +2221,10 @@ class GridWindow(QWidget):
 			qlabel_pointBet = QLabel()
 			if sameBet:
 				qlabel_pointBet.setText(str(pointBet))
-				qlabel_pointBet.setStyleSheet('''.QLabel {background-color: white; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+				qlabel_pointBet.setStyleSheet('''.QLabel {font-size: 8pt; background-color: white; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			else:
 				qlabel_pointBet.setText(str(pointBet))
-				qlabel_pointBet.setStyleSheet('''.QLabel {background-color: white; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+				qlabel_pointBet.setStyleSheet('''.QLabel {font-size: 8pt; background-color: white; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 			
 			qlabel_space = QLabel()
 			qlabel_space.setStyleSheet('''.QLabel {background-color: white; color: gray; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
