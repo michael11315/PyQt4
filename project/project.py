@@ -563,6 +563,8 @@ class betRecord():
 		if len(self.recordAll) == 0:
 			return {'SugBig': SugBig, 'SugEye': SugEye, 'SugSma': SugSma, 'SugPen': SugPen}
 		
+		LastCutStopStatus = self.getLastCutStopStatus()
+		
 		# SugBig
 		#----------------------------------------------------
 		if Big[0] == -1 and Big[1] == -1:
@@ -585,6 +587,11 @@ class betRecord():
 				SugBig = (tmpBig[0], tmpBig[1], tmpBig[2], sugBigBet)
 			else:
 				SugBig = (-1, -1, lastBet[2], 0)
+		
+		# if cut stop now, sugBet still 0
+		if LastCutStopStatus[0]:
+			sugBigBet = 0
+			SugBig = (SugBig[0], SugBig[1], SugBig[2], sugBigBet)
 		
 		# SugEye
 		#----------------------------------------------------
@@ -609,6 +616,11 @@ class betRecord():
 			else:
 				SugEye = (-1, -1, lastBet[2], 0)
 		
+		# if cut stop now, sugBet still 0
+		if LastCutStopStatus[1]:
+			sugEyeBet = 0
+			SugEye = (SugEye[0], SugEye[1], SugEye[2], sugEyeBet)
+		
 		# SugSma
 		#----------------------------------------------------
 		if Sma[0] == -1 and Sma[1] == -1:
@@ -632,6 +644,11 @@ class betRecord():
 			else:
 				SugSma = (-1, -1, lastBet[2], 0)
 		
+		# if cut stop now, sugBet still 0
+		if LastCutStopStatus[2]:
+			sugSmaBet = 0
+			SugSma = (SugSma[0], SugSma[1], SugSma[2], sugSmaBet)
+		
 		# SugPen
 		#----------------------------------------------------
 		if Pen[0] == -1 and Pen[1] == -1:
@@ -654,6 +671,11 @@ class betRecord():
 				SugPen = (tmpPen[0], tmpPen[1], tmpPen[2], sugPenBet)
 			else:
 				SugPen = (-1, -1, lastBet[2], 0)
+		
+		# if cut stop now, sugBet still 0
+		if LastCutStopStatus[3]:
+			sugPenBet = 0
+			SugPen = (SugPen[0], SugPen[1], SugPen[2], sugPenBet)
 		
 		return {'SugBig': SugBig, 'SugEye': SugEye, 'SugSma': SugSma, 'SugPen': SugPen}
 	
@@ -718,24 +740,10 @@ class betRecord():
 				
 				if showList[i][2] == lastSugList[i][2]:
 					sameBet[i] = True
-				
-				# for sum in big
-				'''
-				if i != 0:
-					if sameBet[0] == sameBet[i]:
-						countBet[0] += countBet[i]
-					else:
-						countBet[0] -= countBet[i]
-				'''
-		'''
-		if countBet[0] < 0:
-			countBet[0] = countBet[0] * -1
-			sameBet[0] = not sameBet[0]
-		'''
 		
 		return {'isBet': isBet, 'sameBet': sameBet, 'countBet': countBet}
 	
-	def manualChangeSug(self, i, img, bet):
+	def manualChangeSug(self, i, img, bet, isManual):
 		row, col = -1, -1
 		erase_row, rease_col = -1, -1
 		if i == 0:
@@ -756,6 +764,10 @@ class betRecord():
 					rease_col = tmp[1]
 				
 				self.betSugBig.append((row, col, img, bet))
+				
+				if not isManual:
+					self.betSugBig_origin.pop()
+					self.betSugBig_origin.append((row, col, img, bet))
 		elif i == 1:
 			if len(self.betSugEye) != 0 and self.betSugEye[-1][3] != -1:
 				tmp = self.betSugEye.pop()
@@ -774,6 +786,10 @@ class betRecord():
 					rease_col = tmp[1]
 				
 				self.betSugEye.append((row, col, img, bet))
+				
+				if not isManual:
+					self.betSugEye_origin.pop()
+					self.betSugEye_origin.append((row, col, img, bet))
 		elif i == 2:
 			if len(self.betSugSma) != 0 and self.betSugSma[-1][3] != -1:
 				tmp = self.betSugSma.pop()
@@ -792,7 +808,11 @@ class betRecord():
 					rease_col = tmp[1]
 				
 				self.betSugSma.append((row, col, img, bet))
-		else:
+				
+				if not isManual:
+					self.betSugSma_origin.pop()
+					self.betSugSma_origin.append((row, col, img, bet))
+		elif i == 3:
 			if len(self.betSugPen) != 0 and self.betSugPen[-1][3] != -1:
 				tmp = self.betSugPen.pop()
 				lastBet = self.recordPen[-1]
@@ -810,12 +830,18 @@ class betRecord():
 					rease_col = tmp[1]
 				
 				self.betSugPen.append((row, col, img, bet))
+				
+				if not isManual:
+					self.betSugPen_origin.pop()
+					self.betSugPen_origin.append((row, col, img, bet))
+		else:
+			pass
 		
-		SugBig = self.sumBetInSugBig(self.recordBig[-1], self.betSugBig[-1], self.betSugEye[-1], self.betSugSma[-1], self.betSugPen[-1])
+		SugBig_sum = self.sumBetInSugBig(self.recordBig[-1], self.betSugBig[-1], self.betSugEye[-1], self.betSugSma[-1], self.betSugPen[-1])
 		SugBig_sum_otherimg = self.betSugBig_sum.pop()
-		self.betSugBig_sum.append(SugBig)
+		self.betSugBig_sum.append(SugBig_sum)
 		
-		return (row, col, img, bet), (erase_row, rease_col), SugBig, SugBig_sum_otherimg
+		return (row, col, img, bet), (erase_row, rease_col), SugBig_sum, SugBig_sum_otherimg
 	
 	def gameIsBegin(self):
 		if len(self.recordBig) == 0:
@@ -1694,7 +1720,6 @@ class GridWindow(QWidget):
 			self.lbar_qlineedit[i].setText('')
 			self.binp_qframe[i].show()
 		else:
-			self.controlGridGif()
 			self.lbar_btn[i].setText(self.tr('手動'))
 			if self.betRecord.gameIsBegin():
 				if len(self.lbar_qlineedit[i].text()) > 0:
@@ -1710,41 +1735,9 @@ class GridWindow(QWidget):
 						if ret.get('status') == 0:
 							img = ret['nextStatus'][img][i-1]
 					
-					retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(i, img, bet)
-					
-					row = eraseSug[0]
-					col = eraseSug[1]
-					if row >= 0 and col >= 0:
-						self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
-						self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
-						self.grid_qlabelList[i][row][col].movie().start()
-						self.grid_qlabelList[i][row][col].movie().stop()
-					
-					row = retSug[0]
-					col = retSug[1]
-					img = retSug[2]
-					bet = retSug[3]
-					if row >= 0 and col >= 0:
-						if bet == 0:
-							self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
-							self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
-						else:
-							self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
-							self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
-						
-						self.grid_qlabelList[i][row][col].movie().start()
-						self.grid_qlabelList[i][row][col].movie().stop()
-					
-					img = SugBig_sum[2]
-					bet = SugBig_sum[3]
-					self.update_nbet(img, bet)
-					
-					self.sugListForMovie.pop(i)
-					self.sugListForMovie.insert(i, retSug)
+					self.changeSug(i, img, bet, True)
 			
 			self.binp_qframe[i].close()
-			self.controlGridGif(True)
-			self.restartGridGif()
 	
 	# cut stop
 	def connect_rbar_btn(self, i):
@@ -1759,8 +1752,13 @@ class GridWindow(QWidget):
 					style = str(self.grid_qlabelList[i][show[0]][show[1]].layout().itemAt(0).widget().styleSheet())
 					style = style.replace('{', '{ border: 1px solid black;')
 					self.grid_qlabelList[i][show[0]][show[1]].layout().itemAt(0).widget().setStyleSheet('''%s'''%style)
+				
+				# change Sug to 0
+				self.changeSug(i, show[2], 0, False)
 			else:
 				self.rbar_btn[i].setText(self.tr('切停'))
+				show = self.betRecord.lastShow(i)
+				self.changeSug(i, show[2], 1, False)
 			
 			self.update_rbar()
 			self.update_nbet(-1, -1)
@@ -2241,6 +2239,44 @@ class GridWindow(QWidget):
 			self.rbet_qscrollarea_vl.addWidget(tmp_qframe)
 			
 			self.storeRecordForHtml(countBet, sameBet, colorBet, pointBet)
+	
+	def changeSug(self, i, img, bet, isManual):
+		self.controlGridGif()
+		
+		retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(i, img, bet, isManual)
+		
+		row = eraseSug[0]
+		col = eraseSug[1]
+		if row >= 0 and col >= 0:
+			self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
+			self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
+			self.grid_qlabelList[i][row][col].movie().start()
+			self.grid_qlabelList[i][row][col].movie().stop()
+		
+		row = retSug[0]
+		col = retSug[1]
+		img = retSug[2]
+		bet = retSug[3]
+		if row >= 0 and col >= 0:
+			if bet == 0:
+				self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
+				self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
+			else:
+				self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
+				self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
+			
+			self.grid_qlabelList[i][row][col].movie().start()
+			self.grid_qlabelList[i][row][col].movie().stop()
+		
+		img = SugBig_sum[2]
+		bet = SugBig_sum[3]
+		self.update_nbet(img, bet)
+		
+		self.sugListForMovie.pop(i)
+		self.sugListForMovie.insert(i, retSug)
+		
+		self.controlGridGif(True)
+		self.restartGridGif()
 	
 	# control about sug GridGif
 	def controlGridGif(self, control = False):
