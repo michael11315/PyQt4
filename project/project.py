@@ -56,6 +56,14 @@ Back_From_Tie = 1
 Still_Tie = 2
 No_Back = 5
 Need_Enter_First = 10
+First_Tie = 20
+Still_First_Tie = 21
+Back_Still_First_Tie = 22
+Back_From_First_Tie = 23
+
+# UI grid size
+row_size = 6
+column_size = 30
 
 # TODO : handle first record is Tie
 # TODO : handle overflow(when over 6*30)
@@ -79,7 +87,7 @@ class betRecord():
 		
 		# count continuous times for Eye, Sma, Pen
 		self.countBig = []
-		for i in range(30):
+		for i in range(column_size):
 			self.countBig.append(0)
 		
 		self.mapBig = []
@@ -88,16 +96,13 @@ class betRecord():
 		self.mapPen = []
 		for row in range(6):
 			tmp = []
-			for col in range(30):
-				tmp.append(-1)
 			tmp2 = []
-			for col in range(30):
-				tmp2.append(-1)
 			tmp3 = []
-			for col in range(30):
-				tmp3.append(-1)
 			tmp4 = []
-			for col in range(30):
+			for col in range(column_size):
+				tmp.append(-1)
+				tmp2.append(-1)
+				tmp3.append(-1)
 				tmp4.append(-1)
 				
 			self.mapBig.append(tmp)
@@ -158,6 +163,9 @@ class betRecord():
 		self.cutStopStatusEye = []
 		self.cutStopStatusSma = []
 		self.cutStopStatusPen = []
+		
+		self.isFirstTie = False
+		self.firstTieTimes = 0
 	
 	def bet(self, winner, isPredict = False):
 		if self.startGame == False:
@@ -225,7 +233,17 @@ class betRecord():
 						'lastSugBig': lastSugBig, 'lastSugEye': lastSugEye, 'lastSugSma': lastSugSma, 'lastSugPen': lastSugPen,
 						'isBet': isBet, 'sameBet': sameBet, 'countBet': countBet}
 		else:
-			# TODO : handle first record is Tie
+			# handle first record is Tie
+			if len(self.recordBig) == 0:
+				self.countResult[winner] -= 1
+				
+				if not self.isFirstTie:
+					self.isFirstTie = True
+					self.firstTieTimes += 1
+					return {'status': First_Tie}
+				
+				self.firstTieTimes += 1
+				return {'status': Still_First_Tie}
 			
 			lastBet = self.recordBig[-1]
 			Big = (lastBet[0], lastBet[1], Tie)
@@ -344,7 +362,7 @@ class betRecord():
 		else:
 			img = 0
 		
-		for col in range(30):
+		for col in range(column_size):
 			if map[0][col] == -1:
 				return (0, col, img)
 	
@@ -411,6 +429,16 @@ class betRecord():
 					Big = self.recordBig[-1]
 					return {'status': Back_From_Tie, 'Big': Big}
 		else:
+			# handle back to first Tie
+			if self.isFirstTie:
+				self.firstTieTimes -= 1
+				
+				if self.firstTieTimes != 0:
+					return {'status': Back_Still_First_Tie}
+				
+				self.isFirstTie = False
+				return {'status': Back_From_First_Tie}
+				
 			return {'status': No_Back}
 	
 	def predictNextStatus(self):
@@ -946,7 +974,9 @@ class GridWindow(QWidget):
 		self.welcomeBaccarat()
 		
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-		self.setFixedSize(1169, 683)
+		UI_width = 1169 + (column_size - 30) * 31
+		UI_height = 683
+		self.setFixedSize(UI_width, UI_height)
 		print self.sizeHint()
 		self.vline.setFixedHeight(self.sizeHint().height()-10)
 		
@@ -1036,7 +1066,7 @@ class GridWindow(QWidget):
 			tmp = []
 			for row in range(6):
 				tmprow = []
-				for col in range(30):
+				for col in range(column_size):
 					tmprow.append(QLabel(self.grid_qframe[i]))
 					imgGif = QMovie(imgCell)
 					tmprow[len(tmprow)-1].setMovie(imgGif)
@@ -1934,6 +1964,12 @@ class GridWindow(QWidget):
 			pass
 		elif ret.get('status') == Need_Enter_First:
 			pass
+		elif ret.get('status') == First_Tie:
+			print 'First_Tie'
+			self.grid_qlabelList[0][0][0].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																								border: 1px solid green;}''')
+		elif ret.get('status') == Still_First_Tie:
+			pass
 		
 		self.update_lbar()
 		self.update_rbar()
@@ -2011,6 +2047,10 @@ class GridWindow(QWidget):
 			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].movie().setFileName(self.betRecord.imgPath[0][BackBig[2]])
 			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].movie().start()
 			self.grid_qlabelList[0][BackBig[0]][BackBig[1]].movie().stop()
+		elif ret.get('status') == Back_Still_First_Tie:
+			pass
+		elif ret.get('status') == Back_From_First_Tie:
+			self.grid_qlabelList[0][0][0].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		
 		self.update_lbar()
 		self.update_rbar()
