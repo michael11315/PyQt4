@@ -65,7 +65,6 @@ Back_From_First_Tie = 23
 row_size = 6
 column_size = 30
 
-# TODO : handle first record is Tie
 # TODO : handle overflow(when over 6*30)
 
 class betRecord():
@@ -457,7 +456,53 @@ class betRecord():
 	# handle small count and all count
 	def storeBetStatus(self, Big, Eye, Sma, Pen):
 		LastCutStopStatus = self.getLastCutStopStatus()
+		bet = [Big, Eye, Sma, Pen]
+		betSug = [self.betSugBig, self.betSugEye, self.betSugSma, self.betSugPen]
+		betSug_origin = [self.betSugBig_origin, self.betSugEye_origin, self.betSugSma_origin, self.betSugPen_origin]
+		betStatus = [self.betStatusBig, self.betStatusEye, self.betStatusSma, self.betStatusPen]
+		betCount = [self.betCountBig, self.betCountEye, self.betCountSma, self.betCountPen]
+		betSumCount = [self.betSumCountBig, self.betSumCountEye, self.betSumCountSma, self.betSumCountPen]
 		
+		for i in range(4):
+			#bet status and count
+			if len(betSug[i]) == 0:
+				betStatus[i].append(-1)
+				betCount[i].append(0)
+			elif bet[i][2] == -1:
+				betStatus[i].append(-1)
+				betCount[i].append(betCount[i][-1])
+			elif betSug[i][-1][2] == -1:
+				betStatus[i].append(-1)
+				betCount[i].append(betCount[i][-1])
+			elif bet[i][2] == betSug_origin[i][-1][2] and betSug_origin[i][-1][3] != 0:
+				betStatus[i].append(0)
+				if LastCutStopStatus[i]:
+					betCount[i].append(0)
+				else:
+					if betSug_origin[i][-1][2] == betSug[i][-1][2]:
+						betCount[i].append(betCount[i][-1] + betSug[i][-1][3])
+					else:
+						betCount[i].append(betCount[i][-1] - betSug[i][-1][3])
+			elif bet[i][2] != betSug_origin[i][-1][2] and betSug_origin[i][-1][3] != 0:
+				betStatus[i].append(1)
+				if LastCutStopStatus[i]:
+					betCount[i].append(0)
+				else:
+					if betSug_origin[i][-1][2] == betSug[i][-1][2]:
+						betCount[i].append(betCount[i][-1] - betSug[i][-1][3])
+					else:
+						betCount[i].append(betCount[i][-1] + betSug[i][-1][3])
+			else:
+				betStatus[i].append(-1)
+				betCount[i].append(betCount[i][-1])
+			
+			# bet sum count
+			if len(betSug[i]) == 0:
+				betSumCount[i].append(0)
+			else:
+				betSumCount[i].append(betSumCount[i][-1])
+		
+		'''
 		# bet count Big
 		if len(self.betSugBig) == 0:
 			self.betStatusBig.append(-1)
@@ -473,13 +518,19 @@ class betRecord():
 			if LastCutStopStatus[0]:
 				self.betCountBig.append(0)
 			else:
-				self.betCountBig.append(self.betCountBig[-1] + self.betSugBig[-1][3])
+				if self.betSugBig_origin[-1][2] == self.betSugBig[-1][2]:
+					self.betCountBig.append(self.betCountBig[-1] + self.betSugBig[-1][3])
+				else:
+					self.betCountBig.append(self.betCountBig[-1] - self.betSugBig[-1][3])
 		elif Big[2] != self.betSugBig_origin[-1][2] and self.betSugBig_origin[-1][3] != 0:
 			self.betStatusBig.append(1)
 			if LastCutStopStatus[0]:
 				self.betCountBig.append(0)
 			else:
-				self.betCountBig.append(self.betCountBig[-1] - self.betSugBig[-1][3])
+				if self.betSugBig_origin[-1][2] == self.betSugBig[-1][2]:
+					self.betCountBig.append(self.betCountBig[-1] - self.betSugBig[-1][3])
+				else:
+					self.betCountBig.append(self.betCountBig[-1] + self.betSugBig[-1][3])
 		else:
 			self.betStatusBig.append(-1)
 			self.betCountBig.append(self.betCountBig[-1])
@@ -585,6 +636,7 @@ class betRecord():
 			self.betSumCountPen.append(0)
 		else:
 			self.betSumCountPen.append(self.betSumCountPen[-1])
+		'''
 	
 	def suggestNextBet(self, Big, Eye, Sma, Pen):
 		SugBig, SugEye, SugSma, SugPen = (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)
@@ -984,7 +1036,6 @@ class GridWindow(QWidget):
 	
 	def welcomeBaccarat(self):
 		inputDialog = QInputDialog()
-		inputDialog.setOkButtonText('aaa')
 		gameStart = False
 		while not gameStart:
 			number, ok = inputDialog.getText(None, 'welcome Baccarat', self.tr('請輸入本金後按OK : '))
@@ -1013,6 +1064,9 @@ class GridWindow(QWidget):
 		self.Height_Grid = 23
 		self.Width_BetStatus = 215
 		self.Height_BetStatus_rbet_qscroll = 243
+		self.binp_btnWidth = 37
+		self.binp_btnHeight = 30
+		self .Width_Rbar = 400
 		
 		# general size define
 		self.count = 0
@@ -1022,9 +1076,6 @@ class GridWindow(QWidget):
 		self.sizeHeight_btn = 22
 		self.sizeWidth_qlineedit = 60
 		self.sizePolicy = QSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
-		
-		self.binp_btnWidth = 37
-		self.binp_btnHeight = 30
 	
 	def UIcreate(self):
 		self.UIcreate_Grid()
@@ -1431,15 +1482,16 @@ class GridWindow(QWidget):
 		for i in range(4):
 			self.rbar_qframe[i].setStyleSheet('''.QFrame {border: 1px solid gray;}''')
 			self.rbar_qframe[i].setSizePolicy(self.sizePolicy)
+			self.rbar_qframe[i].setFixedWidth(self.Width_Rbar)
 			
-			self.rbar_hl[i].setSpacing(1)
+			self.rbar_hl[i].setSpacing(0)
 			self.rbar_hl[i].setMargin(0)
 			
-			self.rbar_qlabel1[i].setText(self.tr('小計 : '))
+			self.rbar_qlabel1[i].setText(self.tr(' 小計 : '))
 			self.rbar_qlabel1[i].setStyleSheet('''.QLabel {font-size: 8pt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
-			self.rbar_qlabel1[i].setAlignment(Qt.AlignLeft)
+			self.rbar_qlabel1[i].setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 			self.rbar_qlabel1[i].setSizePolicy(self.sizePolicy)
-			self.rbar_qlabel1[i].setFixedWidth(self.sizeWidth)
+			#self.rbar_qlabel1[i].setFixedWidth(self.sizeWidth)
 			
 			self.rbar_btn[i].setText(self.tr('切停'))
 			self.rbar_btn[i].setStyleSheet('''.QPushButton {font-size: 8pt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
@@ -1447,11 +1499,11 @@ class GridWindow(QWidget):
 			self.rbar_btn[i].setFixedWidth(self.sizeWidth_btn)
 			self.rbar_btn[i].setFixedHeight(self.sizeHeight_btn)
 			
-			self.rbar_qlabel2[i].setText(self.tr('合計 : '))
+			self.rbar_qlabel2[i].setText(self.tr(' 合計 : '))
 			self.rbar_qlabel2[i].setStyleSheet('''.QLabel {font-size: 8pt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
-			self.rbar_qlabel2[i].setAlignment(Qt.AlignLeft)
+			self.rbar_qlabel2[i].setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 			self.rbar_qlabel2[i].setSizePolicy(self.sizePolicy)
-			self.rbar_qlabel2[i].setFixedWidth(self.sizeWidth)
+			#self.rbar_qlabel2[i].setFixedWidth(self.sizeWidth)
 		
 		# initail global values of UIcreate_BetStatus
 		#----------------------------------------------------
@@ -1646,10 +1698,10 @@ class GridWindow(QWidget):
 		
 		# initail global values of UIcreate_numberInput
 		#----------------------------------------------------
-		self.binp_qframe[0].setGeometry(QRect(557, 24, 140, 150))
-		self.binp_qframe[1].setGeometry(QRect(557, 195, 140, 150))
-		self.binp_qframe[2].setGeometry(QRect(557, 366, 140, 150))
-		self.binp_qframe[3].setGeometry(QRect(557, 537, 140, 150))
+		self.binp_qframe[0].setGeometry(QRect(387, 24, 140, 150))
+		self.binp_qframe[1].setGeometry(QRect(387, 195, 140, 150))
+		self.binp_qframe[2].setGeometry(QRect(387, 366, 140, 150))
+		self.binp_qframe[3].setGeometry(QRect(387, 537, 140, 150))
 		for i in range(4):
 			self.binp_qframe[i].setStyleSheet('''.QFrame {background-color: rgb(230, 230, 230); border: 1px solid gray;}
 												.QPushButton {background-color: rgb(250, 250, 250); font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
@@ -2140,7 +2192,7 @@ class GridWindow(QWidget):
 			smallCount = [0, 0, 0, 0]
 		
 		for i in range(4):
-			self.rbar_qlabel1[i].setText(self.tr('小計 : %s' % str(smallCount[i])))
+			self.rbar_qlabel1[i].setText(self.tr(' 小計 : %s' % str(smallCount[i])))
 		
 		if len(self.betRecord.betSumCountBig) > 0:
 			sumCount = [self.betRecord.betSumCountBig[-1], self.betRecord.betSumCountEye[-1], self.betRecord.betSumCountSma[-1], self.betRecord.betSumCountPen[-1]]
@@ -2148,7 +2200,7 @@ class GridWindow(QWidget):
 			sumCount = [0, 0, 0, 0]
 		
 		for i in range(4):
-			self.rbar_qlabel2[i].setText(self.tr('合計 : %s' % str(sumCount[i])))
+			self.rbar_qlabel2[i].setText(self.tr(' 合計 : %s' % str(sumCount[i])))
 	
 	def update_bbet(self):
 		tmp = self.betRecord.getPrincipal() + self.betRecord.principalSum()
@@ -2432,7 +2484,7 @@ def onTrail():
 	
 	if yearNow == 2016 and monthNow == 5 and dayNow <= 31 and dayNow >= 30:
 		return True
-	elif yearNow == 2016 and monthNow == 6 and dayNow <= 12 and dayNow >= 1:
+	elif yearNow == 2016 and monthNow == 6 and dayNow <= 19 and dayNow >= 1:
 		return True
 	else:
 		return False
