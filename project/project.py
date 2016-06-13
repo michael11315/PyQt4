@@ -780,6 +780,9 @@ class betRecord():
 		
 		return {'lastSugBig': lastSugBig,'lastSugBig_sum': lastSugBig_sum, 'lastSugEye': lastSugEye, 'lastSugSma': lastSugSma, 'lastSugPen': lastSugPen}
 	
+	def getSugList(self):
+		return [self.betSugBig[-1], self.betSugEye[-1], self.betSugSma[-1], self.betSugPen[-1]]
+	
 	def sumBetInSugBig(self, Big, SugBig, SugEye, SugSma, SugPen):
 		if Big[0] == 0 and Big[1] == 0:
 			return SugBig
@@ -1001,9 +1004,6 @@ class betRecord():
 				sum += entry
 		
 		return sum
-	
-	def getLastSugList(self):
-		return [self.betSugBig[-1], self.betSugEye[-1], self.betSugSma[-1], self.betSugPen[-1]]
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -1617,7 +1617,7 @@ class GridWindow(QWidget):
 		
 		self.libet_qframe.setStyleSheet('''.QFrame {background-color: white; border: 0px;} .QLabel {background-color: white;}''')
 		
-		self.libet_gl.setSpacing(2)
+		self.libet_gl.setSpacing(0)
 		self.libet_gl.setMargin(0)
 		
 		self.ibet_qlabel_banker1.setText(self.tr('莊'))
@@ -2179,21 +2179,22 @@ class GridWindow(QWidget):
 			self.connect_lbar_btn(i)
 	
 	def update_lbar(self):
-		lbar_color = []
+		check_color = []
 		try:
-			img = self.betRecord.getLastSugList()[0][2]
-			if img != -1:
+			sugList = self.betRecord.getSugList()
+			sugList_img = [sugList[0][2], sugList[1][2], sugList[2][2], sugList[3][2]]
+			if sugList_img[0] != -1:
 				# predict next status
 				ret = self.betRecord.predictNextStatus()
 				
-				lbar_color.append(img)
-				lbar_color.append(ret['nextStatus'][img][0])
-				lbar_color.append(ret['nextStatus'][img][1])
-				lbar_color.append(ret['nextStatus'][img][2])
+				check_color.append(sugList_img[0])
+				check_color.append(ret['nextStatus'][sugList_img[0]][0])
+				check_color.append(ret['nextStatus'][sugList_img[0]][1])
+				check_color.append(ret['nextStatus'][sugList_img[0]][2])
 			else:
-				lbar_color = [-1, -1, -1, -1]
+				check_color = [-1, -1, -1, -1]
 		except:
-			lbar_color = [-1, -1, -1, -1]
+			check_color = [-1, -1, -1, -1]
 		
 		for i in range(4):
 			# reset lbar
@@ -2202,21 +2203,27 @@ class GridWindow(QWidget):
 			self.binp_qframe[i].close()
 			
 			# change lbar color and text
-			if lbar_color[0] == 0:
-				self.lbar_qlabel[i].setText(self.tr('莊'))
+			if sugList_img[i] == 0:
+				if check_color[i] == check_color[0]:
+					self.lbar_qlabel[i].setText(self.tr('莊'))
+				else:
+					self.lbar_qlabel[i].setText(self.tr('閒'))
 			else:
-				self.lbar_qlabel[i].setText(self.tr('閒'))
+				if check_color[i] == check_color[0]:
+					self.lbar_qlabel[i].setText(self.tr('閒'))
+				else:
+					self.lbar_qlabel[i].setText(self.tr('莊'))
 			
-			if lbar_color[i] == 0:
+			if sugList_img[i] == 0:
 				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
-			elif lbar_color[i] == 1:
+			elif sugList_img[i] == 1:
 				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 			else:
 				self.lbar_qlabel[i].setText('')
 				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;}''')
 			
 			# change number input color
-			if lbar_color[0] == lbar_color[i]:
+			if check_color[i] == check_color[0]:
 				self.binp_btn10[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(255, 47, 61); color: white;}''' % self.sizeFontSize_Label)
 				self.binp_btn11[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(116, 106, 255); color: white;}''' % self.sizeFontSize_Label)
 			else:
