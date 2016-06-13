@@ -1802,7 +1802,7 @@ class GridWindow(QWidget):
 		
 		# initail bet inning count area in UIcreate_BetStatus
 		#----------------------------------------------------
-		#clickable(self.libet_qframe).connect(self.connect_libet_qframe)
+		clickable(self.libet_qframe).connect(self.connect_libet_qframe)
 		
 		# initail push button area in UIcreate_BetStatus
 		#----------------------------------------------------
