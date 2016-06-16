@@ -108,6 +108,7 @@ class betRecord():
 			self.mapEye.append(tmp2)
 			self.mapSma.append(tmp3)
 			self.mapPen.append(tmp4)
+		self.map = [self.mapBig, self.mapEye, self.mapSma, self.mapPen]
 		
 		self.betSugBig = []
 		self.betSugBig_sum = []
@@ -926,6 +927,28 @@ class betRecord():
 		
 		return (row, col, img, bet), (erase_row, rease_col), SugBig_sum, SugBig_sum_otherimg
 	
+	def getPossibleSugPosition(self):
+		PossibleSugPosition = []
+		for i in range(4):
+			SugPosition = []
+			for img in range(2):
+				row, col = -1, -1
+				lastBet = self.record[i][-1]
+				if img == lastBet[2]:
+					sugBig = self.PosNext(self.map[i], lastBet[0], lastBet[1], lastBet[2])
+					row = sugBig[0]
+					col = sugBig[1]
+				else:
+					sugBig = self.PosChangeCol(self.map[i], img)
+					row = sugBig[0]
+					col = sugBig[1]
+				
+				SugPosition.append((row, col))
+			
+			PossibleSugPosition.append(SugPosition)
+		
+		return PossibleSugPosition
+	
 	def gameIsBegin(self):
 		if len(self.recordBig) == 0:
 			return False
@@ -1055,7 +1078,7 @@ class GridWindow(QWidget):
 	
 	def globalValue(self):
 		self.betRecord = betRecord()
-		self.sugListForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
+		self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 		self.recordHtml_list = []
 	
 	def sizeDefine(self):
@@ -1802,7 +1825,15 @@ class GridWindow(QWidget):
 		
 		# initail bet inning count area in UIcreate_BetStatus
 		#----------------------------------------------------
-		clickable(self.libet_qframe).connect(self.connect_libet_qframe)
+		#clickable(self.libet_qframe).connect(self.connect_libet_qframe)
+		clickable(self.ibet_qlabel_banker1).connect(functools.partial(self.connect_libet_qframe, 0))
+		clickable(self.ibet_qlabel_banker2).connect(functools.partial(self.connect_libet_qframe, 0))
+		clickable(self.ibet_qlabel_banker3).connect(functools.partial(self.connect_libet_qframe, 0))
+		clickable(self.ibet_qlabel_banker4).connect(functools.partial(self.connect_libet_qframe, 0))
+		clickable(self.ibet_qlabel_player1).connect(functools.partial(self.connect_libet_qframe, 1))
+		clickable(self.ibet_qlabel_player2).connect(functools.partial(self.connect_libet_qframe, 1))
+		clickable(self.ibet_qlabel_player3).connect(functools.partial(self.connect_libet_qframe, 1))
+		clickable(self.ibet_qlabel_player4).connect(functools.partial(self.connect_libet_qframe, 1))
 		
 		# initail push button area in UIcreate_BetStatus
 		#----------------------------------------------------
@@ -1952,7 +1983,8 @@ class GridWindow(QWidget):
 		
 		webbrowser.open_new(url)
 	
-	def connect_libet_qframe(self):
+	def connect_libet_qframe(self, img):
+		'''
 		for i in range(4):
 			row = self.sugListForMovie[i][0]
 			col = self.sugListForMovie[i][1]
@@ -1965,6 +1997,28 @@ class GridWindow(QWidget):
 				elif self.grid_qlabelList[i][row][col].movie().state() == 2:
 					self.grid_qlabelList[i][row][col].movie().stop()
 					self.grid_qlabelList[i][row][col].movie().jumpToFrame(0)
+		'''
+		nextStatus = self.betRecord.predictNextStatus().get('nextStatus')
+		PossibleSugPosition = self.betRecord.getPossibleSugPosition()
+		
+		self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
+		
+		for i in range(4):
+			row = PossibleSugPosition[i][img][0]
+			col = PossibleSugPosition[i][img][1]
+			tmp_img = img
+			if i != 0:
+				tmp_img = nextStatus[img][i-1]
+			if row == 0 and col == 0:
+				row = -1
+				col = -1
+			
+			self.listForMovie.pop(i)
+			self.listForMovie.insert(i, (row, col, tmp_img, 0))
+			
+			self.changeGridGif(i, row, col, tmp_img)
+		
+		self.restartGridGif()
 	
 	def connect_pbet_qlabel(self, winner):
 		self.controlGridGif()
@@ -1984,8 +2038,8 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].movie().stop()
 			
 			showSugList = [ret.get('SugBig'), ret.get('SugEye'), ret.get('SugSma'), ret.get('SugPen')]
-			if winner != Tie:
-				self.sugListForMovie = copy.deepcopy(showSugList)
+			#if winner != Tie:
+				#self.sugListForMovie = copy.deepcopy(showSugList)
 			for i in range(4):
 				row = showSugList[i][0]
 				col = showSugList[i][1]
@@ -2060,7 +2114,8 @@ class GridWindow(QWidget):
 		self.update_rbar()
 		self.update_bbet()
 		self.update_ibet()
-		self.controlGridGif(True)
+		#self.controlGridGif(True)
+		self.controlGridGif()
 	
 	def connect_pbet_btn(self):
 		self.controlGridGif()
@@ -2090,7 +2145,7 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].movie().stop()
 			
 			ShowLastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
-			self.sugListForMovie = copy.deepcopy(ShowLastSugList)
+			#self.sugListForMovie = copy.deepcopy(ShowLastSugList)
 			for i in range(4):
 				row = ShowLastSugList[i][0]
 				col = ShowLastSugList[i][1]
@@ -2142,7 +2197,8 @@ class GridWindow(QWidget):
 		self.update_rbar()
 		self.update_bbet()
 		self.update_ibet()
-		self.controlGridGif(True)
+		#self.controlGridGif(True)
+		self.controlGridGif()
 	
 	def connect_binp_btn(self, i, number):
 		ret = self.betRecord.predictNextStatus()
@@ -2419,19 +2475,30 @@ class GridWindow(QWidget):
 		bet = SugBig_sum[3]
 		self.update_nbet(img, bet)
 		
-		self.sugListForMovie.pop(i)
-		self.sugListForMovie.insert(i, retSug)
+		#self.sugListForMovie.pop(i)
+		#self.sugListForMovie.insert(i, retSug)
 		
 		self.controlGridGif(True)
 		self.restartGridGif()
+		#self.controlGridGif()
+	
+	def changeGridGif(self, i, row, col, img):
+		self.controlGridGif()
+		if row >= 0 and col >= 0:
+			self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
+			self.grid_qlabelList[i][row][col].movie().start()
+			self.grid_qlabelList[i][row][col].movie().stop()
+		
+		self.controlGridGif(True)
+		self.controlGridGif()
 	
 	# control about sug GridGif
 	def controlGridGif(self, control = False):
 		for i in range(4):
-			row = self.sugListForMovie[i][0]
-			col = self.sugListForMovie[i][1]
-			bet = self.sugListForMovie[i][3]
-			if row >= 0 and col >= 0 and bet > 0:
+			row = self.listForMovie[i][0]
+			col = self.listForMovie[i][1]
+			bet = self.listForMovie[i][3]
+			if row >= 0 and col >= 0:
 				self.grid_qlabelList[i][row][col].movie().stop()
 				self.grid_qlabelList[i][row][col].movie().jumpToFrame(0)
 				if control:
@@ -2443,18 +2510,21 @@ class GridWindow(QWidget):
 		self.controlGridGif()
 		
 		for i in range(4):
-			row = self.sugListForMovie[i][0]
-			col = self.sugListForMovie[i][1]
-			img = self.sugListForMovie[i][2]
-			bet = self.sugListForMovie[i][3]
+			row = self.listForMovie[i][0]
+			col = self.listForMovie[i][1]
+			img = self.listForMovie[i][2]
+			bet = self.listForMovie[i][3]
 			if row >= 0 and col >= 0:
-				self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
+				self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+																								color: black; font-weight: bold; font-size: %dpt;}''' % self.sizeFontSize_Grid)
+				'''
 				if bet == 0:
 					self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
 					self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
 				else:
 					self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
 					self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
+				'''
 				
 				self.grid_qlabelList[i][row][col].movie().start()
 				self.grid_qlabelList[i][row][col].movie().stop()
