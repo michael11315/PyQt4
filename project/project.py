@@ -1998,17 +1998,19 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].movie().stop()
 					self.grid_qlabelList[i][row][col].movie().jumpToFrame(0)
 		'''
+		self.controlGridGif()
 		nextStatus = self.betRecord.predictNextStatus().get('nextStatus')
 		PossibleSugPosition = self.betRecord.getPossibleSugPosition()
 		
 		self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 		
 		for i in range(4):
-			row = PossibleSugPosition[i][img][0]
-			col = PossibleSugPosition[i][img][1]
 			tmp_img = img
 			if i != 0:
 				tmp_img = nextStatus[img][i-1]
+			
+			row = PossibleSugPosition[i][tmp_img][0]
+			col = PossibleSugPosition[i][tmp_img][1]
 			if row == 0 and col == 0:
 				row = -1
 				col = -1
@@ -2104,7 +2106,6 @@ class GridWindow(QWidget):
 		elif ret.get('status') == Need_Enter_First:
 			pass
 		elif ret.get('status') == First_Tie:
-			print 'First_Tie'
 			self.grid_qlabelList[0][0][0].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 																								border: 1px solid green;}''')
 		elif ret.get('status') == Still_First_Tie:
@@ -2251,6 +2252,7 @@ class GridWindow(QWidget):
 				check_color = [-1, -1, -1, -1]
 		except:
 			check_color = [-1, -1, -1, -1]
+			sugList_img = [-1, -1, -1, -1]
 		
 		for i in range(4):
 			# reset lbar
@@ -2488,9 +2490,6 @@ class GridWindow(QWidget):
 			self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
 			self.grid_qlabelList[i][row][col].movie().start()
 			self.grid_qlabelList[i][row][col].movie().stop()
-		
-		self.controlGridGif(True)
-		self.controlGridGif()
 	
 	# control about sug GridGif
 	def controlGridGif(self, control = False):
@@ -2609,7 +2608,7 @@ def onTrail():
 	
 	if yearNow == 2016 and monthNow == 5 and dayNow <= 31 and dayNow >= 30:
 		return True
-	elif yearNow == 2016 and monthNow == 6 and dayNow <= 19 and dayNow >= 1:
+	elif yearNow == 2016 and monthNow == 6 and dayNow <= 25 and dayNow >= 1:
 		return True
 	else:
 		return False
