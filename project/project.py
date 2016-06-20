@@ -1351,13 +1351,15 @@ class GridWindow(QWidget):
 		self.pbet_qlabel2 = QLabel(self.pbet_qframe)
 		self.pbet_qlabel3 = QLabel(self.pbet_qframe)
 		self.pbet_btn = QPushButton(self.pbet_qframe)
+		self.pbet_btn_allcut = QPushButton(self.pbet_qframe)
 		
 		# set relationship
 		self.pbet_qframe.setLayout(self.pbet_gl)
-		self.pbet_gl.addWidget(self.pbet_qlabel1, 0, 0, 2, 1)
-		self.pbet_gl.addWidget(self.pbet_qlabel2, 0, 1, 2, 1)
-		self.pbet_gl.addWidget(self.pbet_qlabel3, 0, 2, 2, 1)
+		self.pbet_gl.addWidget(self.pbet_qlabel1, 0, 0, 2, 2)
+		self.pbet_gl.addWidget(self.pbet_qlabel2, 0, 2, 2, 2)
+		self.pbet_gl.addWidget(self.pbet_qlabel3, 0, 4, 2, 2)
 		self.pbet_gl.addWidget(self.pbet_btn, 2, 0, 1, 3, Qt.AlignCenter)
+		self.pbet_gl.addWidget(self.pbet_btn_allcut, 2, 3, 1, 3, Qt.AlignCenter)
 		self.bet_vl.addWidget(self.pbet_qframe)
 		
 		# bet record area
@@ -1699,6 +1701,12 @@ class GridWindow(QWidget):
 		self.pbet_btn.setFixedWidth(90)
 		self.pbet_btn.setFixedHeight(30)
 		
+		self.pbet_btn_allcut.setText(self.tr('全切'))
+		self.pbet_btn_allcut.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
+		self.pbet_btn_allcut.setSizePolicy(self.sizePolicy)
+		self.pbet_btn_allcut.setFixedWidth(90)
+		self.pbet_btn_allcut.setFixedHeight(30)
+		
 		
 		# bet record area
 		#--------------------------
@@ -1841,6 +1849,8 @@ class GridWindow(QWidget):
 		clickable(self.pbet_qlabel2).connect(functools.partial(self.connect_pbet_qlabel, Tie))
 		clickable(self.pbet_qlabel3).connect(functools.partial(self.connect_pbet_qlabel, Player))
 		self.pbet_btn.clicked.connect(self.connect_pbet_btn)
+		self.pbet_btn_allcut.clicked.connect(self.connect_pbet_btn_allcut)
+		
 		
 		# initail UIcreate_numberInput
 		#----------------------------------------------------
@@ -2200,6 +2210,13 @@ class GridWindow(QWidget):
 		self.update_ibet()
 		#self.controlGridGif(True)
 		self.controlGridGif()
+	
+	# cut stop all
+	def connect_pbet_btn_allcut(self):
+		LastCutStopStatus = self.betRecord.getLastCutStopStatus()
+		for i in range(4):
+			if not LastCutStopStatus[i]:
+				self.connect_rbar_btn(i)
 	
 	def connect_binp_btn(self, i, number):
 		ret = self.betRecord.predictNextStatus()
