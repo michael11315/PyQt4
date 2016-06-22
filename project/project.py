@@ -87,7 +87,7 @@ class betRecord():
 		
 		# count continuous times for Eye, Sma, Pen
 		self.countBig = []
-		for i in range(column_size):
+		for i in range(column_size + 1):
 			self.countBig.append(0)
 		
 		self.mapBig = []
@@ -99,7 +99,7 @@ class betRecord():
 			tmp2 = []
 			tmp3 = []
 			tmp4 = []
-			for col in range(column_size):
+			for col in range(column_size + 1):
 				tmp.append(-1)
 				tmp2.append(-1)
 				tmp3.append(-1)
@@ -371,15 +371,12 @@ class betRecord():
 		else:
 			img = 0
 		
-		for col in range(column_size):
+		for col in range(column_size + 1):
 			if map[0][col] == -1:
 				return (0, col, img)
 	
 	def backOneStep(self):
 		if len(self.recordAll) != 0:
-			if self.EndGame:
-				self.EndGame == False
-			
 			winner = self.recordAll.pop()
 			self.countResult[winner] -= 1
 			if winner != Tie:
@@ -1070,6 +1067,9 @@ class betRecord():
 				sum += entry
 		
 		return sum
+	
+	def changeEndGameToFalse(self):
+		self.EndGame = False
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -2182,6 +2182,7 @@ class GridWindow(QWidget):
 	def connect_pbet_btn(self):
 		self.controlGridGif()
 		ret = self.betRecord.backOneStep()
+		self.betRecord.changeEndGameToFalse()
 		if ret.get('status') == 0:
 			removeList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
 			
