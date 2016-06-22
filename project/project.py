@@ -484,7 +484,7 @@ class betRecord():
 			elif betSug[i][-1][2] == -1:
 				betStatus[i].append(-1)
 				betCount[i].append(betCount[i][-1])
-			elif bet[i][2] == betSug_origin[i][-1][2] and betSug_origin[i][-1][3] != 0:
+			elif bet[i][2] == betSug_origin[i][-1][2] and betSug[i][-1][3] != 0:
 				betStatus[i].append(0)
 				if LastCutStopStatus[i]:
 					betCount[i].append(0)
@@ -493,7 +493,7 @@ class betRecord():
 						betCount[i].append(betCount[i][-1] + betSug[i][-1][3])
 					else:
 						betCount[i].append(betCount[i][-1] - betSug[i][-1][3])
-			elif bet[i][2] != betSug_origin[i][-1][2] and betSug_origin[i][-1][3] != 0:
+			elif bet[i][2] != betSug_origin[i][-1][2] and betSug[i][-1][3] != 0:
 				betStatus[i].append(1)
 				if LastCutStopStatus[i]:
 					betCount[i].append(0)
@@ -1092,7 +1092,8 @@ class GridWindow(QWidget):
 		self.welcomeBaccarat()
 		
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-		UI_width = 1169 + (column_size - 30) * 31
+		UI_width = 239 + column_size * (self.Width_Grid + 1)
+		#print UI_width
 		UI_height = 683
 		self.setFixedSize(UI_width, UI_height)
 		print self.sizeHint()
