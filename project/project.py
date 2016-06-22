@@ -56,6 +56,7 @@ Back_From_Tie = 1
 Still_Tie = 2
 No_Back = 5
 Need_Enter_First = 10
+Game_End = 11
 First_Tie = 20
 Still_First_Tie = 21
 Back_Still_First_Tie = 22
@@ -157,6 +158,7 @@ class betRecord():
 		
 		self.principal = 0
 		self.startGame = False
+		self.EndGame = False
 		self.principalEntryList = []
 		
 		self.cutStopStatusBig = []
@@ -168,8 +170,11 @@ class betRecord():
 		self.firstTieTimes = 0
 	
 	def bet(self, winner, isPredict = False):
-		if self.startGame == False:
+		if not self.startGame:
 			return {'status': Need_Enter_First}
+		
+		if self.EndGame and not isPredict:
+			return {'status': Game_End}
 		
 		self.countResult[winner] += 1
 		if winner != Tie:
@@ -179,6 +184,10 @@ class betRecord():
 				Eye = retPos.get('Eye')
 				Sma = retPos.get('Sma')
 				Pen = retPos.get('Pen')
+				
+				if Big[1] == column_size - 1:
+					self.EndGame = True
+				
 				self.recordBig.append(Big)
 				self.recordEye.append(Eye)
 				self.recordSma.append(Sma)
@@ -368,6 +377,9 @@ class betRecord():
 	
 	def backOneStep(self):
 		if len(self.recordAll) != 0:
+			if self.EndGame:
+				self.EndGame == False
+			
 			winner = self.recordAll.pop()
 			self.countResult[winner] -= 1
 			if winner != Tie:
@@ -828,8 +840,38 @@ class betRecord():
 		return {'isBet': isBet, 'sameBet': sameBet, 'countBet': countBet}
 	
 	def manualChangeSug(self, i, img, bet, isManual):
+		betSug = [self.betSugBig, self.betSugEye, self.betSugSma, self.betSugPen]
+		
+		LastCutStopStatus = self.getLastCutStopStatus()
 		row, col = -1, -1
 		erase_row, rease_col = -1, -1
+		
+		if len(betSug[i]) != 0 and betSug[i][-1][3] != -1:
+			tmp = betSug[i].pop()
+			lastBet = self.record[i][-1]
+			if img == lastBet[2]:
+				sug = self.PosNext(self.map[i], lastBet[0], lastBet[1], lastBet[2])
+				row = sug[0]
+				col = sug[1]
+				erase_row = tmp[0]
+				rease_col = tmp[1]
+			else:
+				sug = self.PosChangeCol(self.map[i], img)
+				row = sug[0]
+				col = sug[1]
+				erase_row = tmp[0]
+				rease_col = tmp[1]
+			
+			if LastCutStopStatus[i]:
+				bet = 0
+			
+			betSug[i].append((row, col, img, bet))
+			
+			if not isManual:
+				self.betSugBig_origin.pop()
+				self.betSugBig_origin.append((row, col, img, bet))
+		
+		'''
 		if i == 0:
 			if len(self.betSugBig) != 0 and self.betSugBig[-1][3] != -1:
 				tmp = self.betSugBig.pop()
@@ -920,6 +962,7 @@ class betRecord():
 					self.betSugPen_origin.append((row, col, img, bet))
 		else:
 			pass
+		'''
 		
 		SugBig_sum = self.sumBetInSugBig(self.recordBig[-1], self.betSugBig[-1], self.betSugEye[-1], self.betSugSma[-1], self.betSugPen[-1])
 		SugBig_sum_otherimg = self.betSugBig_sum.pop()
@@ -1075,6 +1118,12 @@ class GridWindow(QWidget):
 				self.bbet_qlineedit.setReadOnly(True)
 			except:
 				continue
+	
+	def gameEndMessage(self):
+		msgBox = QMessageBox(self)
+		msgBox.setIcon(QMessageBox.Information)
+		msgBox.setText(self.tr('記錄已到上限，請另開新局'))
+		msgBox.exec_()
 	
 	def globalValue(self):
 		self.betRecord = betRecord()
@@ -2120,6 +2169,8 @@ class GridWindow(QWidget):
 																								border: 1px solid green;}''')
 		elif ret.get('status') == Still_First_Tie:
 			pass
+		elif ret.get('status') == Game_End:
+			self.gameEndMessage()
 		
 		self.update_lbar()
 		self.update_rbar()
