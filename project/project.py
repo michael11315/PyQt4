@@ -330,7 +330,7 @@ class betRecord():
 					Pen = self.PosChangeCol(self.mapPen, lastBet[2])
 		
 		if jump:
-			for i in range(29, 0, -1):
+			for i in range(column_size - 1, 0, -1):
 				self.countBig[i] = self.countBig[i-1]
 			self.countBig[0] = 1
 		
