@@ -64,7 +64,7 @@ Back_From_First_Tie = 23
 
 # UI grid size
 row_size = 6
-column_size = 30
+column_size = 47
 
 # TODO : handle overflow(when over 6*30)
 
@@ -1092,7 +1092,7 @@ class GridWindow(QWidget):
 		self.welcomeBaccarat()
 		
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-		UI_width = 239 + column_size * (self.Width_Grid + 1)
+		UI_width = 239 + column_size * (self.Width_Grid + 1) - 18
 		#print UI_width
 		UI_height = 683
 		self.setFixedSize(UI_width, UI_height)
@@ -1133,7 +1133,7 @@ class GridWindow(QWidget):
 	
 	def sizeDefine(self):
 		# special size define
-		self.Width_Grid = 30
+		self.Width_Grid = 23
 		self.Height_Grid = 23
 		self.Width_BetStatus = 215
 		self.Height_BetStatus_rbet_qscroll = 243
@@ -1504,7 +1504,7 @@ class GridWindow(QWidget):
 	def initialGlobalAttribute(self):
 		# initail global values of UIcreate
 		#----------------------------------------------------
-		self.UI_hl.setSpacing(10)
+		self.UI_hl.setSpacing(1)
 		self.UI_hl.setMargin(0)
 		self.left_vl.setSpacing(1)
 		self.left_vl.setMargin(0)
