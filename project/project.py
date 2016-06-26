@@ -2670,9 +2670,9 @@ def pressed(widget):
 	return filter.clicked
 
 def onTrail():
-	path = 'C:/ProgramData/recordMic'
+	path = 'C:/Python/recordMic'
 	if not os.path.exists(path):
-		os.mkdir(path)
+		os.makedirs(path)
 		with open(path + '/log', 'w') as file:
 			file.write('good 1 c')
 	else:
