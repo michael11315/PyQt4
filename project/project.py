@@ -484,7 +484,7 @@ class betRecord():
 			elif betSug[i][-1][2] == -1:
 				betStatus[i].append(-1)
 				betCount[i].append(betCount[i][-1])
-			elif bet[i][2] == betSug_origin[i][-1][2] and betSug[i][-1][3] != 0:
+			elif bet[i][2] == betSug_origin[i][-1][2] and (betSug[i][-1][3] != 0 or betSug_origin[i][-1][3]):
 				betStatus[i].append(0)
 				if LastCutStopStatus[i]:
 					betCount[i].append(0)
@@ -493,7 +493,7 @@ class betRecord():
 						betCount[i].append(betCount[i][-1] + betSug[i][-1][3])
 					else:
 						betCount[i].append(betCount[i][-1] - betSug[i][-1][3])
-			elif bet[i][2] != betSug_origin[i][-1][2] and betSug[i][-1][3] != 0:
+			elif bet[i][2] != betSug_origin[i][-1][2] and (betSug[i][-1][3] != 0 or betSug_origin[i][-1][3]):
 				betStatus[i].append(1)
 				if LastCutStopStatus[i]:
 					betCount[i].append(0)
@@ -1584,7 +1584,7 @@ class GridWindow(QWidget):
 			#self.rbar_qlabel1[i].setFixedWidth(self.sizeWidth_qlabel)
 			self.rbar_qlabel1[i].setFixedHeight(self.sizeHeight_qlabel)
 			
-			self.rbar_btn[i].setText(self.tr('切停'))
+			self.rbar_btn[i].setText(self.tr('停止'))
 			self.rbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 			self.rbar_btn[i].setSizePolicy(self.sizePolicy)
 			self.rbar_btn[i].setFixedWidth(self.sizeWidth_btn)
@@ -1803,10 +1803,10 @@ class GridWindow(QWidget):
 		
 		# initail global values of UIcreate_numberInput
 		#----------------------------------------------------
-		self.binp_qframe[0].setGeometry(QRect(345, 24, 180, 145))
-		self.binp_qframe[1].setGeometry(QRect(345, 195, 180, 145))
-		self.binp_qframe[2].setGeometry(QRect(345, 366, 180, 145))
-		self.binp_qframe[3].setGeometry(QRect(345, 537, 180, 145))
+		self.binp_qframe[0].setGeometry(QRect(486, 24, 180, 145))
+		self.binp_qframe[1].setGeometry(QRect(486, 195, 180, 145))
+		self.binp_qframe[2].setGeometry(QRect(486, 366, 180, 145))
+		self.binp_qframe[3].setGeometry(QRect(486, 537, 180, 145))
 		for i in range(4):
 			self.binp_qframe[i].setStyleSheet('''.QFrame {background-color: rgb(230, 230, 230); border: 1px solid gray;}
 												.QPushButton {font-size: %dpt; background-color: rgb(250, 250, 250);
@@ -1949,8 +1949,9 @@ class GridWindow(QWidget):
 	def connect_rbar_btn(self, i):
 		ret = self.betRecord.cutStop(i)
 		if ret:
-			if self.rbar_btn[i].text().toUtf8() == '切停':
+			if self.rbar_btn[i].text().toUtf8() == '停止':
 				self.rbar_btn[i].setText(self.tr('開始'))
+				self.rbar_btn[i].setStyleSheet('''.QPushButton {background-color: rgb(255, 255, 127); font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 				
 				# add black border on the grid
 				show = self.betRecord.lastShow(i)
@@ -1962,7 +1963,8 @@ class GridWindow(QWidget):
 				# change Sug to 0
 				self.changeSug(i, show[2], 0, False)
 			else:
-				self.rbar_btn[i].setText(self.tr('切停'))
+				self.rbar_btn[i].setText(self.tr('停止'))
+				self.rbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 				show = self.betRecord.lastShow(i)
 				self.changeSug(i, show[2], 1, False)
 			
@@ -2611,8 +2613,10 @@ class GridWindow(QWidget):
 		for i in range(4):
 			if LastCutStopStatus[i]:
 				self.rbar_btn[i].setText(self.tr('開始'))
+				self.rbar_btn[i].setStyleSheet('''.QPushButton {background-color: rgb(255, 255, 127); font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 			else:
-				self.rbar_btn[i].setText(self.tr('切停'))
+				self.rbar_btn[i].setText(self.tr('停止'))
+				self.rbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 			
 			style = str(self.grid_qlabelList[i][removeList[i][0]][removeList[i][1]].layout().itemAt(0).widget().styleSheet())
 			style = style.replace('{ border: 1px solid black;','{')
