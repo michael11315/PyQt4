@@ -1922,9 +1922,11 @@ class GridWindow(QWidget):
 	
 	def connect_lbar_btn(self, i):
 		if self.lbar_btn[i].text().toUtf8() == '手動':
-			self.lbar_btn[i].setText(self.tr(''))
-			self.lbar_qlineedit[i].setText('')
-			self.binp_qframe[i].show()
+			LastCutStopStatus = self.betRecord.getLastCutStopStatus()
+			if not LastCutStopStatus[i]:
+				self.lbar_btn[i].setText(self.tr(''))
+				self.lbar_qlineedit[i].setText('')
+				self.binp_qframe[i].show()
 		else:
 			self.lbar_btn[i].setText(self.tr('手動'))
 			if self.betRecord.gameIsBegin():
@@ -1968,6 +1970,7 @@ class GridWindow(QWidget):
 				show = self.betRecord.lastShow(i)
 				self.changeSug(i, show[2], 1, False)
 			
+			self.update_lbar()
 			self.update_rbar()
 			self.update_nbet(-1, -1)
 	
