@@ -484,8 +484,12 @@ class betRecord():
 			elif betSug[i][-1][2] == -1:
 				betStatus[i].append(-1)
 				betCount[i].append(betCount[i][-1])
-			elif bet[i][2] == betSug_origin[i][-1][2] and (betSug[i][-1][3] != 0 or betSug_origin[i][-1][3]):
-				betStatus[i].append(0)
+			elif bet[i][2] == betSug_origin[i][-1][2] and (betSug[i][-1][3] != 0 or betSug_origin[i][-1][3] != 0):
+				if betSug_origin[i][-1][3] == 0:
+					betStatus[i].append(-1)
+				else:
+					betStatus[i].append(0)
+				
 				if LastCutStopStatus[i]:
 					betCount[i].append(0)
 				else:
@@ -493,8 +497,12 @@ class betRecord():
 						betCount[i].append(betCount[i][-1] + betSug[i][-1][3])
 					else:
 						betCount[i].append(betCount[i][-1] - betSug[i][-1][3])
-			elif bet[i][2] != betSug_origin[i][-1][2] and (betSug[i][-1][3] != 0 or betSug_origin[i][-1][3]):
-				betStatus[i].append(1)
+			elif bet[i][2] != betSug_origin[i][-1][2] and (betSug[i][-1][3] != 0 or betSug_origin[i][-1][3] != 0):
+				if betSug_origin[i][-1][3] == 0:
+					betStatus[i].append(-1)
+				else:
+					betStatus[i].append(1)
+				
 				if LastCutStopStatus[i]:
 					betCount[i].append(0)
 				else:
