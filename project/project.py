@@ -838,6 +838,7 @@ class betRecord():
 	
 	def manualChangeSug(self, i, img, bet, isManual):
 		betSug = [self.betSugBig, self.betSugEye, self.betSugSma, self.betSugPen]
+		betSug_origin = [self.betSugBig_origin, self.betSugEye_origin, self.betSugSma_origin, self.betSugPen_origin]
 		
 		LastCutStopStatus = self.getLastCutStopStatus()
 		row, col = -1, -1
@@ -865,8 +866,8 @@ class betRecord():
 			betSug[i].append((row, col, img, bet))
 			
 			if not isManual:
-				self.betSugBig_origin.pop()
-				self.betSugBig_origin.append((row, col, img, bet))
+				betSug_origin[i].pop()
+				betSug_origin[i].append((row, col, img, bet))
 		
 		'''
 		if i == 0:
