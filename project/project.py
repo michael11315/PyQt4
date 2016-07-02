@@ -689,6 +689,8 @@ class betRecord():
 		# if cut stop now, sugBet still 0
 		if LastCutStopStatus[0]:
 			sugBigBet = 0
+			if Big[0] == -1 and Big[1] == -1:
+				sugBigBet = -1
 			SugBig = (SugBig[0], SugBig[1], SugBig[2], sugBigBet)
 		
 		# SugEye
@@ -717,6 +719,8 @@ class betRecord():
 		# if cut stop now, sugBet still 0
 		if LastCutStopStatus[1]:
 			sugEyeBet = 0
+			if Eye[0] == -1 and Eye[1] == -1:
+				sugEyeBet = -1
 			SugEye = (SugEye[0], SugEye[1], SugEye[2], sugEyeBet)
 		
 		# SugSma
@@ -745,6 +749,8 @@ class betRecord():
 		# if cut stop now, sugBet still 0
 		if LastCutStopStatus[2]:
 			sugSmaBet = 0
+			if Sma[0] == -1 and Sma[1] == -1:
+				sugSmaBet = -1
 			SugSma = (SugSma[0], SugSma[1], SugSma[2], sugSmaBet)
 		
 		# SugPen
@@ -773,6 +779,8 @@ class betRecord():
 		# if cut stop now, sugBet still 0
 		if LastCutStopStatus[3]:
 			sugPenBet = 0
+			if Pen[0] == -1 and Pen[1] == -1:
+				sugPenBet = -1
 			SugPen = (SugPen[0], SugPen[1], SugPen[2], sugPenBet)
 		
 		return {'SugBig': SugBig, 'SugEye': SugEye, 'SugSma': SugSma, 'SugPen': SugPen}
@@ -853,6 +861,7 @@ class betRecord():
 		erase_row, rease_col = -1, -1
 		
 		if len(betSug[i]) != 0 and betSug[i][-1][3] != -1:
+			print betSug[i][-1]
 			tmp = betSug[i].pop()
 			lastBet = self.record[i][-1]
 			if img == lastBet[2]:
@@ -2725,7 +2734,7 @@ def onTrail():
 	
 	if yearNow == 2016 and monthNow == 6 and dayNow <= 30 and dayNow >= 26:
 		return True
-	elif yearNow == 2016 and monthNow == 7 and dayNow <= 3 and dayNow >= 1:
+	elif yearNow == 2016 and monthNow == 7 and dayNow <= 10 and dayNow >= 1:
 		return True
 	else:
 		if os.path.exists(path):
