@@ -66,7 +66,8 @@ Back_From_First_Tie = 23
 row_size = 6
 column_size = 47
 
-# TODO : handle overflow(when over 6*30)
+# start time
+startTime = ''
 
 class betRecord():
 	def __init__(self):
@@ -1088,6 +1089,44 @@ class betRecord():
 	
 	def changeEndGameToFalse(self):
 		self.EndGame = False
+	
+	def logRecord(self):
+		self.recordAll = []
+		self.recordBig = []
+		self.recordEye = []
+		self.recordSma = []
+		self.recordPen = []
+		self.mapBig = []
+		self.mapEye = []
+		self.mapSma = []
+		self.mapPen = []
+		
+		path = 'log'
+		if not os.path.exists(path):
+			os.makedirs(path)
+		
+		filename = path + '/%s.record' % startTime
+		timeNow = time.strftime('%Y%m%d %H:%M:%S', time.localtime(time.time()))
+		with open(filename, 'a') as file:
+			file.write('[%s] %s\n' % (timeNow))
+			
+			record = [self.recordAll, self.recordBig, self.recordEye, self.recordSma, self.recordPen]
+			note = ['recordAll',  'recordBig', 'recordEye', 'recordSma', 'recordPen']
+			
+			for i in range(5):
+				file.write('	%s\n' % note[i])
+				count = 0
+				for entry in record[i]:
+					if count == 0:
+						file.write('		')
+					if count < 10:
+						file.write(str(entry) + ' ')
+						count += 1
+					if count == 10:
+						file.write('\n')
+						count = 0
+		
+		pass
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -1098,6 +1137,10 @@ class GridWindow(QWidget):
 		self.left_vl = QVBoxLayout(self.left_qframe)
 		self.bet_qframe = QFrame(self)
 		self.bet_vl = QVBoxLayout(self.bet_qframe)
+		
+		# for log
+		global startTime
+		startTime = time.strftime('%Y%m%d %H-%M-%S', time.localtime(time.time()))
 		
 		# on trail version
 		ret = onTrail()
@@ -2726,21 +2769,33 @@ def onTrail():
 			if not fine:
 				return False
 	
-	timeNow = time.strftime("%Y %m %d %H", time.localtime(time.time())).split()
+	timeNow = time.strftime('%Y %m %d %H', time.localtime(time.time())).split()
 	yearNow = int(timeNow[0])
 	monthNow = int(timeNow[1])
 	dayNow = int(timeNow[2])
 	hourNow = int(timeNow[3])
 	
-	if yearNow == 2016 and monthNow == 6 and dayNow <= 30 and dayNow >= 26:
-		return True
-	elif yearNow == 2016 and monthNow == 7 and dayNow <= 10 and dayNow >= 1:
+	if yearNow == 2016 and monthNow == 7 and dayNow <= 20 and dayNow >= 1:
 		return True
 	else:
 		if os.path.exists(path):
 			with open(path + '/log', 'w') as file:
 				file.write('good 10000 r')
 		return False
+
+def log(msg):
+	try:
+		path = 'log'
+		if not os.path.exists(path):
+			os.makedirs(path)
+		
+		filename = path + '/%s.log' % startTime
+		print filename
+		timeNow = time.strftime('%Y%m%d %H:%M:%S', time.localtime(time.time()))
+		with open(filename, 'a') as file:
+			file.write('[%s] %s\n' % (timeNow, str(msg)))
+	except:
+		pass
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)
