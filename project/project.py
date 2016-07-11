@@ -95,7 +95,7 @@ class betRecord():
 		self.mapEye = []
 		self.mapSma = []
 		self.mapPen = []
-		for row in range(6):
+		for row in range(row_size):
 			tmp = []
 			tmp2 = []
 			tmp3 = []
@@ -117,7 +117,7 @@ class betRecord():
 		self.betSugEye = []
 		self.betSugSma = []
 		self.betSugPen = []
-		# for manualChangeSug, neet betSug*_origin to record origin betSug
+		# for manualChangeSug, need betSug*_origin to record origin betSug
 		self.betSugBig_origin = []
 		self.betSugEye_origin = []
 		self.betSugSma_origin = []
@@ -186,7 +186,7 @@ class betRecord():
 				Sma = retPos.get('Sma')
 				Pen = retPos.get('Pen')
 				
-				if Big[1] == column_size - 1:
+				if Big[1] == column_size - 1 or  Eye[1] == column_size - 1 or  Sma[1] == column_size - 1 or  Pen[1] == column_size - 1:
 					self.EndGame = True
 				
 				self.recordBig.append(Big)
@@ -862,7 +862,6 @@ class betRecord():
 		erase_row, rease_col = -1, -1
 		
 		if len(betSug[i]) != 0 and betSug[i][-1][3] != -1:
-			print betSug[i][-1]
 			tmp = betSug[i].pop()
 			lastBet = self.record[i][-1]
 			if img == lastBet[2]:
@@ -1091,16 +1090,6 @@ class betRecord():
 		self.EndGame = False
 	
 	def logRecord(self):
-		self.recordAll = []
-		self.recordBig = []
-		self.recordEye = []
-		self.recordSma = []
-		self.recordPen = []
-		self.mapBig = []
-		self.mapEye = []
-		self.mapSma = []
-		self.mapPen = []
-		
 		path = 'log'
 		if not os.path.exists(path):
 			os.makedirs(path)
@@ -1108,25 +1097,67 @@ class betRecord():
 		filename = path + '/%s.record' % startTime
 		timeNow = time.strftime('%Y%m%d %H:%M:%S', time.localtime(time.time()))
 		with open(filename, 'a') as file:
-			file.write('[%s] %s\n' % (timeNow))
+			file.write('[%s]\n' % (timeNow))
+			
+			map = [self.mapBig, self.mapEye, self.mapSma, self.mapPen]
+			note_map = ['mapBig', 'mapEye', 'mapSma', 'mapPen']
+			for i in range(4):
+				file.write('	%s\n' % note_map[i])
+				for map_row in map[i]:
+						file.write('		')
+						for entry in map_row:
+							if entry != -1:
+								file.write(' ' + str(entry) + ' ')
+							else:
+								file.write(str(entry) + ' ')
+						file.write('\n')
 			
 			record = [self.recordAll, self.recordBig, self.recordEye, self.recordSma, self.recordPen]
-			note = ['recordAll',  'recordBig', 'recordEye', 'recordSma', 'recordPen']
-			
+			note_record = ['recordAll',  'recordBig', 'recordEye', 'recordSma', 'recordPen']
 			for i in range(5):
-				file.write('	%s\n' % note[i])
+				file.write('	%s\n' % note_record[i])
 				count = 0
 				for entry in record[i]:
 					if count == 0:
 						file.write('		')
-					if count < 10:
-						file.write(str(entry) + ' ')
-						count += 1
-					if count == 10:
-						file.write('\n')
-						count = 0
-		
-		pass
+					
+					file.write(str(entry) + ' ')
+					count += 1
+					
+					if count%10 == 0:
+						if count != len(record[i]):
+							file.write('\n')
+							file.write('		')
+						else:
+							file.write('\n')
+					else:
+						if count == len(record[i]):
+							file.write('\n')
+			
+			betSug = [self.betSugBig_sum, self.betSugBig, self.betSugEye, self.betSugSma, self.betSugPen]
+			note_betSug = ['betSugBig_sum', 'betSugBig', 'betSugEye', 'betSugSma', 'betSugPen']
+			
+			for i in range(5):
+				file.write('	[%s]\n' % note_betSug[i])
+				count = 0
+				for entry in betSug[i]:
+					if count == 0:
+						file.write('		')
+						
+					file.write(str(entry) + ' ')
+					count += 1
+					
+					if count%10 == 0:
+						if count != len(betSug[i]):
+							file.write('\n')
+							file.write('		')
+						else:
+							file.write('\n')
+					else:
+						if count == len(betSug[i]):
+							file.write('\n')
+			
+			file.write('\n')
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -1152,12 +1183,14 @@ class GridWindow(QWidget):
 		self.UIcreate()
 		self.welcomeBaccarat()
 		
+		self.logGame('start game')
+		
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
 		UI_width = 239 + column_size * (self.Width_Grid + 1) - 18
 		#print UI_width
 		UI_height = 683
 		self.setFixedSize(UI_width, UI_height)
-		print self.sizeHint()
+		#print self.sizeHint()
 		self.vline.setFixedHeight(self.sizeHint().height()-10)
 		
 		self.testFunc()
@@ -2005,6 +2038,7 @@ class GridWindow(QWidget):
 							img = ret['nextStatus'][img][i-1]
 					
 					self.changeSug(i, img, bet, True)
+					self.logGame('手動: (road = %d, img = %d, bet = %d)' % (i, img, bet))
 			
 			self.binp_qframe[i].close()
 	
@@ -2013,6 +2047,7 @@ class GridWindow(QWidget):
 		ret = self.betRecord.cutStop(i)
 		if ret:
 			if self.rbar_btn[i].text().toUtf8() == '停止':
+				self.logGame('停止: road = %d' %i)
 				self.rbar_btn[i].setText(self.tr('開始'))
 				self.rbar_btn[i].setStyleSheet('''.QPushButton {background-color: rgb(255, 255, 127); font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 				
@@ -2026,6 +2061,7 @@ class GridWindow(QWidget):
 				# change Sug to 0
 				self.changeSug(i, show[2], 0, False)
 			else:
+				self.logGame('開始: road = %d' %i)
 				self.rbar_btn[i].setText(self.tr('停止'))
 				self.rbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 				show = self.betRecord.lastShow(i)
@@ -2151,6 +2187,7 @@ class GridWindow(QWidget):
 	def connect_pbet_qlabel(self, winner):
 		self.controlGridGif()
 		ret = self.betRecord.bet(winner)
+		self.logGame('result:' + str(winner))
 		if ret.get('status') == 0:
 			lastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
 			for i in range(4):
@@ -2249,6 +2286,7 @@ class GridWindow(QWidget):
 	def connect_pbet_btn(self):
 		self.controlGridGif()
 		ret = self.betRecord.backOneStep()
+		self.logGame('back')
 		self.betRecord.changeEndGameToFalse()
 		if ret.get('status') == 0:
 			removeList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
@@ -2332,6 +2370,7 @@ class GridWindow(QWidget):
 	
 	# cut stop all
 	def connect_pbet_btn_allcut(self):
+		log('全切')
 		LastCutStopStatus = self.betRecord.getLastCutStopStatus()
 		for i in range(4):
 			if not LastCutStopStatus[i]:
@@ -2686,6 +2725,10 @@ class GridWindow(QWidget):
 			style = style.replace('{ border: 1px solid black;','{')
 			self.grid_qlabelList[i][removeList[i][0]][removeList[i][1]].layout().itemAt(0).widget().setStyleSheet('''%s'''%style)
 	
+	def logGame(self, msg):
+		log(msg)
+		self.betRecord.logRecord()
+	
 	# pos in the main widget
 	def mousePressEvent(self, QMouseEvent):
 		#print 'pos in the widget', QMouseEvent.pos()
@@ -2759,7 +2802,6 @@ def onTrail():
 		with open(path + '/log', 'r') as file:
 			fine = True
 			for line in file:
-				print line
 				if line.startswith('good'):
 					line = line.split()
 					if line[2] == 'r':
@@ -2790,7 +2832,6 @@ def log(msg):
 			os.makedirs(path)
 		
 		filename = path + '/%s.log' % startTime
-		print filename
 		timeNow = time.strftime('%Y%m%d %H:%M:%S', time.localtime(time.time()))
 		with open(filename, 'a') as file:
 			file.write('[%s] %s\n' % (timeNow, str(msg)))
