@@ -392,8 +392,9 @@ class betRecord():
 				
 				self.countBig[0] -= 1
 				if self.countBig[0] == 0:
-					for i in range(29):
+					for i in range(column_size):
 						self.countBig[i] = self.countBig[i+1]
+					self.countBig[-1] = 0
 				
 				lastSug = self.lastSugBet()
 				lastSugBig = lastSug.get('lastSugBig')
