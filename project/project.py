@@ -521,141 +521,12 @@ class betRecord():
 			else:
 				betSumCount[i].append(betSumCount[i][-1] + betCount[i][-1] - betCount[i][-2])
 		
-		'''
-		# bet count Big
-		if len(self.betSugBig) == 0:
-			self.betStatusBig.append(-1)
-			self.betCountBig.append(0)
-		elif Big[2] == -1:
-			self.betStatusBig.append(-1)
-			self.betCountBig.append(self.betCountBig[-1])
-		elif self.betSugBig[-1][2] == -1:
-			self.betStatusBig.append(-1)
-			self.betCountBig.append(self.betCountBig[-1])
-		elif Big[2] == self.betSugBig_origin[-1][2] and self.betSugBig_origin[-1][3] != 0:
-			self.betStatusBig.append(0)
-			if LastCutStopStatus[0]:
-				self.betCountBig.append(0)
-			else:
-				if self.betSugBig_origin[-1][2] == self.betSugBig[-1][2]:
-					self.betCountBig.append(self.betCountBig[-1] + self.betSugBig[-1][3])
-				else:
-					self.betCountBig.append(self.betCountBig[-1] - self.betSugBig[-1][3])
-		elif Big[2] != self.betSugBig_origin[-1][2] and self.betSugBig_origin[-1][3] != 0:
-			self.betStatusBig.append(1)
-			if LastCutStopStatus[0]:
-				self.betCountBig.append(0)
-			else:
-				if self.betSugBig_origin[-1][2] == self.betSugBig[-1][2]:
-					self.betCountBig.append(self.betCountBig[-1] - self.betSugBig[-1][3])
-				else:
-					self.betCountBig.append(self.betCountBig[-1] + self.betSugBig[-1][3])
-		else:
-			self.betStatusBig.append(-1)
-			self.betCountBig.append(self.betCountBig[-1])
-		
-		# bet count Eye
-		if len(self.betSugEye) == 0:
-			self.betStatusEye.append(-1)
-			self.betCountEye.append(0)
-		elif Eye[2] == -1:
-			self.betStatusEye.append(-1)
-			self.betCountEye.append(self.betCountEye[-1])
-		elif self.betSugEye[-1][2] == -1:
-			self.betStatusEye.append(-1)
-			self.betCountEye.append(self.betCountEye[-1])
-		elif Eye[2] == self.betSugEye_origin[-1][2] and self.betSugEye_origin[-1][3] != 0:
-			self.betStatusEye.append(0)
-			if LastCutStopStatus[1]:
-				self.betCountEye.append(0)
-			else:
-				self.betCountEye.append(self.betCountEye[-1] + self.betSugEye[-1][3])
-		elif Eye[2] != self.betSugEye_origin[-1][2] and self.betSugEye_origin[-1][3] != 0:
-			self.betStatusEye.append(1)
-			if LastCutStopStatus[1]:
-				self.betCountEye.append(0)
-			else:
-				self.betCountEye.append(self.betCountEye[-1] - self.betSugEye[-1][3])
-		else:
-			self.betStatusEye.append(-1)
-			self.betCountEye.append(self.betCountEye[-1])
-		
-		# bet count Sma
-		if len(self.betSugSma) == 0:
-			self.betStatusSma.append(-1)
-			self.betCountSma.append(0)
-		elif Sma[2] == -1:
-			self.betStatusSma.append(-1)
-			self.betCountSma.append(self.betCountSma[-1])
-		elif self.betSugSma[-1][2] == -1:
-			self.betStatusSma.append(-1)
-			self.betCountSma.append(self.betCountSma[-1])
-		elif Sma[2] == self.betSugSma_origin[-1][2] and self.betSugSma_origin[-1][3] != 0:
-			self.betStatusSma.append(0)
-			if LastCutStopStatus[2]:
-				self.betCountSma.append(0)
-			else:
-				self.betCountSma.append(self.betCountSma[-1] + self.betSugSma[-1][3])
-		elif Sma[2] != self.betSugSma_origin[-1][2] and self.betSugSma_origin[-1][3] != 0:
-			self.betStatusSma.append(1)
-			if LastCutStopStatus[2]:
-				self.betCountSma.append(0)
-			else:
-				self.betCountSma.append(self.betCountSma[-1] - self.betSugSma[-1][3])
-		else:
-			self.betStatusSma.append(-1)
-			self.betCountSma.append(self.betCountSma[-1])
-		
-		# bet count Pen
-		if len(self.betSugPen) == 0:
-			self.betStatusPen.append(-1)
-			self.betCountPen.append(0)
-		elif Pen[2] == -1:
-			self.betStatusPen.append(-1)
-			self.betCountPen.append(self.betCountPen[-1])
-		elif self.betSugPen[-1][2] == -1:
-			self.betStatusPen.append(-1)
-			self.betCountPen.append(self.betCountPen[-1])
-		elif Pen[2] == self.betSugPen_origin[-1][2] and self.betSugPen_origin[-1][3] != 0:
-			self.betStatusPen.append(0)
-			if LastCutStopStatus[3]:
-				self.betCountPen.append(0)
-			else:
-				self.betCountPen.append(self.betCountPen[-1] + self.betSugPen[-1][3])
-		elif Pen[2] != self.betSugPen_origin[-1][2] and self.betSugPen_origin[-1][3] != 0:
-			self.betStatusPen.append(1)
-			if LastCutStopStatus[3]:
-				self.betCountPen.append(0)
-			else:
-				self.betCountPen.append(self.betCountPen[-1] - self.betSugPen[-1][3])
-		else:
-			self.betStatusPen.append(-1)
-			self.betCountPen.append(self.betCountPen[-1])
-		
-		# bet sum count Big
-		if len(self.betSugBig) == 0:
-			self.betSumCountBig.append(0)
-		else:
-			self.betSumCountBig.append(self.betSumCountBig[-1])
-		
-		# bet sum count Eye
-		if len(self.betSugEye) == 0:
-			self.betSumCountEye.append(0)
-		else:
-			self.betSumCountEye.append(self.betSumCountEye[-1])
-		
-		# bet sum count Sma
-		if len(self.betSugSma) == 0:
-			self.betSumCountSma.append(0)
-		else:
-			self.betSumCountSma.append(self.betSumCountSma[-1])
-		
-		# bet sum count Pen
-		if len(self.betSugPen) == 0:
-			self.betSumCountPen.append(0)
-		else:
-			self.betSumCountPen.append(self.betSumCountPen[-1])
-		'''
+		bet = None
+		betSug = None
+		betSug_origin = None
+		betStatus = None
+		betCount = None
+		betSumCount = None
 	
 	def suggestNextBet(self, Big, Eye, Sma, Pen):
 		SugBig, SugEye, SugSma, SugPen = (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)
@@ -886,102 +757,12 @@ class betRecord():
 				betSug_origin[i].pop()
 				betSug_origin[i].append((row, col, img, bet))
 		
-		'''
-		if i == 0:
-			if len(self.betSugBig) != 0 and self.betSugBig[-1][3] != -1:
-				tmp = self.betSugBig.pop()
-				lastBet = self.recordBig[-1]
-				if img == lastBet[2]:
-					sugBig = self.PosNext(self.mapBig, lastBet[0], lastBet[1], lastBet[2])
-					row = sugBig[0]
-					col = sugBig[1]
-					erase_row = tmp[0]
-					rease_col = tmp[1]
-				else:
-					sugBig = self.PosChangeCol(self.mapBig, img)
-					row = sugBig[0]
-					col = sugBig[1]
-					erase_row = tmp[0]
-					rease_col = tmp[1]
-				
-				self.betSugBig.append((row, col, img, bet))
-				
-				if not isManual:
-					self.betSugBig_origin.pop()
-					self.betSugBig_origin.append((row, col, img, bet))
-		elif i == 1:
-			if len(self.betSugEye) != 0 and self.betSugEye[-1][3] != -1:
-				tmp = self.betSugEye.pop()
-				lastBet = self.recordEye[-1]
-				if img == lastBet[2]:
-					sugEye = self.PosNext(self.mapEye, lastBet[0], lastBet[1], lastBet[2])
-					row = sugEye[0]
-					col = sugEye[1]
-					erase_row = tmp[0]
-					rease_col = tmp[1]
-				else:
-					sugEye = self.PosChangeCol(self.mapEye, img)
-					row = sugEye[0]
-					col = sugEye[1]
-					erase_row = tmp[0]
-					rease_col = tmp[1]
-				
-				self.betSugEye.append((row, col, img, bet))
-				
-				if not isManual:
-					self.betSugEye_origin.pop()
-					self.betSugEye_origin.append((row, col, img, bet))
-		elif i == 2:
-			if len(self.betSugSma) != 0 and self.betSugSma[-1][3] != -1:
-				tmp = self.betSugSma.pop()
-				lastBet = self.recordSma[-1]
-				if img == lastBet[2]:
-					sugSma = self.PosNext(self.mapSma, lastBet[0], lastBet[1], lastBet[2])
-					row = sugSma[0]
-					col = sugSma[1]
-					erase_row = tmp[0]
-					rease_col = tmp[1]
-				else:
-					sugSma = self.PosChangeCol(self.mapSma, img)
-					row = sugSma[0]
-					col = sugSma[1]
-					erase_row = tmp[0]
-					rease_col = tmp[1]
-				
-				self.betSugSma.append((row, col, img, bet))
-				
-				if not isManual:
-					self.betSugSma_origin.pop()
-					self.betSugSma_origin.append((row, col, img, bet))
-		elif i == 3:
-			if len(self.betSugPen) != 0 and self.betSugPen[-1][3] != -1:
-				tmp = self.betSugPen.pop()
-				lastBet = self.recordPen[-1]
-				if img == lastBet[2]:
-					sugPen = self.PosNext(self.mapPen, lastBet[0], lastBet[1], lastBet[2])
-					row = sugPen[0]
-					col = sugPen[1]
-					erase_row = tmp[0]
-					rease_col = tmp[1]
-				else:
-					sugPen = self.PosChangeCol(self.mapPen, img)
-					row = sugPen[0]
-					col = sugPen[1]
-					erase_row = tmp[0]
-					rease_col = tmp[1]
-				
-				self.betSugPen.append((row, col, img, bet))
-				
-				if not isManual:
-					self.betSugPen_origin.pop()
-					self.betSugPen_origin.append((row, col, img, bet))
-		else:
-			pass
-		'''
-		
 		SugBig_sum = self.sumBetInSugBig(self.recordBig[-1], self.betSugBig[-1], self.betSugEye[-1], self.betSugSma[-1], self.betSugPen[-1])
 		SugBig_sum_otherimg = self.betSugBig_sum.pop()
 		self.betSugBig_sum.append(SugBig_sum)
+		
+		betSug = None
+		betSug_origin = None
 		
 		return (row, col, img, bet), (erase_row, rease_col), SugBig_sum, SugBig_sum_otherimg
 	
@@ -1017,16 +798,20 @@ class betRecord():
 		betSumCount = [self.betSumCountBig, self.betSumCountEye, self.betSumCountSma, self.betSumCountPen]
 		betCount = [self.betCountBig, self.betCountEye, self.betCountSma, self.betCountPen]
 		
+		cutStatus = False
 		# check start game or not
 		if len(self.betCountBig) > 0:
-			#betSumCount[i][-1] += betCount[i][-1]
 			betCount[i][-1] = 0
-			
 			self.cutStopStatusUpdate(i, True)
-			
-			return True
+			cutStatus = True
 		
-		return False
+		betSumCount = None
+		betCount = None
+		
+		if cutStatus:
+			return True
+		else:
+			return False
 	
 	def cutStopStatusUpdate(self, i, change = False):
 		cutStopStatus = [self.cutStopStatusBig, self.cutStopStatusEye, self.cutStopStatusSma, self.cutStopStatusPen]
@@ -1040,6 +825,8 @@ class betRecord():
 				cutStopStatus[i].append(not tmpStopStatus)
 			else:
 				cutStopStatus[i].append(cutStopStatus[i][-1])
+		
+		cutStopStatus = None
 	
 	def getLastCutStopStatus(self):
 		if len(self.cutStopStatusBig) > 0:
@@ -1158,6 +945,13 @@ class betRecord():
 							file.write('\n')
 			
 			file.write('\n')
+			
+			map = None
+			note_map = None
+			record = None
+			note_record = None
+			betSug = None
+			note_betSug = None
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -2809,7 +2603,8 @@ def onTrail():
 					elif int(line[1]) > 1000:
 						fine = False
 			if not fine:
-				return False
+				pass
+				#return False
 	
 	timeNow = time.strftime('%Y %m %d %H', time.localtime(time.time())).split()
 	yearNow = int(timeNow[0])
