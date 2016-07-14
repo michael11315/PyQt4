@@ -4,6 +4,7 @@ import functools
 import os
 import webbrowser
 import time
+import subprocess
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -1501,7 +1502,7 @@ class GridWindow(QWidget):
 		self.bbet_gl.setSpacing(1)
 		self.bbet_gl.setMargin(0)
 		
-		self.bbet_btn1.setText(self.tr('本金'))
+		self.bbet_btn1.setText(self.tr('重開新局'))
 		self.bbet_btn1.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 		self.bbet_btn1.setSizePolicy(self.sizePolicy)
 		self.bbet_btn1.setFixedWidth(self.sizeWidth_btn)
@@ -1867,15 +1868,18 @@ class GridWindow(QWidget):
 			self.update_nbet(-1, -1)
 	
 	def connect_bbet_btn1(self):
-		# set principal, and change lineedit to read only
-		if not self.bbet_qlineedit.isReadOnly():
+		FILEPATH = 'Baccarat.exe'
+		if os.path.exists(FILEPATH):
+			log('重開新局')
 			try:
-				principal = int(self.bbet_qlineedit.text())
-				self.betRecord.enterPrincipal(principal)
-				self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %principal))
-				self.bbet_qlineedit.setReadOnly(True)
-			except:
-				pass
+				subprocess.Popen([sys.executable, FILEPATH])
+			except OSError as exception:
+				print('ERROR: could not restart aplication:')
+				print('  %s' % str(exception))
+			else:
+				qApp.quit()
+		else:
+			log('重開失敗，檔名不對')
 	
 	def connect_bbet_btn2(self):
 		filename_list = ['gridShot_big', 'gridShot_eye', 'gridShot_sma', 'gridShot_pen']
