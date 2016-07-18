@@ -1502,7 +1502,7 @@ class GridWindow(QWidget):
 		self.bbet_gl.setSpacing(1)
 		self.bbet_gl.setMargin(0)
 		
-		self.bbet_btn1.setText(self.tr('重開新局'))
+		self.bbet_btn1.setText(self.tr('新局'))
 		self.bbet_btn1.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 		self.bbet_btn1.setSizePolicy(self.sizePolicy)
 		self.bbet_btn1.setFixedWidth(self.sizeWidth_btn)
@@ -1868,18 +1868,22 @@ class GridWindow(QWidget):
 			self.update_nbet(-1, -1)
 	
 	def connect_bbet_btn1(self):
-		FILEPATH = 'Baccarat.exe'
-		if os.path.exists(FILEPATH):
-			log('重開新局')
-			try:
-				subprocess.Popen([sys.executable, FILEPATH])
-			except OSError as exception:
-				print('ERROR: could not restart aplication:')
-				print('  %s' % str(exception))
+		reply = QMessageBox.question(self, self.tr('訊息'),
+		self.tr('確定要重開新局嗎?'), QMessageBox.Yes, QMessageBox.No)
+		
+		if reply == QMessageBox.Yes:
+			FILEPATH = 'Baccarat.exe'
+			if os.path.exists(FILEPATH):
+				log('重開新局')
+				try:
+					subprocess.Popen([sys.executable, FILEPATH])
+				except OSError as exception:
+					print('ERROR: could not restart aplication:')
+					print('  %s' % str(exception))
+				else:
+					qApp.quit()
 			else:
-				qApp.quit()
-		else:
-			log('重開失敗，檔名不對')
+				log('重開失敗，檔名不對')
 	
 	def connect_bbet_btn2(self):
 		filename_list = ['gridShot_big', 'gridShot_eye', 'gridShot_sma', 'gridShot_pen']
@@ -1945,25 +1949,12 @@ class GridWindow(QWidget):
 		webbrowser.open_new(url)
 	
 	def connect_libet_qframe(self, img):
-		'''
-		for i in range(4):
-			row = self.sugListForMovie[i][0]
-			col = self.sugListForMovie[i][1]
-			bet = self.sugListForMovie[i][3]
-			if row >= 0 and col >= 0 and bet > 0:
-				if self.grid_qlabelList[i][row][col].movie().state() == 0:
-					self.grid_qlabelList[i][row][col].movie().jumpToFrame(0)
-					self.grid_qlabelList[i][row][col].movie().stop()
-					self.grid_qlabelList[i][row][col].movie().start()
-				elif self.grid_qlabelList[i][row][col].movie().state() == 2:
-					self.grid_qlabelList[i][row][col].movie().stop()
-					self.grid_qlabelList[i][row][col].movie().jumpToFrame(0)
-		'''
 		self.controlGridGif()
 		nextStatus = self.betRecord.predictNextStatus().get('nextStatus')
 		PossibleSugPosition = self.betRecord.getPossibleSugPosition()
 		
-		self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
+		self.initialGridGifList()
+		#self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 		
 		for i in range(4):
 			tmp_img = img
@@ -1976,15 +1967,16 @@ class GridWindow(QWidget):
 				row = -1
 				col = -1
 			
-			self.listForMovie.pop(i)
+			pop = self.listForMovie.pop(i)
 			self.listForMovie.insert(i, (row, col, tmp_img, 0))
-			
 			self.changeGridGif(i, row, col, tmp_img)
 		
 		self.restartGridGif()
 	
 	def connect_pbet_qlabel(self, winner):
 		self.controlGridGif()
+		self.initialGridGifList()
+		
 		ret = self.betRecord.bet(winner)
 		self.logGame('result:' + str(winner))
 		if ret.get('status') == 0:
@@ -2084,6 +2076,8 @@ class GridWindow(QWidget):
 	
 	def connect_pbet_btn(self):
 		self.controlGridGif()
+		self.initialGridGifList()
+		
 		ret = self.betRecord.backOneStep()
 		self.logGame('back')
 		self.betRecord.changeEndGameToFalse()
@@ -2112,7 +2106,6 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].movie().stop()
 			
 			ShowLastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
-			#self.sugListForMovie = copy.deepcopy(ShowLastSugList)
 			for i in range(4):
 				row = ShowLastSugList[i][0]
 				col = ShowLastSugList[i][1]
@@ -2419,6 +2412,7 @@ class GridWindow(QWidget):
 	
 	def changeSug(self, i, img, bet, isManual):
 		self.controlGridGif()
+		self.initialGridGifList()
 		
 		retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(i, img, bet, isManual)
 		
@@ -2490,19 +2484,14 @@ class GridWindow(QWidget):
 			if row >= 0 and col >= 0:
 				self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 																								color: black; font-weight: bold; font-size: %dpt;}''' % self.sizeFontSize_Grid)
-				'''
-				if bet == 0:
-					self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
-					self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
-				else:
-					self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
-					self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
-				'''
 				
 				self.grid_qlabelList[i][row][col].movie().start()
 				self.grid_qlabelList[i][row][col].movie().stop()
 		
 		self.controlGridGif(True)
+	
+	def initialGridGifList(self):
+		self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 	
 	def storeRecordForHtml(self, countBet, sameBet, colorBet, pointBet):
 		self.recordHtml_list.append((countBet, sameBet, colorBet, pointBet))
@@ -2617,7 +2606,7 @@ def onTrail():
 	dayNow = int(timeNow[2])
 	hourNow = int(timeNow[3])
 	
-	if yearNow == 2016 and monthNow == 7 and dayNow <= 20 and dayNow >= 1:
+	if yearNow == 2016 and monthNow == 7 and dayNow <= 31 and dayNow >= 17:
 		return True
 	else:
 		if os.path.exists(path):
