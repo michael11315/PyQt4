@@ -532,11 +532,48 @@ class betRecord():
 	
 	def suggestNextBet(self, Big, Eye, Sma, Pen):
 		SugBig, SugEye, SugSma, SugPen = (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)
+		Sug = [SugBig, SugEye, SugSma, SugPen]
 		if len(self.recordAll) == 0:
 			return {'SugBig': SugBig, 'SugEye': SugEye, 'SugSma': SugSma, 'SugPen': SugPen}
 		
 		LastCutStopStatus = self.getLastCutStopStatus()
+		bet = [Big, Eye, Sma, Pen]
+		map = [self.mapBig, self.mapEye, self.mapSma, self.mapPen]
+		record = [self.recordBig, self.recordEye, self.recordSma, self.recordPen]
+		betSug = [self.betSugBig, self.betSugEye, self.betSugSma, self.betSugPen]
+		betSug_origin = [self.betSugBig_origin, self.betSugEye_origin, self.betSugSma_origin, self.betSugPen_origin]
+		betStatus = [self.betStatusBig, self.betStatusEye, self.betStatusSma, self.betStatusPen]
 		
+		for i in range(4):
+			if bet[i][0] == -1 and bet[i][1] == -1:
+				Sug[i] = (-1, -1, -1, -1)
+			elif betStatus[i][-1] == -1:
+				lastBet = record[i][-1]
+				sugBet = 1
+				tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
+				Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
+			elif betStatus[i][-1] == 0:
+				lastBet = record[i][-1]
+				sugBet = betSug_origin[i][-1][3] + 1
+				tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
+				Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
+			elif betStatus[i][-1] == 1:
+				lastBet = record[i][-1]
+				if betSug_origin[i][-1][3] > 1:
+					sugBet = betSug_origin[i][-1][3] - 1
+					tmp = self.PosChangeCol(map[i], lastBet[2])
+					Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
+				else:
+					Sug[i] = (-1, -1, lastBet[2], 0)
+			
+			# if cut stop now, sugBet still 0
+			if LastCutStopStatus[i]:
+				sugBet = 0
+				if bet[i][0] == -1 and bet[i][1] == -1:
+					sugBet = -1
+				Sug[i] = (Sug[i][0], Sug[i][1], Sug[i][2], sugBet)
+		
+		'''
 		# SugBig
 		#----------------------------------------------------
 		if Big[0] == -1 and Big[1] == -1:
@@ -656,6 +693,30 @@ class betRecord():
 			if Pen[0] == -1 and Pen[1] == -1:
 				sugPenBet = -1
 			SugPen = (SugPen[0], SugPen[1], SugPen[2], sugPenBet)
+		'''
+		
+		bet = None
+		map = None
+		record = None
+		betSug = None
+		betSug_origin = None
+		betStatus = None
+		
+		return {'SugBig': Sug[0], 'SugEye': Sug[1], 'SugSma': Sug[2], 'SugPen': Sug[3]}
+	
+	def suggestNextBet2(self, Big, Eye, Sma, Pen):
+		SugBig, SugEye, SugSma, SugPen = (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)
+		Sug = [SugBig, SugEye, SugSma, SugPen]
+		if len(self.recordAll) == 0:
+			return {'SugBig': SugBig, 'SugEye': SugEye, 'SugSma': SugSma, 'SugPen': SugPen}
+		
+		LastCutStopStatus = self.getLastCutStopStatus()
+		bet = [Big, Eye, Sma, Pen]
+		map = [self.mapBig, self.mapEye, self.mapSma, self.mapPen]
+		record = [self.recordBig, self.recordEye, self.recordSma, self.recordPen]
+		betSug = [self.betSugBig, self.betSugEye, self.betSugSma, self.betSugPen]
+		betSug_origin = [self.betSugBig_origin, self.betSugEye_origin, self.betSugSma_origin, self.betSugPen_origin]
+		betStatus = [self.betStatusBig, self.betStatusEye, self.betStatusSma, self.betStatusPen]
 		
 		return {'SugBig': SugBig, 'SugEye': SugEye, 'SugSma': SugSma, 'SugPen': SugPen}
 	
