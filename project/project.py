@@ -718,7 +718,43 @@ class betRecord():
 		betSug_origin = [self.betSugBig_origin, self.betSugEye_origin, self.betSugSma_origin, self.betSugPen_origin]
 		betStatus = [self.betStatusBig, self.betStatusEye, self.betStatusSma, self.betStatusPen]
 		
-		return {'SugBig': SugBig, 'SugEye': SugEye, 'SugSma': SugSma, 'SugPen': SugPen}
+		for i in range(4):
+			if bet[i][0] == -1 and bet[i][1] == -1:
+				Sug[i] = (-1, -1, -1, -1)
+			elif betStatus[i][-1] == -1:
+				lastBet = record[i][-1]
+				sugBet = 1
+				tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
+				Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
+			elif betStatus[i][-1] == 0:
+				lastBet = record[i][-1]
+				Sug[i] = (-1, -1, lastBet[2], 0)
+			elif betStatus[i][-1] == 1:
+				lastBet = record[i][-1]
+				tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
+				sugBet = 1
+				
+				for index in range(len(betSug_origin[i])):
+					if betSug_origin[i][-1-index][2] == bet[i][2]:
+						if betStatus[i][-1-index] == 0:
+							pass
+						else:
+							sugBet = betSug_origin[i][-1-index][3] * 2 + 1
+							if sugBet > 15:
+								sugBet = 1
+						
+						break
+				
+				Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
+			
+			# if cut stop now, sugBet still 0
+			if LastCutStopStatus[i]:
+				sugBet = 0
+				if bet[i][0] == -1 and bet[i][1] == -1:
+					sugBet = -1
+				Sug[i] = (Sug[i][0], Sug[i][1], Sug[i][2], sugBet)
+		
+		return {'SugBig': Sug[0], 'SugEye': Sug[1], 'SugSma': Sug[2], 'SugPen': Sug[3]}
 	
 	def lastSugBet(self):
 		lastSugBig, lastSugEye, lastSugSma, lastSugPen = (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)
