@@ -9,8 +9,8 @@
 # If everything works well you should find a subdirectory in the build
 # subdirectory that contains the files needed to run the application
 
-application_title = "baccarat" #what you want to application to be called
-main_python_file = "baccarat.py" #the name of the python file you use to run the program
+application_title = "verify" #what you want to application to be called
+main_python_file = "verify.py" #the name of the python file you use to run the program
 
 import sys
 
@@ -25,6 +25,6 @@ includes = ["atexit","re"]
 setup(
 		name = application_title,
 		version = "0.1",
-		description = "baccarat",
+		description = "Baccarat",
 		options = {"build_exe" : {"includes" : includes }},
-			executables = [Executable(main_python_file, base = base, icon="screen.ico")])
+			executables = [Executable(main_python_file, base = base, icon="key.ico")])

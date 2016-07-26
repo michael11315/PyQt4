@@ -5,6 +5,7 @@ import os
 import webbrowser
 import time
 import subprocess
+import base64
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -69,6 +70,9 @@ column_size = 47
 
 # start time
 startTime = ''
+
+# suggestNextBet algorithm
+sugAlgorithm = 'A'
 
 class betRecord():
 	def __init__(self):
@@ -545,26 +549,57 @@ class betRecord():
 		betStatus = [self.betStatusBig, self.betStatusEye, self.betStatusSma, self.betStatusPen]
 		
 		for i in range(4):
-			if bet[i][0] == -1 and bet[i][1] == -1:
-				Sug[i] = (-1, -1, -1, -1)
-			elif betStatus[i][-1] == -1:
-				lastBet = record[i][-1]
-				sugBet = 1
-				tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
-				Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
-			elif betStatus[i][-1] == 0:
-				lastBet = record[i][-1]
-				sugBet = betSug_origin[i][-1][3] + 1
-				tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
-				Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
-			elif betStatus[i][-1] == 1:
-				lastBet = record[i][-1]
-				if betSug_origin[i][-1][3] > 1:
-					sugBet = betSug_origin[i][-1][3] - 1
-					tmp = self.PosChangeCol(map[i], lastBet[2])
+			# algorithm v1
+			if sugAlgorithm == 'A':
+				if bet[i][0] == -1 and bet[i][1] == -1:
+					Sug[i] = (-1, -1, -1, -1)
+				elif betStatus[i][-1] == -1:
+					lastBet = record[i][-1]
+					sugBet = 1
+					tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
 					Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
-				else:
+				elif betStatus[i][-1] == 0:
+					lastBet = record[i][-1]
+					sugBet = betSug_origin[i][-1][3] + 1
+					tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
+					Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
+				elif betStatus[i][-1] == 1:
+					lastBet = record[i][-1]
+					if betSug_origin[i][-1][3] > 1:
+						sugBet = betSug_origin[i][-1][3] - 1
+						tmp = self.PosChangeCol(map[i], lastBet[2])
+						Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
+					else:
+						Sug[i] = (-1, -1, lastBet[2], 0)
+			# algorithm v2
+			elif sugAlgorithm == 'B':
+				if bet[i][0] == -1 and bet[i][1] == -1:
+					Sug[i] = (-1, -1, -1, -1)
+				elif betStatus[i][-1] == -1:
+					lastBet = record[i][-1]
+					sugBet = 1
+					tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
+					Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
+				elif betStatus[i][-1] == 0:
+					lastBet = record[i][-1]
 					Sug[i] = (-1, -1, lastBet[2], 0)
+				elif betStatus[i][-1] == 1:
+					lastBet = record[i][-1]
+					tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
+					sugBet = 1
+					
+					for index in range(len(betSug_origin[i])):
+						if betSug_origin[i][-1-index][2] == bet[i][2]:
+							if betStatus[i][-1-index] == 0:
+								pass
+							else:
+								sugBet = betSug_origin[i][-1-index][3] * 2 + 1
+								if sugBet > 15:
+									sugBet = 1
+							
+							break
+					
+					Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
 			
 			# if cut stop now, sugBet still 0
 			if LastCutStopStatus[i]:
@@ -1075,6 +1110,7 @@ class GridWindow(QWidget):
 		self.sizeDefine()
 		self.UIcreate()
 		self.welcomeBaccarat()
+		self.checkOnTrail()
 		
 		self.logGame('start game')
 		
@@ -1089,23 +1125,77 @@ class GridWindow(QWidget):
 		self.testFunc()
 	
 	def welcomeBaccarat(self):
-		inputDialog = QInputDialog()
-		gameStart = False
-		while not gameStart:
-			number, ok = inputDialog.getText(None, 'welcome Baccarat', self.tr('請輸入本金後按OK : '))
+		self.Dialog = QDialog()
+		self.Dialog.setWindowTitle('welcome Baccarat')
+		qlabel1 = QLabel()
+		qlabel1.setText(self.tr('請開啟驗證程式以及做好以下設定後按 OK'))
+		qlabel2 = QLabel()
+		qlabel3 = QLabel()
+		qlabel3.setText(self.tr('選擇演算法 : '))
+		self.comboBox =  QComboBox()
+		self.comboBox.addItem('A')
+		self.comboBox.addItem('B')
+		qlabel4 = QLabel()
+		qlabel4.setText(self.tr('本金 : '))
+		self.Lineedit = QLineEdit()
+		
+		DialogButtonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+		
+		dia_vl = QVBoxLayout()
+		dia_vl.addWidget(qlabel1)
+		dia_vl.addWidget(qlabel2)
+		dia_vl.addWidget(qlabel3)
+		dia_vl.addWidget(self.comboBox)
+		dia_vl.addWidget(qlabel4)
+		dia_vl.addWidget(self.Lineedit)
+		dia_vl.addWidget(DialogButtonBox)
+		self.Dialog.setLayout(dia_vl)
+		
+		DialogButtonBox.accepted.connect(self.welcomeBaccarat_accept)
+		DialogButtonBox.rejected.connect(self.welcomeBaccarat_reject)
+		
+		self.Dialog.exec_()
+	
+	def welcomeBaccarat_accept(self):
+		algorithm = self.comboBox.currentText()
+		number = self.Lineedit.text()
+		
+		try:
+			global sugAlgorithm
+			sugAlgorithm = algorithm
 			
-			if not ok:
-				sys.exit()
-			
+			number = int(number)
+			gameStart = True
+			self.betRecord.enterPrincipal(number)
+			self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %number))
+			self.bbet_qlineedit.setText(str(number))
+			self.bbet_qlineedit.setReadOnly(True)
+			self.Dialog.close()
+		except:
+			self.Dialog.close()
+			self.chooseAlgorithm()
+
+	def welcomeBaccarat_reject(self):
+		sys.exit()
+	
+	def checkOnTrail(self):
+		path = 'img/OnTrail'
+		OnTrail = False
+		if os.path.exists(path):
 			try:
-				number = int(number)
-				gameStart = True
-				self.betRecord.enterPrincipal(number)
-				self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %number))
-				self.bbet_qlineedit.setText(str(number))
-				self.bbet_qlineedit.setReadOnly(True)
+				with open(path, 'r') as file:
+					lines = file.readlines()
+					timeNow = base64.b64decode(lines[0]).split(':')[1]
+					timeOnTrail = time.strftime('%Y%m%d', time.localtime(time.time()))
+					if timeNow == timeOnTrail:
+						OnTrail = True
+				
+				if not OnTrail:
+					sys.exit()
 			except:
-				continue
+				sys.exit()
+		else:
+			sys.exit()
 	
 	def gameEndMessage(self):
 		msgBox = QMessageBox(self)
