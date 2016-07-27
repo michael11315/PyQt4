@@ -15,20 +15,21 @@ class GridWindow(QWidget):
 		self.getFileDialog()
 	
 	def getFileDialog(self):
-		path = 'C:/Python/record'
-		if not os.path.exists(path):
-			os.makedirs(path)
-		
 		onTrail = str(random.randint(100, 1000)) + time.strftime(':%Y%m%d', time.localtime(time.time()))
-		with open(path + '/OnTrail', 'w') as file:
-			file.write(base64.b64encode(onTrail))
-		
-		msgBox = QMessageBox(self)
-		msgBox.setIcon(QMessageBox.Information)
-		msgBox.setText(self.tr('認證完成'))
-		msgBox.exec_()
-		
-		sys.exit()
+		fileDialog = QFileDialog(self, 'select the Baccarat.exe')
+		fileDialog.setFileMode(QFileDialog.ExistingFile)
+		if fileDialog.exec_():
+			filepath = str(fileDialog.selectedFiles()[0])
+			if os.path.basename(filepath) == 'Baccarat.exe':
+				filepath = os.path.dirname(filepath)
+				with open(filepath + '/img/OnTrail', 'w') as file:
+					file.write(base64.b64encode(onTrail))
+				sys.exit()
+			else:
+				fileDialog.close()
+				self.getFileDialog()
+		else:
+			sys.exit()
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)

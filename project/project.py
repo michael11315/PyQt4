@@ -4,8 +4,10 @@ import functools
 import os
 import webbrowser
 import time
+import datetime
 import subprocess
 import base64
+
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
@@ -739,58 +741,6 @@ class betRecord():
 		
 		return {'SugBig': Sug[0], 'SugEye': Sug[1], 'SugSma': Sug[2], 'SugPen': Sug[3]}
 	
-	def suggestNextBet2(self, Big, Eye, Sma, Pen):
-		SugBig, SugEye, SugSma, SugPen = (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)
-		Sug = [SugBig, SugEye, SugSma, SugPen]
-		if len(self.recordAll) == 0:
-			return {'SugBig': SugBig, 'SugEye': SugEye, 'SugSma': SugSma, 'SugPen': SugPen}
-		
-		LastCutStopStatus = self.getLastCutStopStatus()
-		bet = [Big, Eye, Sma, Pen]
-		map = [self.mapBig, self.mapEye, self.mapSma, self.mapPen]
-		record = [self.recordBig, self.recordEye, self.recordSma, self.recordPen]
-		betSug = [self.betSugBig, self.betSugEye, self.betSugSma, self.betSugPen]
-		betSug_origin = [self.betSugBig_origin, self.betSugEye_origin, self.betSugSma_origin, self.betSugPen_origin]
-		betStatus = [self.betStatusBig, self.betStatusEye, self.betStatusSma, self.betStatusPen]
-		
-		for i in range(4):
-			if bet[i][0] == -1 and bet[i][1] == -1:
-				Sug[i] = (-1, -1, -1, -1)
-			elif betStatus[i][-1] == -1:
-				lastBet = record[i][-1]
-				sugBet = 1
-				tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
-				Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
-			elif betStatus[i][-1] == 0:
-				lastBet = record[i][-1]
-				Sug[i] = (-1, -1, lastBet[2], 0)
-			elif betStatus[i][-1] == 1:
-				lastBet = record[i][-1]
-				tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
-				sugBet = 1
-				
-				for index in range(len(betSug_origin[i])):
-					if betSug_origin[i][-1-index][2] == bet[i][2]:
-						if betStatus[i][-1-index] == 0:
-							pass
-						else:
-							sugBet = betSug_origin[i][-1-index][3] * 2 + 1
-							if sugBet > 15:
-								sugBet = 1
-						
-						break
-				
-				Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
-			
-			# if cut stop now, sugBet still 0
-			if LastCutStopStatus[i]:
-				sugBet = 0
-				if bet[i][0] == -1 and bet[i][1] == -1:
-					sugBet = -1
-				Sug[i] = (Sug[i][0], Sug[i][1], Sug[i][2], sugBet)
-		
-		return {'SugBig': Sug[0], 'SugEye': Sug[1], 'SugSma': Sug[2], 'SugPen': Sug[3]}
-	
 	def lastSugBet(self):
 		lastSugBig, lastSugEye, lastSugSma, lastSugPen = (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)
 		lastSugBig_sum = (-1, -1, -1, -1)
@@ -1101,11 +1051,6 @@ class GridWindow(QWidget):
 		global startTime
 		startTime = time.strftime('%Y%m%d %H-%M-%S', time.localtime(time.time()))
 		
-		# on trail version
-		ret = onTrail()
-		if not ret:
-			sys.exit()
-		
 		self.globalValue()
 		self.sizeDefine()
 		self.UIcreate()
@@ -1121,8 +1066,6 @@ class GridWindow(QWidget):
 		self.setFixedSize(UI_width, UI_height)
 		#print self.sizeHint()
 		self.vline.setFixedHeight(self.sizeHint().height()-10)
-		
-		self.testFunc()
 	
 	def welcomeBaccarat(self):
 		self.Dialog = QDialog()
@@ -1179,22 +1122,36 @@ class GridWindow(QWidget):
 		sys.exit()
 	
 	def checkOnTrail(self):
-		path = 'img/OnTrail'
+		path = 'C:/Python/record/OnTrail'
 		OnTrail = False
 		if os.path.exists(path):
 			try:
 				with open(path, 'r') as file:
 					lines = file.readlines()
-					timeNow = base64.b64decode(lines[0]).split(':')[1]
-					timeOnTrail = time.strftime('%Y%m%d', time.localtime(time.time()))
-					if timeNow == timeOnTrail:
+					timeOnTrail_str = base64.b64decode(lines[0]).split(':')[1]
+					timeOnTrail_year = int(timeOnTrail_str[0:4])
+					timeOnTrail_month = int(timeOnTrail_str[4:6])
+					timeOnTrail_day = int(timeOnTrail_str[6:8])
+					timeOnTrail = datetime.date(timeOnTrail_year, timeOnTrail_month, timeOnTrail_day)
+					
+					timeNow_str = time.strftime('%Y%m%d', time.localtime(time.time()))
+					timeNow_year = int(timeNow_str[0:4])
+					timeNow_month = int(timeNow_str[4:6])
+					timeNow_day = int(timeNow_str[6:8])
+					timeNow = datetime.date(timeNow_year, timeNow_month, timeNow_day)
+					
+					delta = timeNow - timeOnTrail
+					if timeNow >= timeOnTrail and delta.days <= 15:
 						OnTrail = True
 				
-				if not OnTrail:
-					sys.exit()
 			except:
-				sys.exit()
-		else:
+				OnTrail = False
+		
+		if not OnTrail:
+			msgBox = QMessageBox(self)
+			msgBox.setIcon(QMessageBox.Information)
+			msgBox.setText(self.tr('請使用驗證程式'))
+			msgBox.exec_()
 			sys.exit()
 	
 	def gameEndMessage(self):
@@ -2141,7 +2098,6 @@ class GridWindow(QWidget):
 		PossibleSugPosition = self.betRecord.getPossibleSugPosition()
 		
 		self.initialGridGifList()
-		#self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 		
 		for i in range(4):
 			tmp_img = img
@@ -2181,8 +2137,6 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].movie().stop()
 			
 			showSugList = [ret.get('SugBig'), ret.get('SugEye'), ret.get('SugSma'), ret.get('SugPen')]
-			#if winner != Tie:
-				#self.sugListForMovie = copy.deepcopy(showSugList)
 			for i in range(4):
 				row = showSugList[i][0]
 				col = showSugList[i][1]
@@ -2258,8 +2212,6 @@ class GridWindow(QWidget):
 		self.update_rbar()
 		self.update_bbet()
 		self.update_ibet()
-		#self.controlGridGif(True)
-		self.controlGridGif()
 	
 	def connect_pbet_btn(self):
 		self.controlGridGif()
@@ -2344,8 +2296,6 @@ class GridWindow(QWidget):
 		self.update_rbar()
 		self.update_bbet()
 		self.update_ibet()
-		#self.controlGridGif(True)
-		self.controlGridGif()
 	
 	# cut stop all
 	def connect_pbet_btn_allcut(self):
@@ -2631,13 +2581,6 @@ class GridWindow(QWidget):
 		img = SugBig_sum[2]
 		bet = SugBig_sum[3]
 		self.update_nbet(img, bet)
-		
-		#self.sugListForMovie.pop(i)
-		#self.sugListForMovie.insert(i, retSug)
-		
-		self.controlGridGif(True)
-		self.restartGridGif()
-		#self.controlGridGif()
 	
 	def changeGridGif(self, i, row, col, img):
 		self.controlGridGif()
@@ -2703,19 +2646,6 @@ class GridWindow(QWidget):
 	def logGame(self, msg):
 		log(msg)
 		self.betRecord.logRecord()
-	
-	# pos in the main widget
-	def mousePressEvent(self, QMouseEvent):
-		#print 'pos in the widget', QMouseEvent.pos()
-		pass
-	
-	# pos in the windows screen
-	def mouseReleaseEvent(self, QMouseEvent):
-		cursor = QCursor()
-		#print 'pos in the windows screen', cursor.pos()
-	
-	def testFunc(self):
-		pass
 
 def clickable(widget):
 	class Filter(QObject):
@@ -2735,7 +2665,7 @@ def clickable(widget):
 	filter = Filter(widget)
 	widget.installEventFilter(filter)
 	return filter.clicked
-	
+
 def pressed(widget):
 	class Filter(QObject):
 		
@@ -2754,54 +2684,6 @@ def pressed(widget):
 	filter = Filter(widget)
 	widget.installEventFilter(filter)
 	return filter.clicked
-
-def onTrail():
-	path = 'C:/Python/recordMic'
-	if not os.path.exists(path):
-		os.makedirs(path)
-		with open(path + '/log', 'w') as file:
-			file.write('good 1 c')
-	else:
-		tmp =''
-		with open(path + '/log', 'r') as file:
-			for line in file:
-				if line.startswith('good'):
-					line = line.split()
-					count = int(line[1]) + 1
-					tmp = '%s %s %s' % (line[0], count, line[2])
-		
-		with open(path + '/log', 'w') as file:
-			file.write(tmp)
-	
-	if os.path.exists(path):
-		with open(path + '/log', 'r') as file:
-			fine = True
-			for line in file:
-				if line.startswith('good'):
-					line = line.split()
-					if line[2] == 'r':
-						fine = False
-					elif int(line[1]) > 1000:
-						fine = False
-			if not fine:
-				pass
-				#return False
-	
-	timeNow = time.strftime('%Y %m %d %H', time.localtime(time.time())).split()
-	yearNow = int(timeNow[0])
-	monthNow = int(timeNow[1])
-	dayNow = int(timeNow[2])
-	hourNow = int(timeNow[3])
-	
-	if yearNow == 2016 and monthNow == 7 and dayNow <= 31 and dayNow >= 17:
-		return True
-	elif yearNow == 2016 and monthNow == 8 and dayNow <= 10 and dayNow >= 1:
-		return True
-	else:
-		if os.path.exists(path):
-			with open(path + '/log', 'w') as file:
-				file.write('good 10000 r')
-		return False
 
 def log(msg):
 	try:
