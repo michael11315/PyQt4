@@ -1173,7 +1173,7 @@ class GridWindow(QWidget):
 			self.Dialog.close()
 		except:
 			self.Dialog.close()
-			self.chooseAlgorithm()
+			self.welcomeBaccarat()
 
 	def welcomeBaccarat_reject(self):
 		sys.exit()
@@ -2794,6 +2794,8 @@ def onTrail():
 	hourNow = int(timeNow[3])
 	
 	if yearNow == 2016 and monthNow == 7 and dayNow <= 31 and dayNow >= 17:
+		return True
+	elif yearNow == 2016 and monthNow == 8 and dayNow <= 10 and dayNow >= 1:
 		return True
 	else:
 		if os.path.exists(path):
