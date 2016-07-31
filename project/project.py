@@ -1056,6 +1056,8 @@ class GridWindow(QWidget):
 		self.UIcreate()
 		self.welcomeBaccarat()
 		self.checkOnTrail()
+		#if not onTrail():
+			#sys.exit()
 		
 		self.logGame('start game')
 		
@@ -2684,6 +2686,20 @@ def pressed(widget):
 	filter = Filter(widget)
 	widget.installEventFilter(filter)
 	return filter.clicked
+
+def onTrail():
+	timeNow = time.strftime("%Y %m %d %H", time.localtime(time.time())).split()
+	yearNow = int(timeNow[0])
+	monthNow = int(timeNow[1])
+	dayNow = int(timeNow[2])
+	hourNow = int(timeNow[3])
+	
+	if yearNow == 2016 and monthNow == 8 and dayNow <= 15 and dayNow >= 1:
+		return True
+	elif yearNow == 2016 and monthNow == 7 and dayNow == 31:
+		return True
+	else:
+		return False
 
 def log(msg):
 	try:
