@@ -592,14 +592,17 @@ class betRecord():
 					
 					for index in range(len(betSug_origin[i])):
 						if betSug_origin[i][-1-index][2] == bet[i][2]:
-							if betStatus[i][-1-index] == 0:
-								pass
-							else:
+							if betStatus[i][-1-index] != 0:
+								if betSug_origin[i][-1-index][3] == 7:
+									continue
 								sugBet = betSug_origin[i][-1-index][3] * 2 + 1
-								if sugBet > 15:
-									sugBet = 1
+								if sugBet == 7:
+									tmp = self.PosChangeCol(map[i], lastBet[2])
 							
 							break
+						if betSug_origin[i][-1-index][2] != bet[i][2]:
+							if betSug_origin[i][-1-index][3] == 7:
+								break
 					
 					Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
 			
