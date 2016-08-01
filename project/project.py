@@ -1886,7 +1886,12 @@ class GridWindow(QWidget):
 				self.rbar_btn[i].setText(self.tr('停止'))
 				self.rbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 				show = self.betRecord.lastShow(i)
-				self.changeSug(i, show[2], 1, False)
+				# algorithm v1
+				if sugAlgorithm == 'A':
+					self.changeSug(i, show[2], 1, False)
+				# algorithm v2
+				if sugAlgorithm == 'B':
+					self.changeSug(i, show[2], 0, False)
 			
 			self.update_lbar()
 			self.update_rbar()
