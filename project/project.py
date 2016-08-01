@@ -598,6 +598,9 @@ class betRecord():
 								elif betSug_origin[i][-1-index][2] != bet[i][2]:
 									if betSug_origin[i][-1-index][3] == 7:
 										break
+									# cut stop at that time
+									elif betSug_origin[i][-1-index][3] == 0:
+										break
 						
 						Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
 			
