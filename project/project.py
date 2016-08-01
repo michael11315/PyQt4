@@ -577,34 +577,29 @@ class betRecord():
 			elif sugAlgorithm == 'B':
 				if bet[i][0] == -1 and bet[i][1] == -1:
 					Sug[i] = (-1, -1, -1, -1)
-				elif betStatus[i][-1] == -1:
+				else:
 					lastBet = record[i][-1]
-					sugBet = 1
-					tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
-					Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
-				elif betStatus[i][-1] == 0:
-					lastBet = record[i][-1]
-					Sug[i] = (-1, -1, lastBet[2], 0)
-				elif betStatus[i][-1] == 1:
-					lastBet = record[i][-1]
-					tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
-					sugBet = 1
-					
-					for index in range(len(betSug_origin[i])):
-						if betSug_origin[i][-1-index][2] == bet[i][2]:
-							if betStatus[i][-1-index] != 0:
-								if betSug_origin[i][-1-index][3] == 7:
-									continue
-								sugBet = betSug_origin[i][-1-index][3] * 2 + 1
-								if sugBet == 7:
-									tmp = self.PosChangeCol(map[i], lastBet[2])
-							
-							break
-						if betSug_origin[i][-1-index][2] != bet[i][2]:
-							if betSug_origin[i][-1-index][3] == 7:
-								break
-					
-					Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
+					if lastBet[0] > 0:
+						Sug[i] = (-1, -1, lastBet[2], 0)
+					else:
+						tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
+						sugBet = 1
+						for index in range(len(betSug_origin[i])):
+							if betSug_origin[i][-1-index][0] != -1 and betSug_origin[i][-1-index][1] != -1:
+								if betSug_origin[i][-1-index][2] == bet[i][2]:
+									if betSug_origin[i][-1-index][3] == 7:
+										continue
+									if betStatus[i][-1-index] != 0:
+										sugBet = betSug_origin[i][-1-index][3] * 2 + 1
+										if sugBet == 7:
+											tmp = self.PosChangeCol(map[i], lastBet[2])
+										
+									break
+								elif betSug_origin[i][-1-index][2] != bet[i][2]:
+									if betSug_origin[i][-1-index][3] == 7:
+										break
+						
+						Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
 			
 			# if cut stop now, sugBet still 0
 			if LastCutStopStatus[i]:
@@ -612,128 +607,6 @@ class betRecord():
 				if bet[i][0] == -1 and bet[i][1] == -1:
 					sugBet = -1
 				Sug[i] = (Sug[i][0], Sug[i][1], Sug[i][2], sugBet)
-		
-		'''
-		# SugBig
-		#----------------------------------------------------
-		if Big[0] == -1 and Big[1] == -1:
-			SugBig = (-1, -1, -1, -1)
-		elif self.betStatusBig[-1] == -1:
-			lastBet = self.recordBig[-1]
-			sugBigBet = 1
-			tmpBig = self.PosNext(self.mapBig, lastBet[0], lastBet[1], lastBet[2])
-			SugBig = (tmpBig[0], tmpBig[1], tmpBig[2], sugBigBet)
-		elif self.betStatusBig[-1] == 0:
-			lastBet = self.recordBig[-1]
-			sugBigBet = self.betSugBig_origin[-1][3] + 1
-			tmpBig = self.PosNext(self.mapBig, lastBet[0], lastBet[1], lastBet[2])
-			SugBig = (tmpBig[0], tmpBig[1], tmpBig[2], sugBigBet)
-		elif self.betStatusBig[-1] == 1:
-			lastBet = self.recordBig[-1]
-			if self.betSugBig_origin[-1][3] > 1:
-				sugBigBet = self.betSugBig_origin[-1][3] - 1
-				tmpBig = self.PosChangeCol(self.mapBig, lastBet[2])
-				SugBig = (tmpBig[0], tmpBig[1], tmpBig[2], sugBigBet)
-			else:
-				SugBig = (-1, -1, lastBet[2], 0)
-		
-		# if cut stop now, sugBet still 0
-		if LastCutStopStatus[0]:
-			sugBigBet = 0
-			if Big[0] == -1 and Big[1] == -1:
-				sugBigBet = -1
-			SugBig = (SugBig[0], SugBig[1], SugBig[2], sugBigBet)
-		
-		# SugEye
-		#----------------------------------------------------
-		if Eye[0] == -1 and Eye[1] == -1:
-			SugEye = (-1, -1, -1, -1)
-		elif self.betStatusEye[-1] == -1:
-			lastBet = self.recordEye[-1]
-			sugEyeBet = 1
-			tmpEye = self.PosNext(self.mapEye, lastBet[0], lastBet[1], lastBet[2])
-			SugEye = (tmpEye[0], tmpEye[1], tmpEye[2], sugEyeBet)
-		elif self.betStatusEye[-1] == 0:
-			lastBet = self.recordEye[-1]
-			sugEyeBet = self.betSugEye_origin[-1][3] + 1
-			tmpEye = self.PosNext(self.mapEye, lastBet[0], lastBet[1], lastBet[2])
-			SugEye = (tmpEye[0], tmpEye[1], tmpEye[2], sugEyeBet)
-		elif self.betStatusEye[-1] == 1:
-			lastBet = self.recordEye[-1]
-			if self.betSugEye_origin[-1][3] > 1:
-				sugEyeBet = self.betSugEye_origin[-1][3] - 1
-				tmpEye = self.PosChangeCol(self.mapEye, lastBet[2])
-				SugEye = (tmpEye[0], tmpEye[1], tmpEye[2], sugEyeBet)
-			else:
-				SugEye = (-1, -1, lastBet[2], 0)
-		
-		# if cut stop now, sugBet still 0
-		if LastCutStopStatus[1]:
-			sugEyeBet = 0
-			if Eye[0] == -1 and Eye[1] == -1:
-				sugEyeBet = -1
-			SugEye = (SugEye[0], SugEye[1], SugEye[2], sugEyeBet)
-		
-		# SugSma
-		#----------------------------------------------------
-		if Sma[0] == -1 and Sma[1] == -1:
-			SugSma = (-1, -1, -1, -1)
-		elif self.betStatusSma[-1] == -1:
-			lastBet = self.recordSma[-1]
-			sugSmaBet = 1
-			tmpSma = self.PosNext(self.mapSma, lastBet[0], lastBet[1], lastBet[2])
-			SugSma = (tmpSma[0], tmpSma[1], tmpSma[2], sugSmaBet)
-		elif self.betStatusSma[-1] == 0:
-			lastBet = self.recordSma[-1]
-			sugSmaBet = self.betSugSma_origin[-1][3] + 1
-			tmpSma = self.PosNext(self.mapSma, lastBet[0], lastBet[1], lastBet[2])
-			SugSma = (tmpSma[0], tmpSma[1], tmpSma[2], sugSmaBet)
-		elif self.betStatusSma[-1] == 1:
-			lastBet = self.recordSma[-1]
-			if self.betSugSma_origin[-1][3] > 1:
-				sugSmaBet = self.betSugSma_origin[-1][3] - 1
-				tmpSma = self.PosChangeCol(self.mapSma, lastBet[2])
-				SugSma = (tmpSma[0], tmpSma[1], tmpSma[2], sugSmaBet)
-			else:
-				SugSma = (-1, -1, lastBet[2], 0)
-		
-		# if cut stop now, sugBet still 0
-		if LastCutStopStatus[2]:
-			sugSmaBet = 0
-			if Sma[0] == -1 and Sma[1] == -1:
-				sugSmaBet = -1
-			SugSma = (SugSma[0], SugSma[1], SugSma[2], sugSmaBet)
-		
-		# SugPen
-		#----------------------------------------------------
-		if Pen[0] == -1 and Pen[1] == -1:
-			SugPen = (-1, -1, -1, -1)
-		elif self.betStatusPen[-1] == -1:
-			lastBet = self.recordPen[-1]
-			sugPenBet = 1
-			tmpPen = self.PosNext(self.mapPen, lastBet[0], lastBet[1], lastBet[2])
-			SugPen = (tmpPen[0], tmpPen[1], tmpPen[2], sugPenBet)
-		elif self.betStatusPen[-1] == 0:
-			lastBet = self.recordPen[-1]
-			sugPenBet = self.betSugPen_origin[-1][3] + 1
-			tmpPen = self.PosNext(self.mapPen, lastBet[0], lastBet[1], lastBet[2])
-			SugPen = (tmpPen[0], tmpPen[1], tmpPen[2], sugPenBet)
-		elif self.betStatusPen[-1] == 1:
-			lastBet = self.recordPen[-1]
-			if self.betSugPen_origin[-1][3] > 1:
-				sugPenBet = self.betSugPen_origin[-1][3] - 1
-				tmpPen = self.PosChangeCol(self.mapPen, lastBet[2])
-				SugPen = (tmpPen[0], tmpPen[1], tmpPen[2], sugPenBet)
-			else:
-				SugPen = (-1, -1, lastBet[2], 0)
-		
-		# if cut stop now, sugBet still 0
-		if LastCutStopStatus[3]:
-			sugPenBet = 0
-			if Pen[0] == -1 and Pen[1] == -1:
-				sugPenBet = -1
-			SugPen = (SugPen[0], SugPen[1], SugPen[2], sugPenBet)
-		'''
 		
 		bet = None
 		map = None
