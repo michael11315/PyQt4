@@ -76,6 +76,8 @@ startTime = ''
 # suggestNextBet algorithm
 sugAlgorithm = 'A'
 
+LOGLEVEL = 0
+
 class betRecord():
 	def __init__(self):
 		self.recordAll = []
@@ -840,81 +842,82 @@ class betRecord():
 		self.EndGame = False
 	
 	def logRecord(self):
-		path = 'log'
-		if not os.path.exists(path):
-			os.makedirs(path)
-		
-		filename = path + '/%s.record' % startTime
-		timeNow = time.strftime('%Y%m%d %H:%M:%S', time.localtime(time.time()))
-		with open(filename, 'a') as file:
-			file.write('[%s]\n' % (timeNow))
+		if LOGLEVEL != 0:
+			path = 'log'
+			if not os.path.exists(path):
+				os.makedirs(path)
 			
-			map = [self.mapBig, self.mapEye, self.mapSma, self.mapPen]
-			note_map = ['mapBig', 'mapEye', 'mapSma', 'mapPen']
-			for i in range(4):
-				file.write('	%s\n' % note_map[i])
-				for map_row in map[i]:
-						file.write('		')
-						for entry in map_row:
-							if entry != -1:
-								file.write(' ' + str(entry) + ' ')
-							else:
-								file.write(str(entry) + ' ')
-						file.write('\n')
-			
-			record = [self.recordAll, self.recordBig, self.recordEye, self.recordSma, self.recordPen]
-			note_record = ['recordAll',  'recordBig', 'recordEye', 'recordSma', 'recordPen']
-			for i in range(5):
-				file.write('	%s\n' % note_record[i])
-				count = 0
-				for entry in record[i]:
-					if count == 0:
-						file.write('		')
-					
-					file.write(str(entry) + ' ')
-					count += 1
-					
-					if count%10 == 0:
-						if count != len(record[i]):
-							file.write('\n')
+			filename = path + '/%s.record' % startTime
+			timeNow = time.strftime('%Y%m%d %H:%M:%S', time.localtime(time.time()))
+			with open(filename, 'a') as file:
+				file.write('[%s]\n' % (timeNow))
+				
+				map = [self.mapBig, self.mapEye, self.mapSma, self.mapPen]
+				note_map = ['mapBig', 'mapEye', 'mapSma', 'mapPen']
+				for i in range(4):
+					file.write('	%s\n' % note_map[i])
+					for map_row in map[i]:
 							file.write('		')
-						else:
+							for entry in map_row:
+								if entry != -1:
+									file.write(' ' + str(entry) + ' ')
+								else:
+									file.write(str(entry) + ' ')
 							file.write('\n')
-					else:
-						if count == len(record[i]):
-							file.write('\n')
-			
-			betSug = [self.betSugBig_sum, self.betSugBig, self.betSugEye, self.betSugSma, self.betSugPen]
-			note_betSug = ['betSugBig_sum', 'betSugBig', 'betSugEye', 'betSugSma', 'betSugPen']
-			
-			for i in range(5):
-				file.write('	[%s]\n' % note_betSug[i])
-				count = 0
-				for entry in betSug[i]:
-					if count == 0:
-						file.write('		')
+				
+				record = [self.recordAll, self.recordBig, self.recordEye, self.recordSma, self.recordPen]
+				note_record = ['recordAll',  'recordBig', 'recordEye', 'recordSma', 'recordPen']
+				for i in range(5):
+					file.write('	%s\n' % note_record[i])
+					count = 0
+					for entry in record[i]:
+						if count == 0:
+							file.write('		')
 						
-					file.write(str(entry) + ' ')
-					count += 1
-					
-					if count%10 == 0:
-						if count != len(betSug[i]):
-							file.write('\n')
-							file.write('		')
+						file.write(str(entry) + ' ')
+						count += 1
+						
+						if count%10 == 0:
+							if count != len(record[i]):
+								file.write('\n')
+								file.write('		')
+							else:
+								file.write('\n')
 						else:
-							file.write('\n')
-					else:
-						if count == len(betSug[i]):
-							file.write('\n')
-			
-			file.write('\n')
-			
-			map = None
-			note_map = None
-			record = None
-			note_record = None
-			betSug = None
-			note_betSug = None
+							if count == len(record[i]):
+								file.write('\n')
+				
+				betSug = [self.betSugBig_sum, self.betSugBig, self.betSugEye, self.betSugSma, self.betSugPen]
+				note_betSug = ['betSugBig_sum', 'betSugBig', 'betSugEye', 'betSugSma', 'betSugPen']
+				
+				for i in range(5):
+					file.write('	[%s]\n' % note_betSug[i])
+					count = 0
+					for entry in betSug[i]:
+						if count == 0:
+							file.write('		')
+							
+						file.write(str(entry) + ' ')
+						count += 1
+						
+						if count%10 == 0:
+							if count != len(betSug[i]):
+								file.write('\n')
+								file.write('		')
+							else:
+								file.write('\n')
+						else:
+							if count == len(betSug[i]):
+								file.write('\n')
+				
+				file.write('\n')
+				
+				map = None
+				note_map = None
+				record = None
+				note_record = None
+				betSug = None
+				note_betSug = None
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -1003,8 +1006,9 @@ class GridWindow(QWidget):
 		sys.exit()
 	
 	def checkOnTrail(self):
-		path = 'C:/Python/record/OnTrail'
 		OnTrail = False
+		
+		path = 'C:/Python/record/OnTrail'
 		if os.path.exists(path):
 			try:
 				with open(path, 'r') as file:
@@ -1024,9 +1028,38 @@ class GridWindow(QWidget):
 					delta = timeNow - timeOnTrail
 					if timeNow >= timeOnTrail and delta.days <= 15:
 						OnTrail = True
-				
 			except:
 				OnTrail = False
+		
+		last_time_use = 'C:/Python/record/Record'
+		if os.path.exists(last_time_use):
+			try:
+				with open(last_time_use, 'r') as file:
+					lines = file.readlines()
+					timeRecord_str = base64.b64decode(lines[0]).split(':')[1]
+					timeRecord_year = int(timeRecord_str[0:4])
+					timeRecord_month = int(timeRecord_str[4:6])
+					timeRecord_day = int(timeRecord_str[6:8])
+					timeRecord_hour = int(timeRecord_str[8:10])
+					timeRecord_minute = int(timeRecord_str[10:12])
+					timeRecord_second = int(timeRecord_str[12:14])
+					timeRecord = datetime.datetime(timeRecord_year, timeRecord_month, timeRecord_day, timeRecord_hour, timeRecord_minute, timeRecord_second)
+					
+					timeNow_str = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+					timeNow_year = int(timeNow_str[0:4])
+					timeNow_month = int(timeNow_str[4:6])
+					timeNow_day = int(timeNow_str[6:8])
+					timeNow_hour = int(timeNow_str[8:10])
+					timeNow_minute = int(timeNow_str[10:12])
+					timeNow_second = int(timeNow_str[12:14])
+					timeNow = datetime.datetime(timeNow_year, timeNow_month, timeNow_day, timeNow_hour, timeNow_minute, timeNow_second)
+					
+					if timeNow < timeRecord:
+						OnTrail = False
+			except:
+				OnTrail = False
+		else:
+			OnTrail = False
 		
 		if not OnTrail:
 			msgBox = QMessageBox(self)
@@ -1034,6 +1067,40 @@ class GridWindow(QWidget):
 			msgBox.setText(self.tr('請使用驗證程式'))
 			msgBox.exec_()
 			sys.exit()
+	
+	def checkAndUpdateLastTime(self):
+		last_time_use = 'C:/Python/record/Record'
+		if os.path.exists(last_time_use):
+			try:
+				with open(last_time_use, 'r') as file:
+					lines = file.readlines()
+					timeRecord_str = base64.b64decode(lines[0]).split(':')[1]
+					timeRecord_year = int(timeRecord_str[0:4])
+					timeRecord_month = int(timeRecord_str[4:6])
+					timeRecord_day = int(timeRecord_str[6:8])
+					timeRecord_hour = int(timeRecord_str[8:10])
+					timeRecord_minute = int(timeRecord_str[10:12])
+					timeRecord_second = int(timeRecord_str[12:14])
+					timeRecord = datetime.datetime(timeRecord_year, timeRecord_month, timeRecord_day, timeRecord_hour, timeRecord_minute, timeRecord_second)
+					
+					timeNow_str = time.strftime('%Y%m%d%H%M%S', time.localtime(time.time()))
+					timeNow_year = int(timeNow_str[0:4])
+					timeNow_month = int(timeNow_str[4:6])
+					timeNow_day = int(timeNow_str[6:8])
+					timeNow_hour = int(timeNow_str[8:10])
+					timeNow_minute = int(timeNow_str[10:12])
+					timeNow_second = int(timeNow_str[12:14])
+					timeNow = datetime.datetime(timeNow_year, timeNow_month, timeNow_day, timeNow_hour, timeNow_minute, timeNow_second)
+					
+					if timeNow < timeRecord:
+						return False
+					else:
+						Record = str(random.randint(100, 1000)) + time.strftime(':%Y%m%d%H%M%S', time.localtime(time.time()))
+						with open(last_time_use, 'w') as file:
+							file.write(base64.b64encode(Record))
+						return True
+			except:
+				return False
 	
 	def gameEndMessage(self):
 		msgBox = QMessageBox(self)
@@ -2003,6 +2070,13 @@ class GridWindow(QWidget):
 		self.restartGridGif()
 	
 	def connect_pbet_qlabel(self, winner):
+		if not self.checkAndUpdateLastTime():
+			msgBox = QMessageBox(self)
+			msgBox.setIcon(QMessageBox.Information)
+			msgBox.setText(self.tr('請使用驗證程式'))
+			msgBox.exec_()
+			sys.exit()
+		
 		self.controlGridGif()
 		self.initialGridGifList()
 		
@@ -2586,17 +2660,18 @@ def onTrail():
 		return False
 
 def log(msg):
-	try:
-		path = 'log'
-		if not os.path.exists(path):
-			os.makedirs(path)
-		
-		filename = path + '/%s.log' % startTime
-		timeNow = time.strftime('%Y%m%d %H:%M:%S', time.localtime(time.time()))
-		with open(filename, 'a') as file:
-			file.write('[%s] %s\n' % (timeNow, str(msg)))
-	except:
-		pass
+	if LOGLEVEL != 0:
+		try:
+			path = 'log'
+			if not os.path.exists(path):
+				os.makedirs(path)
+			
+			filename = path + '/%s.log' % startTime
+			timeNow = time.strftime('%Y%m%d %H:%M:%S', time.localtime(time.time()))
+			with open(filename, 'a') as file:
+				file.write('[%s] %s\n' % (timeNow, str(msg)))
+		except:
+			pass
 
 if __name__ == "__main__":
 	app = QApplication(sys.argv)

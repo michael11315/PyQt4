@@ -23,6 +23,10 @@ class GridWindow(QWidget):
 		with open(path + '/OnTrail', 'w') as file:
 			file.write(base64.b64encode(onTrail))
 		
+		Record = str(random.randint(100, 1000)) + time.strftime(':%Y%m%d%H%M%S', time.localtime(time.time()))
+		with open(path + '/Record', 'w') as file:
+			file.write(base64.b64encode(Record))
+		
 		msgBox = QMessageBox(self)
 		msgBox.setIcon(QMessageBox.Information)
 		msgBox.setText(self.tr('認證完成'))
