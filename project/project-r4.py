@@ -76,6 +76,9 @@ startTime = ''
 # suggestNextBet algorithm
 sugAlgorithm = 'A'
 
+# D, E, F print algorithm  based on sugAlgorithm A
+printDEFalgorithm = ''
+
 LOGLEVEL = 0
 
 class betRecord():
@@ -918,6 +921,15 @@ class betRecord():
 				note_record = None
 				betSug = None
 				note_betSug = None
+	
+	def algorithm_D(self):
+		pass
+	
+	def algorithm_E(self):
+		pass
+	
+	def algorithm_F(self):
+		pass
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -962,6 +974,9 @@ class GridWindow(QWidget):
 		self.comboBox =  QComboBox()
 		self.comboBox.addItem('A')
 		self.comboBox.addItem('B')
+		self.comboBox.addItem('D')
+		self.comboBox.addItem('E')
+		self.comboBox.addItem('F')
 		qlabel4 = QLabel()
 		qlabel4.setText(self.tr('本金 : '))
 		self.Lineedit = QLineEdit()
@@ -989,7 +1004,13 @@ class GridWindow(QWidget):
 		
 		try:
 			global sugAlgorithm
-			sugAlgorithm = algorithm
+			global printDEFalgorithm
+			
+			if algorithm in ['A', 'B']:
+				sugAlgorithm = algorithm
+			else:
+				printDEFalgorithm = algorithm
+				sugAlgorithm = 'A'
 			
 			number = int(number)
 			gameStart = True
