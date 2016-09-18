@@ -7,6 +7,8 @@ import time
 import datetime
 import subprocess
 import base64
+import random
+import traceback
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
@@ -75,7 +77,6 @@ startTime = ''
 
 # suggestNextBet algorithm
 sugAlgorithm = 'A'
-
 # D, E, F print algorithm  based on sugAlgorithm A
 printDEFalgorithm = ''
 
@@ -181,6 +182,10 @@ class betRecord():
 		
 		self.isFirstTie = False
 		self.firstTieTimes = 0
+		
+		self.betSugD = []
+		self.betSugE = []
+		self.betSugF = []
 	
 	def bet(self, winner, isPredict = False):
 		if not self.startGame:
@@ -466,6 +471,7 @@ class betRecord():
 	
 	def predictNextStatus(self):
 		nextStatus = []
+		countImg = []
 		
 		for i in range(2):
 			ret = self.bet(i, isPredict = True)
@@ -474,8 +480,19 @@ class betRecord():
 			
 			nextStatus.append((ret.get('Eye')[2], ret.get('Sma')[2], ret.get('Pen')[2]))
 			self.backOneStep()
+			
+			countList = [ret.get('Eye')[2], ret.get('Sma')[2], ret.get('Pen')[2]]
+			countBanker = 0
+			countPlayer = 0
+			for entry in countList:
+				if entry == 0:
+					countBanker += 1
+				elif entry == 1:
+					countPlayer += 1
+			
+			countImg.append((countBanker, countPlayer))
 		
-		return {'status': 0, 'nextStatus': nextStatus}
+		return {'status': 0, 'nextStatus': nextStatus, 'countImg': countImg}
 	
 	# handle small count and all count
 	def storeBetStatus(self, Big, Eye, Sma, Pen):
@@ -624,6 +641,174 @@ class betRecord():
 		betStatus = None
 		
 		return {'SugBig': Sug[0], 'SugEye': Sug[1], 'SugSma': Sug[2], 'SugPen': Sug[3]}
+	
+	def algorithmDEF(self):
+		predictCount = self.predictNextStatus().get('countImg')
+		ret_D = self.sugAlgorithm_D(predictCount)
+		ret_E = self.sugAlgorithm_E(predictCount)
+		ret_F = self.sugAlgorithm_F(predictCount)
+		
+		sugD = ret_D.get('sugD')
+		lastSugD = ret_D.get('lastSugD')
+		betStatusD = ret_D.get('betStatus')
+		
+		sugE = ret_E.get('sugE')
+		lastSugE = ret_E.get('lastSugE')
+		betStatusE = ret_E.get('betStatus')
+		
+		sugF = ret_F.get('sugF')
+		lastSugF = ret_F.get('lastSugF')
+		betStatusF = ret_F.get('betStatus')
+		
+		lastSugList = []
+		showSugList = []
+		isBet = []
+		sameBet = []
+		countBet = []
+		
+		if printDEFalgorithm == 'D':
+			lastSugList.append(lastSugD)
+			showSugList.append(sugD)
+			isBet.append(betStatusD[0])
+			sameBet.append(betStatusD[1])
+			countBet.append(betStatusD[2])
+		
+		if printDEFalgorithm == 'E':
+			lastSugList.append(lastSugE)
+			showSugList.append(sugE)
+			isBet.append(betStatusE[0])
+			sameBet.append(betStatusE[1])
+			countBet.append(betStatusE[2])
+		
+		if printDEFalgorithm == 'F':
+			lastSugList.append(lastSugF)
+			showSugList.append(sugF)
+			isBet.append(betStatusF[0])
+			sameBet.append(betStatusF[1])
+			countBet.append(betStatusF[2])
+		
+		lastSugList.append(lastSugD)
+		showSugList.append(sugD)
+		isBet.append(betStatusD[0])
+		sameBet.append(betStatusD[1])
+		countBet.append(betStatusD[2])
+		
+		lastSugList.append(lastSugE)
+		showSugList.append(sugE)
+		isBet.append(betStatusE[0])
+		sameBet.append(betStatusE[1])
+		countBet.append(betStatusE[2])
+		
+		lastSugList.append(lastSugF)
+		showSugList.append(sugF)
+		isBet.append(betStatusF[0])
+		sameBet.append(betStatusF[1])
+		countBet.append(betStatusF[2])
+		
+		return {'lastSugList': lastSugList, 'showSugList': showSugList, 'isBet': isBet, 'sameBet': sameBet, 'countBet': countBet}
+	
+	def sugAlgorithm_D(self, predictCount):
+		# predict sugD
+		row, col, img, bet = -1, -1, -1, -1
+		if predictCount[0][0] == 2 and predictCount[0][1] == 1:
+			img = 0
+		elif predictCount[1][0] == 2 and predictCount[1][1] == 1:
+			img = 1
+		
+		if img != -1:
+			if len(self.betSugD) > 0:
+				for i in range(len(self.betSugD)):
+					if self.betSugD[-i][3] not in [0, -1]:
+						if self.betSugD[-i][2] != self.recordBig[-i][2]:
+							bet = self.betSugD[-i][3] * 2 + 1
+							if bet > 15:
+								bet = 1
+						else:
+							bet = 1
+						break
+					
+					if i == len(self.betSugD) -1:
+						bet = 1
+			else:
+				bet = 1
+			
+			lastBig = self.recordBig[-1]
+			if img == lastBig[2]:
+				tmp = self.PosNext(self.mapBig, lastBig[0], lastBig[1], lastBig[2])
+			else:
+				tmp = self.PosChangeCol(self.mapBig, lastBig[2])
+			row, col = tmp[0], tmp[1]
+		
+		# get lastSugD and store sugD
+		lastSugD = (-1, -1, -1, -1)
+		if len(self.betSugD) > 0:
+			lastSugD = self.betSugD[-1]
+		self.betSugD.append((row, col, img, bet))
+		
+		# get bet status
+		isBet, sameBet, countBet = False, False, 0
+		if lastSugD[2] != -1:
+			isBet = True
+			if self.recordBig[-1][2] == lastSugD[2]:
+				sameBet = True
+			countBet = lastSugD[3]
+		
+		return {'sugD': (row, col, img, bet), 'lastSugD': lastSugD, 'betStatus': (isBet, sameBet, countBet)}
+	
+	def sugAlgorithm_E(self, predictCount):
+		# predict sugE
+		row, col, img, bet = -1, -1, -1, -1
+		if predictCount[0][0] == 1 and predictCount[0][1] == 2:
+			img = 0
+		elif predictCount[1][0] == 1 and predictCount[1][1] == 2:
+			img = 1
+		
+		if img != -1:
+			if len(self.betSugE) > 0:
+				for i in range(len(self.betSugE)):
+					if self.betSugE[-i][3] not in [0, -1]:
+						if self.betSugE[-i][2] != self.recordBig[-i][2]:
+							bet = self.betSugE[-i][3] * 2 + 1
+							if bet > 15:
+								bet = 1
+						else:
+							bet = 1
+						break
+					
+					if i == len(self.betSugE) -1:
+						bet = 1
+			else:
+				bet = 1
+			
+			lastBig = self.recordBig[-1]
+			if img == lastBig[2]:
+				tmp = self.PosNext(self.mapBig, lastBig[0], lastBig[1], lastBig[2])
+			else:
+				tmp = self.PosChangeCol(self.mapBig, lastBig[2])
+			row, col = tmp[0], tmp[1]
+		
+		# get lastSugE and store sugE
+		lastSugE = (-1, -1, -1, -1)
+		if len(self.betSugE) > 0:
+			lastSugE = self.betSugE[-1]
+		self.betSugE.append((row, col, img, bet))
+		
+		# get bet status
+		isBet, sameBet, countBet = False, False, 0
+		if lastSugE[2] != -1:
+			isBet = True
+			if self.recordBig[-1][2] == lastSugE[2]:
+				sameBet = True
+			countBet = lastSugE[3]
+		
+		return {'sugE': (row, col, img, bet), 'lastSugE': lastSugE, 'betStatus': (isBet, sameBet, countBet)}
+	
+	def sugAlgorithm_F(self, predictCount):
+		row, col, img, bet = -1, -1, -1, -1
+		lastSugF = (-1, -1, -1, -1)
+		isBet, sameBet, countBet = False, False, 0
+		
+		return {'sugF': (row, col, img, bet), 'lastSugF': lastSugF, 'betStatus': (isBet, sameBet, countBet)}
 	
 	def lastSugBet(self):
 		lastSugBig, lastSugEye, lastSugSma, lastSugPen = (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)
@@ -921,15 +1106,6 @@ class betRecord():
 				note_record = None
 				betSug = None
 				note_betSug = None
-	
-	def algorithm_D(self):
-		pass
-	
-	def algorithm_E(self):
-		pass
-	
-	def algorithm_F(self):
-		pass
 
 class GridWindow(QWidget):
 	def __init__(self, parent = None):
@@ -1121,6 +1297,7 @@ class GridWindow(QWidget):
 							file.write(base64.b64encode(Record))
 						return True
 			except:
+				#print traceback.format_exc()
 				return False
 	
 	def gameEndMessage(self):
@@ -2105,6 +2282,22 @@ class GridWindow(QWidget):
 		self.logGame('result:' + str(winner))
 		if ret.get('status') == 0:
 			lastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
+			showSugList = [ret.get('SugBig'), ret.get('SugEye'), ret.get('SugSma'), ret.get('SugPen')]
+			showList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
+			isBet = ret.get('isBet')
+			sameBet = ret.get('sameBet')
+			countBet = ret.get('countBet')
+			
+			# new insert code for new algorithm DEF
+			if printDEFalgorithm != '':
+				ret_DEF = self.betRecord.algorithmDEF()
+				lastSugList = ret_DEF.get('lastSugList')
+				showSugList = ret_DEF.get('showSugList')
+				showList = [ret.get('Big'), ret.get('Big'), ret.get('Big'), ret.get('Big')]
+				isBet = ret_DEF.get('isBet')
+				sameBet = ret_DEF.get('sameBet')
+				countBet = ret_DEF.get('countBet')
+			
 			for i in range(4):
 				row = lastSugList[i][0]
 				col = lastSugList[i][1]
@@ -2117,7 +2310,6 @@ class GridWindow(QWidget):
 						self.grid_qlabelList[i][row][col].movie().start()
 						self.grid_qlabelList[i][row][col].movie().stop()
 			
-			showSugList = [ret.get('SugBig'), ret.get('SugEye'), ret.get('SugSma'), ret.get('SugPen')]
 			for i in range(4):
 				row = showSugList[i][0]
 				col = showSugList[i][1]
@@ -2136,10 +2328,6 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].movie().start()
 					self.grid_qlabelList[i][row][col].movie().stop()
 			
-			showList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
-			isBet = ret.get('isBet')
-			sameBet = ret.get('sameBet')
-			countBet = ret.get('countBet')
 			for i in range(4):
 				row = showList[i][0]
 				col = showList[i][1]
@@ -2203,6 +2391,8 @@ class GridWindow(QWidget):
 		self.betRecord.changeEndGameToFalse()
 		if ret.get('status') == 0:
 			removeList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
+			removeSugList = [ret.get('SugBig'), ret.get('SugEye'), ret.get('SugSma'), ret.get('SugPen')]
+			ShowLastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
 			
 			for i in range(4):
 				row = removeList[i][0]
@@ -2213,7 +2403,6 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].movie().start()
 					self.grid_qlabelList[i][row][col].movie().stop()
 			
-			removeSugList = [ret.get('SugBig'), ret.get('SugEye'), ret.get('SugSma'), ret.get('SugPen')]
 			for i in range(4):
 				row = removeSugList[i][0]
 				col = removeSugList[i][1]
@@ -2225,7 +2414,6 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].movie().start()
 					self.grid_qlabelList[i][row][col].movie().stop()
 			
-			ShowLastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
 			for i in range(4):
 				row = ShowLastSugList[i][0]
 				col = ShowLastSugList[i][1]
