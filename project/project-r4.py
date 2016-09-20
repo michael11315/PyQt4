@@ -672,15 +672,13 @@ class betRecord():
 			isBet.append(betStatusD[0])
 			sameBet.append(betStatusD[1])
 			countBet.append(betStatusD[2])
-		
-		if printDEFalgorithm == 'E':
+		elif printDEFalgorithm == 'E':
 			lastSugList.append(lastSugE)
 			showSugList.append(sugE)
 			isBet.append(betStatusE[0])
 			sameBet.append(betStatusE[1])
 			countBet.append(betStatusE[2])
-		
-		if printDEFalgorithm == 'F':
+		elif printDEFalgorithm == 'F':
 			lastSugList.append(lastSugF)
 			showSugList.append(sugF)
 			isBet.append(betStatusF[0])
@@ -706,6 +704,29 @@ class betRecord():
 		countBet.append(betStatusF[2])
 		
 		return {'lastSugList': lastSugList, 'showSugList': showSugList, 'isBet': isBet, 'sameBet': sameBet, 'countBet': countBet}
+	
+	def algorithmDEFbackOneStep(self):
+		SugD = self.betSugD.pop()
+		SugE = self.betSugE.pop()
+		SugF = self.betSugF.pop()
+		if printDEFalgorithm == 'D':
+			removeSugList = [SugD, SugD, SugE, SugF]
+		elif printDEFalgorithm == 'E':
+			removeSugList = [SugE, SugD, SugE, SugF]
+		elif printDEFalgorithm == 'F':
+			removeSugList = [SugF, SugD, SugE, SugF]
+		
+		lastSugD = self.betSugD[-1]
+		lastSugE = self.betSugE[-1]
+		lastSugF = self.betSugF[-1]
+		if printDEFalgorithm == 'D':
+			ShowLastSugList = [lastSugD, lastSugD, lastSugE, lastSugF]
+		elif printDEFalgorithm == 'E':
+			ShowLastSugList = [lastSugE, lastSugD, lastSugE, lastSugF]
+		elif printDEFalgorithm == 'F':
+			ShowLastSugList = [lastSugF, lastSugD, lastSugE, lastSugF]
+		
+		return {'removeSugList': removeSugList, 'ShowLastSugList': ShowLastSugList}
 	
 	def sugAlgorithm_D(self, predictCount):
 		# predict sugD
@@ -807,6 +828,8 @@ class betRecord():
 		row, col, img, bet = -1, -1, -1, -1
 		lastSugF = (-1, -1, -1, -1)
 		isBet, sameBet, countBet = False, False, 0
+		
+		self.betSugF.append((row, col, img, bet))
 		
 		return {'sugF': (row, col, img, bet), 'lastSugF': lastSugF, 'betStatus': (isBet, sameBet, countBet)}
 	
@@ -2393,6 +2416,13 @@ class GridWindow(QWidget):
 			removeList = [ret.get('Big'), ret.get('Eye'), ret.get('Sma'), ret.get('Pen')]
 			removeSugList = [ret.get('SugBig'), ret.get('SugEye'), ret.get('SugSma'), ret.get('SugPen')]
 			ShowLastSugList = [ret.get('lastSugBig'), ret.get('lastSugEye'), ret.get('lastSugSma'), ret.get('lastSugPen')]
+			
+			# new insert code for new algorithm DEF
+			if printDEFalgorithm != '':
+				ret_DEF = self.betRecord.algorithmDEFbackOneStep()
+				removeList = [ret.get('Big'), ret.get('Big'), ret.get('Big'), ret.get('Big')]
+				removeSugList = ret_DEF.get('removeSugList')
+				ShowLastSugList = ret_DEF.get('ShowLastSugList')
 			
 			for i in range(4):
 				row = removeList[i][0]
