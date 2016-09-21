@@ -186,6 +186,7 @@ class betRecord():
 		self.betSugD = []
 		self.betSugE = []
 		self.betSugF = []
+		self.betSugDEF_sum = []
 	
 	def bet(self, winner, isPredict = False):
 		if not self.startGame:
@@ -703,7 +704,18 @@ class betRecord():
 		sameBet.append(betStatusF[1])
 		countBet.append(betStatusF[2])
 		
-		return {'lastSugList': lastSugList, 'showSugList': showSugList, 'isBet': isBet, 'sameBet': sameBet, 'countBet': countBet}
+		lastBig = self.recordBig[-1]
+		if printDEFalgorithm == 'D':
+			SugBig = sugD
+		elif printDEFalgorithm == 'E':
+			SugBig = sugE
+		elif printDEFalgorithm == 'F':
+			SugBig = sugF
+		
+		SugDEF_sum = self.sumBetInSugBig(lastBig, SugBig, sugD, sugE, sugF)
+		self.betSugDEF_sum.append(SugDEF_sum)
+		
+		return {'lastSugList': lastSugList, 'showSugList': showSugList, 'isBet': isBet, 'sameBet': sameBet, 'countBet': countBet, 'SugDEF_sum': SugDEF_sum}
 	
 	def algorithmDEFbackOneStep(self):
 		SugD = self.betSugD.pop()
@@ -2312,7 +2324,7 @@ class GridWindow(QWidget):
 			countBet = ret.get('countBet')
 			
 			# new insert code for new algorithm DEF
-			if printDEFalgorithm != '':
+			if printDEFalgorithm != '' and winner != Tie:
 				ret_DEF = self.betRecord.algorithmDEF()
 				lastSugList = ret_DEF.get('lastSugList')
 				showSugList = ret_DEF.get('showSugList')
