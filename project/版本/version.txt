@@ -1,0 +1,2 @@
+Baccarat_1.0-stable : 演算法A、B and 15天驗證器
+Baccarat_DE-測試版 : 演算法DE，停用"手動、切停、右邊欄位"
