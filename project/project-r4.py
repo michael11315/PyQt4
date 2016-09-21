@@ -712,10 +712,15 @@ class betRecord():
 		elif printDEFalgorithm == 'F':
 			SugBig = sugF
 		
-		SugDEF_sum = self.sumBetInSugBig(lastBig, SugBig, sugD, sugE, sugF)
+		lastSugDEF_sum = (-1, -1, -1, -1)
+		if len(self.betSugDEF_sum) > 0:
+			lastSugDEF_sum = self.betSugDEF_sum[-1]
+		
+		SugDEF_sum = SugBig
+		#SugDEF_sum = self.sumBetInSugBig(lastBig, SugBig, sugD, sugE, sugF)
 		self.betSugDEF_sum.append(SugDEF_sum)
 		
-		return {'lastSugList': lastSugList, 'showSugList': showSugList, 'isBet': isBet, 'sameBet': sameBet, 'countBet': countBet, 'SugDEF_sum': SugDEF_sum}
+		return {'lastSugList': lastSugList, 'showSugList': showSugList, 'isBet': isBet, 'sameBet': sameBet, 'countBet': countBet, 'SugDEF_sum': SugDEF_sum, 'lastSugDEF_sum': lastSugDEF_sum}
 	
 	def algorithmDEFbackOneStep(self):
 		SugD = self.betSugD.pop()
@@ -728,9 +733,16 @@ class betRecord():
 		elif printDEFalgorithm == 'F':
 			removeSugList = [SugF, SugD, SugE, SugF]
 		
-		lastSugD = self.betSugD[-1]
-		lastSugE = self.betSugE[-1]
-		lastSugF = self.betSugF[-1]
+		lastSugD = (-1, -1, -1, -1)
+		lastSugE = (-1, -1, -1, -1)
+		lastSugF = (-1, -1, -1, -1)
+		if len(self.betSugD) > 0:
+			lastSugD = self.betSugD[-1]
+		if len(self.betSugE) > 0:
+			lastSugE = self.betSugE[-1]
+		if len(self.betSugF) > 0:
+			lastSugF = self.betSugF[-1]
+		
 		if printDEFalgorithm == 'D':
 			ShowLastSugList = [lastSugD, lastSugD, lastSugE, lastSugF]
 		elif printDEFalgorithm == 'E':
@@ -2332,6 +2344,8 @@ class GridWindow(QWidget):
 				isBet = ret_DEF.get('isBet')
 				sameBet = ret_DEF.get('sameBet')
 				countBet = ret_DEF.get('countBet')
+				#ret['SugBig_sum'] = ret_DEF.get('SugDEF_sum')
+				#ret['lastSugBig_sum'] = ret_DEF.get('lastSugDEF_sum')
 			
 			for i in range(4):
 				row = lastSugList[i][0]
