@@ -79,6 +79,7 @@ startTime = ''
 sugAlgorithm = 'A'
 # D, E, F print algorithm  based on sugAlgorithm A
 printDEFalgorithm = ''
+printGalgorithm = ''
 
 LOGLEVEL = 0
 
@@ -643,6 +644,9 @@ class betRecord():
 		
 		return {'SugBig': Sug[0], 'SugEye': Sug[1], 'SugSma': Sug[2], 'SugPen': Sug[3]}
 	
+	def algorithmG(self):
+		pass
+	
 	def algorithmDEF(self):
 		predictCount = self.predictNextStatus().get('countImg')
 		ret_D = self.sugAlgorithm_D(predictCount)
@@ -1170,8 +1174,10 @@ class GridWindow(QWidget):
 		
 		self.globalValue()
 		self.sizeDefine()
-		self.UIcreate()
 		self.welcomeBaccarat()
+		self.UIcreate()
+		#self.welcomeBaccarat()
+		self.setPrincipal()
 		self.checkOnTrail()
 		#if not onTrail():
 			#sys.exit()
@@ -1200,6 +1206,7 @@ class GridWindow(QWidget):
 		self.comboBox.addItem('D')
 		self.comboBox.addItem('E')
 		self.comboBox.addItem('F')
+		self.comboBox.addItem('G')
 		qlabel4 = QLabel()
 		qlabel4.setText(self.tr('本金 : '))
 		self.Lineedit = QLineEdit()
@@ -1228,9 +1235,13 @@ class GridWindow(QWidget):
 		try:
 			global sugAlgorithm
 			global printDEFalgorithm
+			global printGalgorithm
 			
 			if algorithm in ['A', 'B']:
 				sugAlgorithm = algorithm
+			elif algorithm in ['G']:
+				printGalgorithm = algorithm
+				sugAlgorithm = 'A'
 			else:
 				printDEFalgorithm = algorithm
 				sugAlgorithm = 'A'
@@ -1238,16 +1249,21 @@ class GridWindow(QWidget):
 			number = int(number)
 			gameStart = True
 			self.betRecord.enterPrincipal(number)
-			self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %number))
-			self.bbet_qlineedit.setText(str(number))
-			self.bbet_qlineedit.setReadOnly(True)
+			
 			self.Dialog.close()
 		except:
+			#print traceback.format_exc()
 			self.Dialog.close()
 			self.welcomeBaccarat()
 
 	def welcomeBaccarat_reject(self):
 		sys.exit()
+	
+	def setPrincipal(self):
+		number = self.betRecord.getPrincipal()
+		self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %number))
+		self.bbet_qlineedit.setText(str(number))
+		self.bbet_qlineedit.setReadOnly(True)
 	
 	def checkOnTrail(self):
 		OnTrail = False
@@ -2346,6 +2362,9 @@ class GridWindow(QWidget):
 				countBet = ret_DEF.get('countBet')
 				#ret['SugBig_sum'] = ret_DEF.get('SugDEF_sum')
 				#ret['lastSugBig_sum'] = ret_DEF.get('lastSugDEF_sum')
+			
+			if printGalgorithm != '' and winner != Tie:
+				pass
 			
 			for i in range(4):
 				row = lastSugList[i][0]
