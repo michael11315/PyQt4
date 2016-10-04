@@ -1,2 +1,3 @@
 Baccarat_1.0-stable : 演算法A、B and 15天驗證器
 Baccarat_DE-測試版 : 演算法DE，停用"手動、切停、右邊欄位"
+Baccarat_G-第一階段 : 5路UI 紅藍路顯示演算法G 手動輸入與下局投注、大路連接
