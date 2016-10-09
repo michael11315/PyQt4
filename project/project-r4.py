@@ -2825,8 +2825,8 @@ class GridWindow(QWidget):
 					sugList_img.append(sugList_G[1][2])
 					sugList_img.append(sugList_G[2][2])
 					sugList_img.append(sugList_G[3][2])
-			else:
-				check_color = [-1, -1, -1, -1, -1]
+				else:
+					check_color = [-1, -1, -1, -1, -1]
 		except:
 			check_color = [-1, -1, -1, -1]
 			sugList_img = [-1, -1, -1, -1]
