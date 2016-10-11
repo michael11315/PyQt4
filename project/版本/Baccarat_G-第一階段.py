@@ -2218,8 +2218,7 @@ class GridWindow(QWidget):
 		clickable(self.pbet_qlabel2).connect(functools.partial(self.connect_pbet_qlabel, Tie))
 		clickable(self.pbet_qlabel3).connect(functools.partial(self.connect_pbet_qlabel, Player))
 		self.pbet_btn.clicked.connect(self.connect_pbet_btn)
-		if printGalgorithm == '':
-			self.pbet_btn_allcut.clicked.connect(self.connect_pbet_btn_allcut)
+		self.pbet_btn_allcut.clicked.connect(self.connect_pbet_btn_allcut)
 		
 		
 		# initail UIcreate_numberInput
@@ -2738,7 +2737,7 @@ class GridWindow(QWidget):
 	def connect_pbet_btn_allcut(self):
 		log('全切')
 		LastCutStopStatus = self.betRecord.getLastCutStopStatus()
-		for i in range(road_count):
+		for i in range(4):
 			if not LastCutStopStatus[i]:
 				self.connect_rbar_btn(i)
 	
@@ -2825,8 +2824,8 @@ class GridWindow(QWidget):
 					sugList_img.append(sugList_G[1][2])
 					sugList_img.append(sugList_G[2][2])
 					sugList_img.append(sugList_G[3][2])
-				else:
-					check_color = [-1, -1, -1, -1, -1]
+			else:
+				check_color = [-1, -1, -1, -1, -1]
 		except:
 			check_color = [-1, -1, -1, -1]
 			sugList_img = [-1, -1, -1, -1]
