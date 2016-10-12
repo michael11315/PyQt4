@@ -2478,11 +2478,17 @@ class GridWindow(QWidget):
 				countBet_G = [0, 0, 0, 0]
 				
 				ret_G = self.betRecord.algorithmG(winner)
-				
 				imgG = ret_G.get('imgG')
 				all_the_same = ret_G.get('all_the_same')
+				needShowSugBig = False
 				if imgG != -1:
 					ret_G = self.betRecord_G.bet(imgG)
+				else:
+					tmp = self.betRecord.algorithmG(winner)
+					tmp_img = tmp.get('imgG')
+					if tmp_img != -1:
+						needShowSugBig = True
+					self.betRecord.algorithmGbackOneStep()
 				
 				for i in range(4):
 					if i != 3:
@@ -2521,7 +2527,7 @@ class GridWindow(QWidget):
 					if SugBig_sum[2] != -1 and SugBig_sum[3] != -1:
 						retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(0, SugBig_sum[2], SugBig_sum[3], False)
 						showSugList[0] = SugBig_sum
-				else:
+				elif needShowSugBig:
 					if len(self.betRecord_G.betSugBig_sum) > 0:
 						lastSugBig_sum = self.betRecord_G.betSugBig_sum[-1]
 					else:
@@ -2529,6 +2535,7 @@ class GridWindow(QWidget):
 					if lastSugBig_sum[2] != -1 and lastSugBig_sum[3] != -1:
 						retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(0, lastSugBig_sum[2], lastSugBig_sum[3], False)
 						showSugList[0] = SugBig_sum
+						ret['SugBig_sum'] = SugBig_sum
 			elif printGalgorithm != '' and winner == Tie:
 				lastSugList.append((-1, -1, -1, -1))
 				showSugList.append((-1, -1, -1, -1))
@@ -3094,11 +3101,11 @@ class GridWindow(QWidget):
 				if img != imgG:
 					img = imgG
 			else:
-				pass
+				img = imgG
 		
 		self.update_nbet(img, bet)
 		
-		if printGalgorithm != '':
+		if printGalgorithm != '' and imgG != -1:
 			i = 0
 			retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(i, img, bet, isManual)
 			
