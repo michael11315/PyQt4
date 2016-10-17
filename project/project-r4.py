@@ -2752,6 +2752,20 @@ class GridWindow(QWidget):
 	def connect_binp_btn(self, i, number):
 		ret = self.betRecord.predictNextStatus()
 		nextStatus = ret['nextStatus']
+		
+		if printGalgorithm != '':
+			ret = self.betRecord_G.predictNextStatus()
+			nextStatus_G = ret['nextStatus']
+			
+			ret_G = self.betRecord.algorithmG(0, True)
+			imgG = ret_G.get('imgG')
+			if imgG == 0:
+				nextStatus = [[0, nextStatus_G[0][0], nextStatus_G[0][1], nextStatus_G[0][2]], [1, nextStatus_G[1][0], nextStatus_G[1][1], nextStatus_G[1][2]]]
+			elif imgG == 1:
+				nextStatus = [[1, nextStatus_G[1][0], nextStatus_G[1][1], nextStatus_G[1][2]], [0, nextStatus_G[0][0], nextStatus_G[0][1], nextStatus_G[0][2]]]
+			else:
+				nextStatus = [[0, nextStatus_G[0][0], nextStatus_G[0][1], nextStatus_G[0][2]], [1, nextStatus_G[1][0], nextStatus_G[1][1], nextStatus_G[1][2]]]
+		
 		if number in range(10):
 			tmp = self.lbar_qlineedit[i].text() + str(number)
 			self.lbar_qlineedit[i].setText(tmp)
@@ -2769,6 +2783,7 @@ class GridWindow(QWidget):
 					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
 		elif number == 11:
 			self.lbar_qlabel[i].setText(self.tr('閒'))
+			
 			if i == 0:
 				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 			else:
