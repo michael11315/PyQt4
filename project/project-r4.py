@@ -1555,6 +1555,16 @@ class GridWindow(QWidget):
 			self.bar_qframe.append(QFrame(self.left_qframe))
 			self.bar_hl.append(QHBoxLayout(self.bar_qframe[i]))
 		
+		self.UIcreate_GridBar_empty()
+		self.UIcreate_GridBar_title()
+		if printGalgorithm != '':
+			self.UIcreate_GridBar_cutstop()
+			self.UIcreate_GridBar_manual()
+		else:
+			self.UIcreate_GridBar_manual()
+			self.UIcreate_GridBar_cutstop()
+	
+	def UIcreate_GridBar_empty(self):
 		# bar's empty
 		#----------------------------------------------------
 		self.ebar_qframe = []
@@ -1584,14 +1594,13 @@ class GridWindow(QWidget):
 					self.ebar_btn2 = QPushButton(self.ebar_qframe[i])
 					self.ebar_hl[i].addWidget(self.ebar_btn2)
 				if i in [3, 4, 5, 6]:
-					#self.ebar_qradiobtn1 = QRadioButton()
 					self.ebar_hl[i].addWidget(self.ebar_qradiobtn1[i])
-					#self.ebar_qradiobtn2 = QRadioButton()
 					self.ebar_hl[i].addWidget(self.ebar_qradiobtn2[i])
 			
 			self.ebar_qframe[i].setLayout(self.ebar_hl[i])
 			self.bar_hl[i].addWidget(self.ebar_qframe[i])
-		
+	
+	def UIcreate_GridBar_title(self):
 		# bar's title
 		#----------------------------------------------------
 		self.tbar_qframe = []
@@ -1608,99 +1617,54 @@ class GridWindow(QWidget):
 			self.tbar_hl[i].addWidget(self.tbar_qlabel[i])
 			self.tbar_qframe[i].setLayout(self.tbar_hl[i])
 			self.bar_hl[i].addWidget(self.tbar_qframe[i])
+	
+	def UIcreate_GridBar_manual(self):
+		# manual change bar's global data
+		#----------------------------------------------------
+		self.mcbar_qframe = []
+		self.mcbar_hl = []
+		self.mcbar_qlabel = []
+		self.mcbar_btn = []
+		self.mcbar_qlineedit = []
 		
-		if printGalgorithm != '':
-			# right bar's global data
-			#----------------------------------------------------
-			self.rbar_qframe = []
-			self.rbar_hl = []
-			self.rbar_qlabel1 = []
-			self.rbar_btn = []
-			self.rbar_qlabel2 = []
+		for i in range(road_count):
+			# initial manual change bar
+			self.mcbar_qframe.append(QFrame(self.bar_qframe[i]))
+			self.mcbar_hl.append(QHBoxLayout(self.mcbar_qframe[i]))
+			self.mcbar_qlabel.append(QLabel(self.mcbar_qframe[i]))
+			self.mcbar_btn.append(QPushButton(self.mcbar_qframe[i]))
+			self.mcbar_qlineedit.append(QLineEdit(self.mcbar_qframe[i]))
 			
-			for i in range(road_count):
-				# initial right bar
-				self.rbar_qframe.append(QFrame(self.bar_qframe[i]))
-				self.rbar_hl.append(QHBoxLayout(self.rbar_qframe[i]))
-				self.rbar_qlabel1.append(QLabel(self.rbar_qframe[i]))
-				self.rbar_btn.append(QPushButton(self.rbar_qframe[i]))
-				self.rbar_qlabel2.append(QLabel(self.rbar_qframe[i]))
-				
-				# set relationship
-				self.rbar_hl[i].addWidget(self.rbar_qlabel1[i])
-				self.rbar_hl[i].addWidget(self.rbar_btn[i])
-				self.rbar_hl[i].addWidget(self.rbar_qlabel2[i])
-				self.rbar_qframe[i].setLayout(self.rbar_hl[i])
-				self.bar_hl[i].addWidget(self.rbar_qframe[i])
+			# set relationship
+			self.mcbar_hl[i].addWidget(self.mcbar_qlabel[i])
+			self.mcbar_hl[i].addWidget(self.mcbar_btn[i])
+			self.mcbar_hl[i].addWidget(self.mcbar_qlineedit[i])
+			self.mcbar_qframe[i].setLayout(self.mcbar_hl[i])
+			self.bar_hl[i].addWidget(self.mcbar_qframe[i])
+	
+	def UIcreate_GridBar_cutstop(self):
+		# cut stop bar's global data
+		#----------------------------------------------------
+		self.csbar_qframe = []
+		self.csbar_hl = []
+		self.csbar_qlabel1 = []
+		self.csbar_btn = []
+		self.csbar_qlabel2 = []
+		
+		for i in range(road_count):
+			# initial cut stop bar
+			self.csbar_qframe.append(QFrame(self.bar_qframe[i]))
+			self.csbar_hl.append(QHBoxLayout(self.csbar_qframe[i]))
+			self.csbar_qlabel1.append(QLabel(self.csbar_qframe[i]))
+			self.csbar_btn.append(QPushButton(self.csbar_qframe[i]))
+			self.csbar_qlabel2.append(QLabel(self.csbar_qframe[i]))
 			
-			# left bar's global data
-			#----------------------------------------------------
-			self.lbar_qframe = []
-			self.lbar_hl = []
-			self.lbar_qlabel = []
-			self.lbar_btn = []
-			self.lbar_qlineedit = []
-			
-			for i in range(road_count):
-				# initial left bar
-				self.lbar_qframe.append(QFrame(self.bar_qframe[i]))
-				self.lbar_hl.append(QHBoxLayout(self.lbar_qframe[i]))
-				self.lbar_qlabel.append(QLabel(self.lbar_qframe[i]))
-				self.lbar_btn.append(QPushButton(self.lbar_qframe[i]))
-				self.lbar_qlineedit.append(QLineEdit(self.lbar_qframe[i]))
-				
-				# set relationship
-				self.lbar_hl[i].addWidget(self.lbar_qlabel[i])
-				self.lbar_hl[i].addWidget(self.lbar_btn[i])
-				self.lbar_hl[i].addWidget(self.lbar_qlineedit[i])
-				self.lbar_qframe[i].setLayout(self.lbar_hl[i])
-				self.bar_hl[i].addWidget(self.lbar_qframe[i])
-		else:
-			# left bar's global data
-			#----------------------------------------------------
-			self.lbar_qframe = []
-			self.lbar_hl = []
-			self.lbar_qlabel = []
-			self.lbar_btn = []
-			self.lbar_qlineedit = []
-			
-			for i in range(road_count):
-				# initial left bar
-				self.lbar_qframe.append(QFrame(self.bar_qframe[i]))
-				self.lbar_hl.append(QHBoxLayout(self.lbar_qframe[i]))
-				self.lbar_qlabel.append(QLabel(self.lbar_qframe[i]))
-				self.lbar_btn.append(QPushButton(self.lbar_qframe[i]))
-				self.lbar_qlineedit.append(QLineEdit(self.lbar_qframe[i]))
-				
-				# set relationship
-				self.lbar_hl[i].addWidget(self.lbar_qlabel[i])
-				self.lbar_hl[i].addWidget(self.lbar_btn[i])
-				self.lbar_hl[i].addWidget(self.lbar_qlineedit[i])
-				self.lbar_qframe[i].setLayout(self.lbar_hl[i])
-				self.bar_hl[i].addWidget(self.lbar_qframe[i])
-			
-			# right bar's global data
-			#----------------------------------------------------
-			self.rbar_qframe = []
-			self.rbar_hl = []
-			self.rbar_qlabel1 = []
-			self.rbar_btn = []
-			self.rbar_qlabel2 = []
-			
-			for i in range(road_count):
-				# initial right bar
-				self.rbar_qframe.append(QFrame(self.bar_qframe[i]))
-				self.rbar_hl.append(QHBoxLayout(self.rbar_qframe[i]))
-				self.rbar_qlabel1.append(QLabel(self.rbar_qframe[i]))
-				self.rbar_btn.append(QPushButton(self.rbar_qframe[i]))
-				self.rbar_qlabel2.append(QLabel(self.rbar_qframe[i]))
-				
-				# set relationship
-				self.rbar_hl[i].addWidget(self.rbar_qlabel1[i])
-				self.rbar_hl[i].addWidget(self.rbar_btn[i])
-				self.rbar_hl[i].addWidget(self.rbar_qlabel2[i])
-				self.rbar_qframe[i].setLayout(self.rbar_hl[i])
-				self.bar_hl[i].addWidget(self.rbar_qframe[i])
+			# set relationship
+			self.csbar_hl[i].addWidget(self.csbar_qlabel1[i])
+			self.csbar_hl[i].addWidget(self.csbar_btn[i])
+			self.csbar_hl[i].addWidget(self.csbar_qlabel2[i])
+			self.csbar_qframe[i].setLayout(self.csbar_hl[i])
+			self.bar_hl[i].addWidget(self.csbar_qframe[i])
 	
 	def UI_create_Vline(self):
 		self.vline = QFrame(self)
@@ -2009,63 +1973,63 @@ class GridWindow(QWidget):
 			self.tbar_qlabel[3].setText(self.tr('小路'))
 			self.tbar_qlabel[4].setText(self.tr('筆路'))
 		
-		# left bar
+		# manual change bar
 		#--------------------------
 		for i in range(road_count):
-			self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;}''')
-			self.lbar_qframe[i].setSizePolicy(self.sizePolicy)
+			self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;}''')
+			self.mcbar_qframe[i].setSizePolicy(self.sizePolicy)
 			
-			self.lbar_hl[i].setSpacing(1)
-			self.lbar_hl[i].setMargin(0)
+			self.mcbar_hl[i].setSpacing(1)
+			self.mcbar_hl[i].setMargin(0)
 			
-			self.lbar_qlabel[i].setText('')
-			self.lbar_qlabel[i].setStyleSheet('''.QLabel {font-size: %dpt; color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-			self.lbar_qlabel[i].setAlignment(Qt.AlignCenter)
-			self.lbar_qlabel[i].setSizePolicy(self.sizePolicy)
-			self.lbar_qlabel[i].setFixedWidth(self.sizeWidth_qlabel)
-			self.lbar_qlabel[i].setFixedHeight(self.sizeHeight_qlabel)
+			self.mcbar_qlabel[i].setText('')
+			self.mcbar_qlabel[i].setStyleSheet('''.QLabel {font-size: %dpt; color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+			self.mcbar_qlabel[i].setAlignment(Qt.AlignCenter)
+			self.mcbar_qlabel[i].setSizePolicy(self.sizePolicy)
+			self.mcbar_qlabel[i].setFixedWidth(self.sizeWidth_qlabel)
+			self.mcbar_qlabel[i].setFixedHeight(self.sizeHeight_qlabel)
 			
-			self.lbar_btn[i].setText(self.tr('手動'))
-			self.lbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
-			self.lbar_btn[i].setSizePolicy(self.sizePolicy)
-			self.lbar_btn[i].setFixedWidth(self.sizeWidth_btn)
-			self.lbar_btn[i].setFixedHeight(self.sizeHeight_btn)
+			self.mcbar_btn[i].setText(self.tr('手動'))
+			self.mcbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
+			self.mcbar_btn[i].setSizePolicy(self.sizePolicy)
+			self.mcbar_btn[i].setFixedWidth(self.sizeWidth_btn)
+			self.mcbar_btn[i].setFixedHeight(self.sizeHeight_btn)
 			
-			self.lbar_qlineedit[i].setStyleSheet('''.QLineEdit {font-size: %dpt; color: black; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-			self.lbar_qlineedit[i].setSizePolicy(self.sizePolicy)
-			self.lbar_qlineedit[i].setFixedWidth(self.sizeWidth_qlabel)
-			self.lbar_qlineedit[i].setFixedHeight(self.sizeHeight_qlabel)
-			self.lbar_qlineedit[i].setReadOnly(True)
+			self.mcbar_qlineedit[i].setStyleSheet('''.QLineEdit {font-size: %dpt; color: black; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+			self.mcbar_qlineedit[i].setSizePolicy(self.sizePolicy)
+			self.mcbar_qlineedit[i].setFixedWidth(self.sizeWidth_qlabel)
+			self.mcbar_qlineedit[i].setFixedHeight(self.sizeHeight_qlabel)
+			self.mcbar_qlineedit[i].setReadOnly(True)
 		
-		# right bar
+		# cut stop bar
 		#--------------------------
 		for i in range(road_count):
-			self.rbar_qframe[i].setStyleSheet('''.QFrame {border: 1px solid gray;}''')
-			self.rbar_qframe[i].setSizePolicy(self.sizePolicy)
-			self.rbar_qframe[i].setFixedWidth(self.Width_rbar)
+			self.csbar_qframe[i].setStyleSheet('''.QFrame {border: 1px solid gray;}''')
+			self.csbar_qframe[i].setSizePolicy(self.sizePolicy)
+			self.csbar_qframe[i].setFixedWidth(self.Width_rbar)
 			
-			self.rbar_hl[i].setSpacing(0)
-			self.rbar_hl[i].setMargin(0)
+			self.csbar_hl[i].setSpacing(0)
+			self.csbar_hl[i].setMargin(0)
 			
-			self.rbar_qlabel1[i].setText(self.tr(' 小計 : '))
-			self.rbar_qlabel1[i].setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-			self.rbar_qlabel1[i].setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-			self.rbar_qlabel1[i].setSizePolicy(self.sizePolicy)
-			#self.rbar_qlabel1[i].setFixedWidth(self.sizeWidth_qlabel)
-			self.rbar_qlabel1[i].setFixedHeight(self.sizeHeight_qlabel)
+			self.csbar_qlabel1[i].setText(self.tr(' 小計 : '))
+			self.csbar_qlabel1[i].setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+			self.csbar_qlabel1[i].setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+			self.csbar_qlabel1[i].setSizePolicy(self.sizePolicy)
+			#self.csbar_qlabel1[i].setFixedWidth(self.sizeWidth_qlabel)
+			self.csbar_qlabel1[i].setFixedHeight(self.sizeHeight_qlabel)
 			
-			self.rbar_btn[i].setText(self.tr('停止'))
-			self.rbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
-			self.rbar_btn[i].setSizePolicy(self.sizePolicy)
-			self.rbar_btn[i].setFixedWidth(self.sizeWidth_btn)
-			self.rbar_btn[i].setFixedHeight(self.sizeHeight_btn)
+			self.csbar_btn[i].setText(self.tr('停止'))
+			self.csbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
+			self.csbar_btn[i].setSizePolicy(self.sizePolicy)
+			self.csbar_btn[i].setFixedWidth(self.sizeWidth_btn)
+			self.csbar_btn[i].setFixedHeight(self.sizeHeight_btn)
 			
-			self.rbar_qlabel2[i].setText(self.tr(' 合計 : '))
-			self.rbar_qlabel2[i].setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-			self.rbar_qlabel2[i].setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-			self.rbar_qlabel2[i].setSizePolicy(self.sizePolicy)
-			#self.rbar_qlabel2[i].setFixedWidth(self.sizeWidth_qlabel)
-			self.rbar_qlabel2[i].setFixedHeight(self.sizeHeight_qlabel)
+			self.csbar_qlabel2[i].setText(self.tr(' 合計 : '))
+			self.csbar_qlabel2[i].setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+			self.csbar_qlabel2[i].setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+			self.csbar_qlabel2[i].setSizePolicy(self.sizePolicy)
+			#self.csbar_qlabel2[i].setFixedWidth(self.sizeWidth_qlabel)
+			self.csbar_qlabel2[i].setFixedHeight(self.sizeHeight_qlabel)
 		
 		# initail global values of UIcreate_BetStatus
 		#----------------------------------------------------
@@ -2339,15 +2303,15 @@ class GridWindow(QWidget):
 			self.binp_btn13[i].setFixedHeight(self.binp_btnHeight*2)
 	
 	def initialBtnConnect(self):
-		# initail left bar btn in UIcreate_Grid
+		# initail manual change bar btn in UIcreate_Grid
 		#----------------------------------------------------
 		for i in range(road_count):
-			self.lbar_btn[i].clicked.connect(functools.partial(self.connect_lbar_btn, i))
+			self.mcbar_btn[i].clicked.connect(functools.partial(self.connect_mcbar_btn, i))
 		
-		# initail right bar btn in UIcreate_Grid
+		# initail cut stop bar btn in UIcreate_Grid
 		#----------------------------------------------------
 		for i in range(road_count):
-			self.rbar_btn[i].clicked.connect(functools.partial(self.connect_rbar_btn, i))
+			self.csbar_btn[i].clicked.connect(functools.partial(self.connect_csbar_btn, i))
 		
 		# initail bet and print area in UIcreate_BetStatus
 		#----------------------------------------------------
@@ -2395,7 +2359,7 @@ class GridWindow(QWidget):
 			self.binp_btn12[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 12))
 			self.binp_btn13[i].clicked.connect(functools.partial(self.connect_binp_btn, i, 13))
 	
-	def connect_lbar_btn(self, i):
+	def connect_mcbar_btn(self, i):
 		betRecord = self.betRecord
 		index = i
 		if printGalgorithm != '':
@@ -2403,19 +2367,19 @@ class GridWindow(QWidget):
 				index -= 1
 				betRecord = self.betRecord_G
 		
-		if self.lbar_btn[i].text().toUtf8() == '手動':
+		if self.mcbar_btn[i].text().toUtf8() == '手動':
 			LastCutStopStatus = betRecord.getLastCutStopStatus()
 			if not LastCutStopStatus[index]:
-				self.lbar_btn[i].setText(self.tr(''))
-				self.lbar_qlineedit[i].setText('')
+				self.mcbar_btn[i].setText(self.tr(''))
+				self.mcbar_qlineedit[i].setText('')
 				self.binp_qframe[i].show()
 		else:
-			self.lbar_btn[i].setText(self.tr('手動'))
+			self.mcbar_btn[i].setText(self.tr('手動'))
 			if betRecord.gameIsBegin():
-				if len(self.lbar_qlineedit[i].text()) > 0:
+				if len(self.mcbar_qlineedit[i].text()) > 0:
 					img = 0
-					bet = int(self.lbar_qlineedit[i].text())
-					if self.lbar_qlabel[i].text().toUtf8() == '莊':
+					bet = int(self.mcbar_qlineedit[i].text())
+					if self.mcbar_qlabel[i].text().toUtf8() == '莊':
 						img = 0
 					else:
 						img = 1
@@ -2444,7 +2408,7 @@ class GridWindow(QWidget):
 			self.binp_qframe[i].close()
 	
 	# cut stop
-	def connect_rbar_btn(self, i):
+	def connect_csbar_btn(self, i):
 		betRecord = self.betRecord
 		index = i
 		if printGalgorithm != '':
@@ -2454,10 +2418,10 @@ class GridWindow(QWidget):
 		
 		ret = betRecord.cutStop(index)
 		if ret:
-			if self.rbar_btn[i].text().toUtf8() == '停止':
+			if self.csbar_btn[i].text().toUtf8() == '停止':
 				self.logGame('停止: road = %d' %i)
-				self.rbar_btn[i].setText(self.tr('開始'))
-				self.rbar_btn[i].setStyleSheet('''.QPushButton {background-color: rgb(255, 255, 127); font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
+				self.csbar_btn[i].setText(self.tr('開始'))
+				self.csbar_btn[i].setStyleSheet('''.QPushButton {background-color: rgb(255, 255, 127); font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 				
 				# add black border on the grid
 				show = betRecord.lastShow(index)
@@ -2470,8 +2434,8 @@ class GridWindow(QWidget):
 				self.changeSug(i, show[2], 0, False)
 			else:
 				self.logGame('開始: road = %d' %i)
-				self.rbar_btn[i].setText(self.tr('停止'))
-				self.rbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
+				self.csbar_btn[i].setText(self.tr('停止'))
+				self.csbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 				show = betRecord.lastShow(index)
 				# algorithm v1
 				if sugAlgorithm == 'A':
@@ -2898,7 +2862,7 @@ class GridWindow(QWidget):
 		LastCutStopStatus = self.betRecord.getLastCutStopStatus()
 		for i in range(road_count):
 			if not LastCutStopStatus[i]:
-				self.connect_rbar_btn(i)
+				self.connect_csbar_btn(i)
 	
 	def connect_binp_btn(self, i, number):
 		ret = self.betRecord.predictNextStatus()
@@ -2918,36 +2882,36 @@ class GridWindow(QWidget):
 				nextStatus = [[0, nextStatus_G[0][0], nextStatus_G[0][1], nextStatus_G[0][2]], [1, nextStatus_G[1][0], nextStatus_G[1][1], nextStatus_G[1][2]]]
 		
 		if number in range(10):
-			tmp = self.lbar_qlineedit[i].text() + str(number)
-			self.lbar_qlineedit[i].setText(tmp)
+			tmp = self.mcbar_qlineedit[i].text() + str(number)
+			self.mcbar_qlineedit[i].setText(tmp)
 		elif number == 10:
-			self.lbar_qlabel[i].setText(self.tr('莊'))
+			self.mcbar_qlabel[i].setText(self.tr('莊'))
 			
 			if i == 0:
-				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+				self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
 			else:
 				if nextStatus[0][i-1] == 0:
-					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+					self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
 				elif nextStatus[0][i-1] == 1:
-					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
+					self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 				else:
-					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+					self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
 		elif number == 11:
-			self.lbar_qlabel[i].setText(self.tr('閒'))
+			self.mcbar_qlabel[i].setText(self.tr('閒'))
 			
 			if i == 0:
-				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
+				self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 			else:
 				if nextStatus[1][i-1] == 0:
-					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+					self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
 				elif nextStatus[1][i-1] == 1:
-					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
+					self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 				else:
-					self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
+					self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 		elif number == 12:
-			self.lbar_qlineedit[i].setText('')
+			self.mcbar_qlineedit[i].setText('')
 		elif number == 13:
-			self.connect_lbar_btn(i)
+			self.connect_mcbar_btn(i)
 	
 	def update_lbar(self):
 		check_color = []
@@ -2996,15 +2960,15 @@ class GridWindow(QWidget):
 		
 		for i in range(road_count):
 			# reset lbar
-			self.lbar_btn[i].setText(self.tr('手動'))
-			self.lbar_qlineedit[i].setText('')
+			self.mcbar_btn[i].setText(self.tr('手動'))
+			self.mcbar_qlineedit[i].setText('')
 			self.binp_qframe[i].close()
 			
 			# change lbar color and text
 			# change number input color
 			if sugList_img[0] == 0:
 				if sugList_img[i] == check_color[i]:
-					self.lbar_qlabel[i].setText(self.tr('莊'))
+					self.mcbar_qlabel[i].setText(self.tr('莊'))
 					if sugList_img[i] == 0:
 						self.binp_btn10[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(255, 47, 61); color: white;}''' % self.sizeFontSize_Label)
 						self.binp_btn11[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(116, 106, 255); color: white;}''' % self.sizeFontSize_Label)
@@ -3012,7 +2976,7 @@ class GridWindow(QWidget):
 						self.binp_btn10[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(116, 106, 255); color: white;}''' % self.sizeFontSize_Label)
 						self.binp_btn11[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(255, 47, 61); color: white;}''' % self.sizeFontSize_Label)
 				else:
-					self.lbar_qlabel[i].setText(self.tr('閒'))
+					self.mcbar_qlabel[i].setText(self.tr('閒'))
 					if sugList_img[i] == 1:
 						self.binp_btn10[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(255, 47, 61); color: white;}''' % self.sizeFontSize_Label)
 						self.binp_btn11[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(116, 106, 255); color: white;}''' % self.sizeFontSize_Label)
@@ -3021,7 +2985,7 @@ class GridWindow(QWidget):
 						self.binp_btn11[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(255, 47, 61); color: white;}''' % self.sizeFontSize_Label)
 			else:
 				if sugList_img[i] == check_color[i]:
-					self.lbar_qlabel[i].setText(self.tr('閒'))
+					self.mcbar_qlabel[i].setText(self.tr('閒'))
 					if sugList_img[i] == 1:
 						self.binp_btn10[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(255, 47, 61); color: white;}''' % self.sizeFontSize_Label)
 						self.binp_btn11[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(116, 106, 255); color: white;}''' % self.sizeFontSize_Label)
@@ -3029,7 +2993,7 @@ class GridWindow(QWidget):
 						self.binp_btn10[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(116, 106, 255); color: white;}''' % self.sizeFontSize_Label)
 						self.binp_btn11[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(255, 47, 61); color: white;}''' % self.sizeFontSize_Label)
 				else:
-					self.lbar_qlabel[i].setText(self.tr('莊'))
+					self.mcbar_qlabel[i].setText(self.tr('莊'))
 					if sugList_img[i] == 0:
 						self.binp_btn10[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(255, 47, 61); color: white;}''' % self.sizeFontSize_Label)
 						self.binp_btn11[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(116, 106, 255); color: white;}''' % self.sizeFontSize_Label)
@@ -3038,12 +3002,12 @@ class GridWindow(QWidget):
 						self.binp_btn11[i].setStyleSheet('''.QPushButton {font-size: %dpt; background-color: rgb(255, 47, 61); color: white;}''' % self.sizeFontSize_Label)
 			
 			if sugList_img[i] == 0:
-				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+				self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
 			elif sugList_img[i] == 1:
-				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
+				self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 			else:
-				self.lbar_qlabel[i].setText('')
-				self.lbar_qframe[i].setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;}''')
+				self.mcbar_qlabel[i].setText('')
+				self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;}''')
 	
 	def update_rbar(self):
 		if len(self.betRecord.betCountBig) > 0:
@@ -3061,7 +3025,7 @@ class GridWindow(QWidget):
 				smallCount = [0, 0, 0, 0, 0]
 		
 		for i in range(road_count):
-			self.rbar_qlabel1[i].setText(self.tr(' 小計 : %s' % str(smallCount[i])))
+			self.csbar_qlabel1[i].setText(self.tr(' 小計 : %s' % str(smallCount[i])))
 		
 		if len(self.betRecord.betSumCountBig) > 0:
 			sumCount = [self.betRecord.betSumCountBig[-1], self.betRecord.betSumCountEye[-1], self.betRecord.betSumCountSma[-1], self.betRecord.betSumCountPen[-1]]
@@ -3078,7 +3042,7 @@ class GridWindow(QWidget):
 				sumCount = [0, 0, 0, 0, 0]
 		
 		for i in range(road_count):
-			self.rbar_qlabel2[i].setText(self.tr(' 合計 : %s' % str(sumCount[i])))
+			self.csbar_qlabel2[i].setText(self.tr(' 合計 : %s' % str(sumCount[i])))
 	
 	def update_bbet(self):
 		tmp = self.betRecord.getPrincipal() + self.betRecord.principalSum()
@@ -3355,11 +3319,11 @@ class GridWindow(QWidget):
 		LastCutStopStatus = self.betRecord.getLastCutStopStatus()
 		for i in range(4):
 			if LastCutStopStatus[i]:
-				self.rbar_btn[i].setText(self.tr('開始'))
-				self.rbar_btn[i].setStyleSheet('''.QPushButton {background-color: rgb(255, 255, 127); font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
+				self.csbar_btn[i].setText(self.tr('開始'))
+				self.csbar_btn[i].setStyleSheet('''.QPushButton {background-color: rgb(255, 255, 127); font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 			else:
-				self.rbar_btn[i].setText(self.tr('停止'))
-				self.rbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
+				self.csbar_btn[i].setText(self.tr('停止'))
+				self.csbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 			
 			style = str(self.grid_qlabelList[i][removeList[i][0]][removeList[i][1]].layout().itemAt(0).widget().styleSheet())
 			style = style.replace('{ border: 1px solid black;','{')
