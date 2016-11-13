@@ -1326,10 +1326,14 @@ class GridWindow(QWidget):
 		sys.exit()
 	
 	def setPrincipal(self, betPrincipal):
-		self.betRecord.enterPrincipal(betPrincipal)
-		self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %betPrincipal))
-		self.bbet_qlineedit.setText(str(betPrincipal))
-		self.bbet_qlineedit.setReadOnly(True)
+		if printGalgorithm != '':
+			# TODO
+			pass
+		else:
+			self.betRecord.enterPrincipal(betPrincipal)
+			self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %betPrincipal))
+			self.bbet_qlineedit.setText(str(betPrincipal))
+			self.bbet_qlineedit.setReadOnly(True)
 	
 	def checkOnTrail(self):
 		OnTrail = False
@@ -1449,8 +1453,9 @@ class GridWindow(QWidget):
 			self.betRecord_G.enterPrincipal(number)
 			
 			global road_count
-			road_count = 5
-			#road_count = 7
+			# TODO
+			#road_count = 5
+			road_count = 7
 	
 	def sizeDefine(self):
 		# special size define
@@ -1589,10 +1594,6 @@ class GridWindow(QWidget):
 					self.ebar_hl[i].addWidget(self.ebar_qlineedit)
 					self.ebar_combobox = QComboBox(self.ebar_qframe[i])
 					self.ebar_hl[i].addWidget(self.ebar_combobox)
-					self.ebar_btn1 = QPushButton(self.ebar_qframe[i])
-					self.ebar_hl[i].addWidget(self.ebar_btn1)
-					self.ebar_btn2 = QPushButton(self.ebar_qframe[i])
-					self.ebar_hl[i].addWidget(self.ebar_btn2)
 				if i in [3, 4, 5, 6]:
 					self.ebar_hl[i].addWidget(self.ebar_qradiobtn1[i])
 					self.ebar_hl[i].addWidget(self.ebar_qradiobtn2[i])
@@ -1675,7 +1676,26 @@ class GridWindow(QWidget):
 		self.bet_qframe.setLayout(self.bet_vl)
 		
 		if printGalgorithm != '':
-			pass
+			self.UIcreate_BetStatus_UI2_ar_nextBet()
+			self.UIcreate_BetStatus_UI2_ar_betInningCount()
+			self.UIcreate_BetStatus_UI2_ar_pushButton()
+			self.UIcreate_BetStatus_UI2_big_detailInfo()
+			self.UIcreate_BetStatus_UI2_big_pushButton()
+			self.UIcreate_BetStatus_UI2_rb_betInningCount()
+			self.UIcreate_BetStatus_UI2_rb_betPushButton()
+			self.UIcreate_BetStatus_UI2_rb_empty()
+			
+			self.bet_vl.addWidget(self.arnbet_qframe)
+			self.bet_vl.addWidget(self.aribet_qframe)
+			self.bet_vl.addWidget(self.arrpbet_qframe)
+			self.bet_vl.addWidget(self.bigdibet_qframe)
+			self.bet_vl.addWidget(self.brrabet_qframe)
+			for i in range(5):
+				self.bet_vl.addWidget(self.rbibet_qframe[i])
+				if i == 0:
+					self.bet_vl.addWidget(self.rbpbet_qframe)
+				else:
+					self.bet_vl.addWidget(self.eibet_qframe[i-1])
 		else:
 			self.UIcreate_BetStatus_betPrint()
 			self.UIcreate_BetStatus_nextBet()
@@ -1833,78 +1853,224 @@ class GridWindow(QWidget):
 		self.trbet_hl.addWidget(self.trbet_qlabel4)
 		self.trbet_hl.addWidget(self.trbet_qlabelspace)
 	
-	def UIcreate_BetStatus_betInningCount_algG(self):
-		# bet inning count area global data
+	def UIcreate_BetStatus_UI2_ar_nextBet(self):
+		# UI2(for algorithm G), all record, next bet area
 		#----------------------------------------------------
-		self.ibet_qframe = []
-		self.ibet_gl = []
-		self.ibet_qlabel1 = []
-		self.ibet_qlabel2 = []
-		self.ibet_qlabel3 = []
-		self.ibet_qlabel4 = []
-		
-		self.libet_qframe = []
-		self.libet_gl = []
-		self.ibet_qlabel_banker1 = []
-		self.ibet_qlabel_banker2 = []
-		self.ibet_qlabel_banker3 = []
-		self.ibet_qlabel_banker4 = []
-		self.ibet_qlabel_player1 = []
-		self.ibet_qlabel_player2 = []
-		self.ibet_qlabel_player3 = []
-		self.ibet_qlabel_player4 = []
-		self.ibet_qlabel_tie1 = []
-		self.ibet_qlabel_tie2 = []
-		self.ibet_qlabel_tie3 = []
-		self.ibet_qlabel_tie4 = []
-		
-		for i in range(road_count):
-			# initial
-			self.ibet_qframe.append(QFrame(self.bet_qframe))
-			self.ibet_gl.append(QGridLayout(self.ibet_qframe[i]))
-			self.ibet_qlabel1.append(QLabel(self.ibet_qframe[i]))
-			self.ibet_qlabel2.append(QLabel(self.ibet_qframe[i]))
-			self.ibet_qlabel3.append(QLabel(self.ibet_qframe[i]))
-			self.ibet_qlabel4.append(QLabel(self.ibet_qframe[i]))
-		
-			self.libet_qframe.append(QFrame(self.ibet_qframe[i]))
-			self.libet_gl.append(QGridLayout(self.libet_qframe[i]))
-			self.ibet_qlabel_banker1.append(QLabel(self.libet_qframe[i]))
-			self.ibet_qlabel_banker2.append(QLabel(self.libet_qframe[i]))
-			self.ibet_qlabel_banker3.append(QLabel(self.libet_qframe[i]))
-			self.ibet_qlabel_banker4.append(QLabel(self.libet_qframe[i]))
-			self.ibet_qlabel_player1.append(QLabel(self.libet_qframe[i]))
-			self.ibet_qlabel_player2.append(QLabel(self.libet_qframe[i]))
-			self.ibet_qlabel_player3.append(QLabel(self.libet_qframe[i]))
-			self.ibet_qlabel_player4.append(QLabel(self.libet_qframe[i]))
-			self.ibet_qlabel_tie1.append(QLabel(self.libet_qframe[i]))
-			self.ibet_qlabel_tie2.append(QLabel(self.libet_qframe[i]))
-			self.ibet_qlabel_tie3.append(QLabel(self.libet_qframe[i]))
-			self.ibet_qlabel_tie4.append(QLabel(self.libet_qframe[i]))
+		# initial
+		self.arnbet_qframe = QFrame(self.bet_qframe)
+		self.arnbet_gl = QGridLayout(self.arnbet_qframe)
+		self.arnbet_qlabel1 = QLabel(self.arnbet_qframe)
+		self.arnbet_qlabel2 = QLabel(self.arnbet_qframe)
+		self.arnbet_qlabel3 = QLabel(self.arnbet_qframe)
+		self.arnbet_qlabel4 = QLabel(self.arnbet_qframe)
+		self.arnbet_qlabel5 = QLabel(self.arnbet_qframe)
 		
 		# set relationship
-		self.ibet_qframe.setLayout(self.ibet_gl)
-		self.ibet_gl.addWidget(self.ibet_qlabel1, 0, 4, 1, 2)
-		self.ibet_gl.addWidget(self.ibet_qlabel2, 0, 6, 3, 2)
-		self.ibet_gl.addWidget(self.ibet_qlabel3, 1, 4, 1, 2)
-		self.ibet_gl.addWidget(self.ibet_qlabel4, 2, 4, 1, 2)
-		self.ibet_gl.addWidget(self.libet_qframe, 0, 0, 3, 4)
+		self.arnbet_qframe.setLayout(self.arnbet_gl)
+		self.arnbet_gl.addWidget(self.arnbet_qlabel1, 0, 0, 1, 3)
+		self.arnbet_gl.addWidget(self.arnbet_qlabel2, 0, 3)
+		self.arnbet_gl.addWidget(self.arnbet_qlabel3, 1, 0, 1, 2)
+		self.arnbet_gl.addWidget(self.arnbet_qlabel4, 1, 2)
+		self.arnbet_gl.addWidget(self.arnbet_qlabel5, 1, 3)
+	
+	def UIcreate_BetStatus_UI2_ar_betInningCount(self):
+		# UI2(for algorithm G), all record, bet inning count area
+		#----------------------------------------------------
+		# initial
+		self.aribet_qframe = QFrame(self.bet_qframe)
+		self.aribet_gl = QGridLayout(self.aribet_qframe)
+		self.aribet_qlabel1 = QLabel(self.aribet_qframe)
+		self.aribet_qlabel2 = QLabel(self.aribet_qframe)
+		self.aribet_qlabel3 = QLabel(self.aribet_qframe)
+		self.aribet_qlabel4 = QLabel(self.aribet_qframe)
 		
-		self.libet_qframe.setLayout(self.libet_gl)
-		self.libet_gl.addWidget(self.ibet_qlabel_banker1, 0, 0)
-		self.libet_gl.addWidget(self.ibet_qlabel_banker2, 0, 1)
-		self.libet_gl.addWidget(self.ibet_qlabel_banker3, 0, 2)
-		self.libet_gl.addWidget(self.ibet_qlabel_banker4, 0, 3)
-		self.libet_gl.addWidget(self.ibet_qlabel_player1, 1, 0)
-		self.libet_gl.addWidget(self.ibet_qlabel_player2, 1, 1)
-		self.libet_gl.addWidget(self.ibet_qlabel_player3, 1, 2)
-		self.libet_gl.addWidget(self.ibet_qlabel_player4, 1, 3)
-		self.libet_gl.addWidget(self.ibet_qlabel_tie1, 2, 0)
-		self.libet_gl.addWidget(self.ibet_qlabel_tie2, 2, 1)
-		self.libet_gl.addWidget(self.ibet_qlabel_tie3, 2, 2)
-		self.libet_gl.addWidget(self.ibet_qlabel_tie4, 2, 3)
+		self.arlibet_qframe = QFrame(self.aribet_qframe)
+		self.arlibet_gl = QGridLayout(self.arlibet_qframe)
+		self.aribet_qlabel_banker1 = QLabel(self.arlibet_qframe)
+		self.aribet_qlabel_banker2 = QLabel(self.arlibet_qframe)
+		self.aribet_qlabel_banker3 = QLabel(self.arlibet_qframe)
+		self.aribet_qlabel_banker4 = QLabel(self.arlibet_qframe)
+		self.aribet_qlabel_player1 = QLabel(self.arlibet_qframe)
+		self.aribet_qlabel_player2 = QLabel(self.arlibet_qframe)
+		self.aribet_qlabel_player3 = QLabel(self.arlibet_qframe)
+		self.aribet_qlabel_player4 = QLabel(self.arlibet_qframe)
+		self.aribet_qlabel_tie1 = QLabel(self.arlibet_qframe)
+		self.aribet_qlabel_tie2 = QLabel(self.arlibet_qframe)
+		self.aribet_qlabel_tie3 = QLabel(self.arlibet_qframe)
+		self.aribet_qlabel_tie4 = QLabel(self.arlibet_qframe)
 		
-		self.bet_vl.addWidget(self.ibet_qframe)
+		# set relationship
+		self.aribet_qframe.setLayout(self.aribet_gl)
+		self.aribet_gl.addWidget(self.aribet_qlabel1, 0, 4, 1, 2)
+		self.aribet_gl.addWidget(self.aribet_qlabel2, 0, 6, 3, 2)
+		self.aribet_gl.addWidget(self.aribet_qlabel3, 1, 4, 1, 2)
+		self.aribet_gl.addWidget(self.aribet_qlabel4, 2, 4, 1, 2)
+		self.aribet_gl.addWidget(self.arlibet_qframe, 0, 0, 3, 4)
+		
+		self.arlibet_qframe.setLayout(self.arlibet_gl)
+		self.arlibet_gl.addWidget(self.aribet_qlabel_banker1, 0, 0)
+		self.arlibet_gl.addWidget(self.aribet_qlabel_banker2, 0, 1)
+		self.arlibet_gl.addWidget(self.aribet_qlabel_banker3, 0, 2)
+		self.arlibet_gl.addWidget(self.aribet_qlabel_banker4, 0, 3)
+		self.arlibet_gl.addWidget(self.aribet_qlabel_player1, 1, 0)
+		self.arlibet_gl.addWidget(self.aribet_qlabel_player2, 1, 1)
+		self.arlibet_gl.addWidget(self.aribet_qlabel_player3, 1, 2)
+		self.arlibet_gl.addWidget(self.aribet_qlabel_player4, 1, 3)
+		self.arlibet_gl.addWidget(self.aribet_qlabel_tie1, 2, 0)
+		self.arlibet_gl.addWidget(self.aribet_qlabel_tie2, 2, 1)
+		self.arlibet_gl.addWidget(self.aribet_qlabel_tie3, 2, 2)
+		self.arlibet_gl.addWidget(self.aribet_qlabel_tie4, 2, 3)
+	
+	def UIcreate_BetStatus_UI2_ar_pushButton(self):
+		# UI2(for algorithm G), all record, restart and print pushButton area
+		#----------------------------------------------------
+		# initial
+		self.arrpbet_qframe = QFrame(self.bet_qframe)
+		self.arrpbet_hl = QHBoxLayout(self.arrpbet_qframe)
+		self.arrpbet_btn_restart = QPushButton(self.arrpbet_qframe)
+		self.arrpbet_btn_print = QPushButton(self.arrpbet_qframe)
+		
+		# set relationship
+		self.arrpbet_qframe.setLayout(self.arrpbet_hl)
+		self.arrpbet_hl.addWidget(self.arrpbet_btn_restart)
+		self.arrpbet_hl.addWidget(self.arrpbet_btn_print)
+	
+	def UIcreate_BetStatus_UI2_big_detailInfo(self):
+		# UI2(for algorithm G), big road, detail info area
+		#----------------------------------------------------
+		# initial
+		self.bigdibet_qframe = QFrame(self.bet_qframe)
+		self.bigdibet_gl = QGridLayout(self.bigdibet_qframe)
+		self.bigdibet_qlabel1 = QLabel(self.bigdibet_qframe)
+		self.bigdibet_qlabel2 = QLabel(self.bigdibet_qframe)
+		self.bigdibet_qlabel3 = QLabel(self.bigdibet_qframe)
+		self.bigdibet_qlabel4 = QLabel(self.bigdibet_qframe)
+		self.bigdibet_qlabel1_number = QLabel(self.bigdibet_qframe)
+		self.bigdibet_qlabel2_number = QLabel(self.bigdibet_qframe)
+		self.bigdibet_qlabel3_number = QLabel(self.bigdibet_qframe)
+		self.bigdibet_qlabel4_number = QLabel(self.bigdibet_qframe)
+		
+		# set relationship
+		self.bigdibet_qframe.setLayout(self.bigdibet_gl)
+		self.bigdibet_gl.addWidget(self.bigdibet_qlabel1, 0, 0)
+		self.bigdibet_gl.addWidget(self.bigdibet_qlabel1_number, 0, 1)
+		self.bigdibet_gl.addWidget(self.bigdibet_qlabel1, 1, 0)
+		self.bigdibet_gl.addWidget(self.bigdibet_qlabel1_number, 1, 1)
+		self.bigdibet_gl.addWidget(self.bigdibet_qlabel1, 2, 0)
+		self.bigdibet_gl.addWidget(self.bigdibet_qlabel1_number, 2, 1)
+		self.bigdibet_gl.addWidget(self.bigdibet_qlabel1, 3, 0)
+		self.bigdibet_gl.addWidget(self.bigdibet_qlabel1_number, 3, 1)
+	
+	def UIcreate_BetStatus_UI2_big_pushButton(self):
+		# UI2(for algorithm G), big road, return and all cut pushButton area
+		#----------------------------------------------------
+		# initial
+		self.brrabet_qframe = QFrame(self.bet_qframe)
+		self.brrabet_hl = QHBoxLayout(self.brrabet_qframe)
+		self.brrabet_btn_return = QPushButton(self.brrabet_qframe)
+		self.brrabet_btn_allcut = QPushButton(self.brrabet_qframe)
+		
+		# set relationship
+		self.brrabet_qframe.setLayout(self.brrabet_hl)
+		self.brrabet_hl.addWidget(self.brrabet_btn_return)
+		self.brrabet_hl.addWidget(self.brrabet_btn_allcut)
+	
+	def UIcreate_BetStatus_UI2_rb_betInningCount(self):
+		# UI2(for algorithm G), red blue(5 road), bet inning count area
+		#----------------------------------------------------
+		# bet inning count area global data
+		self.rbibet_qframe = []
+		self.rbibet_gl = []
+		self.rbibet_qlabel1 = []
+		self.rbibet_qlabel2 = []
+		self.rbibet_qlabel3 = []
+		self.rbibet_qlabel4 = []
+		
+		self.rblibet_qframe = []
+		self.rblibet_gl = []
+		self.rbibet_qlabel_banker1 = []
+		self.rbibet_qlabel_banker2 = []
+		self.rbibet_qlabel_banker3 = []
+		self.rbibet_qlabel_banker4 = []
+		self.rbibet_qlabel_player1 = []
+		self.rbibet_qlabel_player2 = []
+		self.rbibet_qlabel_player3 = []
+		self.rbibet_qlabel_player4 = []
+		self.rbibet_qlabel_tie1 = []
+		self.rbibet_qlabel_tie2 = []
+		self.rbibet_qlabel_tie3 = []
+		self.rbibet_qlabel_tie4 = []
+		
+		for i in range(5):
+			# initial
+			self.rbibet_qframe.append(QFrame(self.bet_qframe))
+			self.rbibet_gl.append(QGridLayout(self.rbibet_qframe[i]))
+			self.rbibet_qlabel1.append(QLabel(self.rbibet_qframe[i]))
+			self.rbibet_qlabel2.append(QLabel(self.rbibet_qframe[i]))
+			self.rbibet_qlabel3.append(QLabel(self.rbibet_qframe[i]))
+			self.rbibet_qlabel4.append(QLabel(self.rbibet_qframe[i]))
+		
+			self.rblibet_qframe.append(QFrame(self.rbibet_qframe[i]))
+			self.rblibet_gl.append(QGridLayout(self.rblibet_qframe[i]))
+			self.rbibet_qlabel_banker1.append(QLabel(self.rblibet_qframe[i]))
+			self.rbibet_qlabel_banker2.append(QLabel(self.rblibet_qframe[i]))
+			self.rbibet_qlabel_banker3.append(QLabel(self.rblibet_qframe[i]))
+			self.rbibet_qlabel_banker4.append(QLabel(self.rblibet_qframe[i]))
+			self.rbibet_qlabel_player1.append(QLabel(self.rblibet_qframe[i]))
+			self.rbibet_qlabel_player2.append(QLabel(self.rblibet_qframe[i]))
+			self.rbibet_qlabel_player3.append(QLabel(self.rblibet_qframe[i]))
+			self.rbibet_qlabel_player4.append(QLabel(self.rblibet_qframe[i]))
+			self.rbibet_qlabel_tie1.append(QLabel(self.rblibet_qframe[i]))
+			self.rbibet_qlabel_tie2.append(QLabel(self.rblibet_qframe[i]))
+			self.rbibet_qlabel_tie3.append(QLabel(self.rblibet_qframe[i]))
+			self.rbibet_qlabel_tie4.append(QLabel(self.rblibet_qframe[i]))
+		
+			# set relationship
+			self.rbibet_qframe[i].setLayout(self.rbibet_gl[i])
+			self.rbibet_gl[i].addWidget(self.rbibet_qlabel1[i], 0, 4, 1, 2)
+			self.rbibet_gl[i].addWidget(self.rbibet_qlabel2[i], 0, 6, 3, 2)
+			self.rbibet_gl[i].addWidget(self.rbibet_qlabel3[i], 1, 4, 1, 2)
+			self.rbibet_gl[i].addWidget(self.rbibet_qlabel4[i], 2, 4, 1, 2)
+			self.rbibet_gl[i].addWidget(self.rblibet_qframe[i], 0, 0, 3, 4)
+			
+			self.rblibet_qframe[i].setLayout(self.rblibet_gl[i])
+			self.rblibet_gl[i].addWidget(self.rbibet_qlabel_banker1[i], 0, 0)
+			self.rblibet_gl[i].addWidget(self.rbibet_qlabel_banker2[i], 0, 1)
+			self.rblibet_gl[i].addWidget(self.rbibet_qlabel_banker3[i], 0, 2)
+			self.rblibet_gl[i].addWidget(self.rbibet_qlabel_banker4[i], 0, 3)
+			self.rblibet_gl[i].addWidget(self.rbibet_qlabel_player1[i], 1, 0)
+			self.rblibet_gl[i].addWidget(self.rbibet_qlabel_player2[i], 1, 1)
+			self.rblibet_gl[i].addWidget(self.rbibet_qlabel_player3[i], 1, 2)
+			self.rblibet_gl[i].addWidget(self.rbibet_qlabel_player4[i], 1, 3)
+			self.rblibet_gl[i].addWidget(self.rbibet_qlabel_tie1[i], 2, 0)
+			self.rblibet_gl[i].addWidget(self.rbibet_qlabel_tie2[i], 2, 1)
+			self.rblibet_gl[i].addWidget(self.rbibet_qlabel_tie3[i], 2, 2)
+			self.rblibet_gl[i].addWidget(self.rbibet_qlabel_tie4[i], 2, 3)
+	
+	def UIcreate_BetStatus_UI2_rb_betPushButton(self):
+		# bet push button area
+		#----------------------------------------------------
+		# initial
+		self.rbpbet_qframe = QFrame(self.bet_qframe)
+		self.rbpbet_hl = QHBoxLayout(self.rbpbet_qframe)
+		self.rbpbet_qlabel1 = QLabel(self.rbpbet_qframe)
+		self.rbpbet_qlabel2 = QLabel(self.rbpbet_qframe)
+		self.rbpbet_qlabel3 = QLabel(self.rbpbet_qframe)
+		
+		# set relationship
+		self.rbpbet_qframe.setLayout(self.rbpbet_hl)
+		self.rbpbet_hl.addWidget(self.rbpbet_qlabel1)
+		self.rbpbet_hl.addWidget(self.rbpbet_qlabel2)
+		self.rbpbet_hl.addWidget(self.rbpbet_qlabel3)
+	
+	def UIcreate_BetStatus_UI2_rb_empty(self):
+		# bet empty area
+		#----------------------------------------------------
+		self.eibet_qframe = []
+		
+		for i in range(4):
+			# initial
+			self.eibet_qframe.append(QFrame(self.bet_qframe))
 	
 	def UIcreate_numberInput(self):
 		self.binp_qframe = []
@@ -1961,6 +2127,15 @@ class GridWindow(QWidget):
 			self.binp_gl[i].addWidget(self.binp_btn13[i], 2, 3, 2, 1)
 	
 	def initialGlobalAttribute(self):
+		self.initialGlobalAttribute_Grid()
+		if printGalgorithm != '':
+			# TODO
+			pass
+		else:
+			self.initialGlobalAttribute_BetStatus()
+		self.initialGlobalAttribute_numberInput()
+	
+	def initialGlobalAttribute_Grid(self):
 		# initail global values of UIcreate
 		#----------------------------------------------------
 		self.UI_hl.setSpacing(1)
@@ -1968,6 +2143,10 @@ class GridWindow(QWidget):
 		self.left_vl.setSpacing(1)
 		self.left_vl.setMargin(0)
 		
+		self.initialGlobalAttribute_GridLayout()
+		self.initialGlobalAttribute_GridBar()
+	
+	def initialGlobalAttribute_GridLayout(self):
 		# initail global values of UIcreate_GridLayout
 		#----------------------------------------------------
 		for i in range(road_count):
@@ -1975,12 +2154,19 @@ class GridWindow(QWidget):
 			
 			self.grid_gl[i].setSpacing(1)
 			self.grid_gl[i].setMargin(1)
-		
+	
+	def initialGlobalAttribute_GridBar(self):
 		# initail global values of UIcreate_BarForGrid
 		#----------------------------------------------------
 		for i in range(road_count):
 			self.bar_hl[i].setMargin(0)
 		
+		self.initialGlobalAttribute_GridBar_empty()
+		self.initialGlobalAttribute_GridBar_title()
+		self.initialGlobalAttribute_GridBar_manualChange()
+		self.initialGlobalAttribute_GridBar_cutStop()
+	
+	def initialGlobalAttribute_GridBar_empty(self):
 		# bar's empty
 		#--------------------------
 		for i in range(road_count):
@@ -2022,24 +2208,13 @@ class GridWindow(QWidget):
 			self.ebar_combobox.setSizePolicy(self.sizePolicy)
 			self.ebar_combobox.setFixedWidth(55)
 			self.ebar_combobox.setFixedHeight(self.sizeHeight_qlabel)
-			
-			self.ebar_btn1.setText(self.tr('新局'))
-			self.ebar_btn1.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
-			self.ebar_btn1.setSizePolicy(self.sizePolicy)
-			self.ebar_btn1.setFixedWidth(55)
-			self.ebar_btn1.setFixedHeight(self.sizeHeight_btn)
-			
-			self.ebar_btn2.setText(self.tr('列印'))
-			self.ebar_btn2.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
-			self.ebar_btn2.setSizePolicy(self.sizePolicy)
-			self.ebar_btn2.setFixedWidth(55)
-			self.ebar_btn2.setFixedHeight(self.sizeHeight_btn)
 		
 		name = sugAlgorithm
 		if printDEFalgorithm != '':
 			name = printDEFalgorithm
 		self.ebar_qlabel[0].setText(self.tr(sugAlgorithm))
-		
+	
+	def initialGlobalAttribute_GridBar_title(self):
 		# bar's title
 		#--------------------------
 		for i in range(road_count):
@@ -2060,7 +2235,8 @@ class GridWindow(QWidget):
 			self.tbar_qlabel[2].setText(self.tr('眼路'))
 			self.tbar_qlabel[3].setText(self.tr('小路'))
 			self.tbar_qlabel[4].setText(self.tr('筆路'))
-		
+	
+	def initialGlobalAttribute_GridBar_manualChange(self):
 		# manual change bar
 		#--------------------------
 		for i in range(road_count):
@@ -2088,7 +2264,8 @@ class GridWindow(QWidget):
 			self.mcbar_qlineedit[i].setFixedWidth(self.sizeWidth_qlabel)
 			self.mcbar_qlineedit[i].setFixedHeight(self.sizeHeight_qlabel)
 			self.mcbar_qlineedit[i].setReadOnly(True)
-		
+	
+	def initialGlobalAttribute_GridBar_cutStop(self):
 		# cut stop bar
 		#--------------------------
 		for i in range(road_count):
@@ -2118,12 +2295,20 @@ class GridWindow(QWidget):
 			self.csbar_qlabel2[i].setSizePolicy(self.sizePolicy)
 			#self.csbar_qlabel2[i].setFixedWidth(self.sizeWidth_qlabel)
 			self.csbar_qlabel2[i].setFixedHeight(self.sizeHeight_qlabel)
-		
+	
+	def initialGlobalAttribute_BetStatus(self):
 		# initail global values of UIcreate_BetStatus
 		#----------------------------------------------------
 		self.bet_vl.setSpacing(10)
 		self.bet_vl.setMargin(0)
 		
+		self.initialGlobalAttribute_BetStatus_betPrint()
+		self.initialGlobalAttribute_BetStatus_nextBet()
+		self.initialGlobalAttribute_BetStatus_betInningCount()
+		self.initialGlobalAttribute_BetStatus_betPushButton()
+		self.initialGlobalAttribute_BetStatus_betRecord()
+	
+	def initialGlobalAttribute_BetStatus_betPrint(self):
 		# bet and print area
 		#--------------------------
 		self.bbet_qframe.setStyleSheet('''.QFrame {border: 1px solid gray;}''')
@@ -2158,7 +2343,8 @@ class GridWindow(QWidget):
 		self.bbet_qlabel2.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 		self.bbet_qlabel2.setSizePolicy(self.sizePolicy)
 		self.bbet_qlabel2.setFixedHeight(self.sizeHeight_qlabel)
-		
+	
+	def initialGlobalAttribute_BetStatus_nextBet(self):
 		# next bet area
 		#--------------------------
 		self.nbet_qframe.setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;} .QLabel {background-color: white;}''')
@@ -2185,7 +2371,8 @@ class GridWindow(QWidget):
 		
 		self.nbet_qlabel5.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 		self.nbet_qlabel5.setAlignment(Qt.AlignCenter)
-		
+	
+	def initialGlobalAttribute_BetStatus_betInningCount(self):
 		# bet inning count area
 		#--------------------------
 		self.ibet_qframe.setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;} .QLabel {background-color: white;}''')
@@ -2231,8 +2418,8 @@ class GridWindow(QWidget):
 		self.ibet_qlabel_tie1.setText(self.tr('和'))
 		self.ibet_qlabel_tie1.setStyleSheet('''.QLabel {font-size: %dpt; color: green; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 		self.ibet_qlabel_tie1.setAlignment(Qt.AlignCenter)
-		
-		
+	
+	def initialGlobalAttribute_BetStatus_betPushButton(self):
 		# bet push button area
 		#--------------------------
 		self.pbet_qframe.setStyleSheet('''.QFrame {background-color: white; border: 1px solid gray;}''')
@@ -2278,8 +2465,8 @@ class GridWindow(QWidget):
 		self.pbet_btn_allcut.setSizePolicy(self.sizePolicy)
 		self.pbet_btn_allcut.setFixedWidth(90)
 		self.pbet_btn_allcut.setFixedHeight(30)
-		
-		
+	
+	def initialGlobalAttribute_BetStatus_betRecord(self):
 		# bet record area
 		#--------------------------
 		self.rbet_qframe.setSizePolicy(self.sizePolicy)
@@ -2322,7 +2509,8 @@ class GridWindow(QWidget):
 		self.trbet_qlabelspace.setFixedWidth(self.Width_trbet_space)
 		self.trbet_hl.setSpacing(0)
 		self.trbet_hl.setMargin(0)
-		
+	
+	def initialGlobalAttribute_numberInput(self):
 		# initail global values of UIcreate_numberInput
 		#----------------------------------------------------
 		self.binp_qframe[0].setGeometry(QRect(486, 24, 180, 145))
@@ -2391,21 +2579,36 @@ class GridWindow(QWidget):
 			self.binp_btn13[i].setFixedHeight(self.binp_btnHeight*2)
 	
 	def initialBtnConnect(self):
+		self.initialBtnConnect_GridBar_manualChange()
+		self.initialBtnConnect_GridBar_cutStop()
+		if printGalgorithm != '':
+			# TODO
+			pass
+		else:
+			self.initialBtnConnect_BetStatus_betPrint()
+			self.initialBtnConnect_BetStatus_betInningCount()
+			self.initialBtnConnect_BetStatus_betPushButton()
+		self.initialBtnConnect_numberInput()
+	
+	def initialBtnConnect_GridBar_manualChange(self):
 		# initail manual change bar btn in UIcreate_Grid
 		#----------------------------------------------------
 		for i in range(road_count):
 			self.mcbar_btn[i].clicked.connect(functools.partial(self.connect_mcbar_btn, i))
-		
+	
+	def initialBtnConnect_GridBar_cutStop(self):
 		# initail cut stop bar btn in UIcreate_Grid
 		#----------------------------------------------------
 		for i in range(road_count):
 			self.csbar_btn[i].clicked.connect(functools.partial(self.connect_csbar_btn, i))
-		
+	
+	def initialBtnConnect_BetStatus_betPrint(self):
 		# initail bet and print area in UIcreate_BetStatus
 		#----------------------------------------------------
 		self.bbet_btn1.clicked.connect(self.connect_bbet_btn1)
 		self.bbet_btn2.clicked.connect(self.connect_bbet_btn2)
-		
+	
+	def initialBtnConnect_BetStatus_betInningCount(self):
 		# initail bet inning count area in UIcreate_BetStatus
 		#----------------------------------------------------
 		#clickable(self.libet_qframe).connect(self.connect_libet_qframe)
@@ -2418,7 +2621,8 @@ class GridWindow(QWidget):
 			clickable(self.ibet_qlabel_player2).connect(functools.partial(self.connect_libet_qframe, 1))
 			clickable(self.ibet_qlabel_player3).connect(functools.partial(self.connect_libet_qframe, 1))
 			clickable(self.ibet_qlabel_player4).connect(functools.partial(self.connect_libet_qframe, 1))
-		
+	
+	def initialBtnConnect_BetStatus_betPushButton(self):
 		# initail push button area in UIcreate_BetStatus
 		#----------------------------------------------------
 		clickable(self.pbet_qlabel1).connect(functools.partial(self.connect_pbet_qlabel, Banker))
@@ -2427,8 +2631,8 @@ class GridWindow(QWidget):
 		self.pbet_btn.clicked.connect(self.connect_pbet_btn)
 		if printGalgorithm == '':
 			self.pbet_btn_allcut.clicked.connect(self.connect_pbet_btn_allcut)
-		
-		
+	
+	def initialBtnConnect_numberInput(self):
 		# initail UIcreate_numberInput
 		#----------------------------------------------------
 		for i in range(road_count):
@@ -2448,6 +2652,7 @@ class GridWindow(QWidget):
 			self.binp_btn13[i].clicked.connect(functools.partial(self.connect_binp_btn, i, 13))
 	
 	def connect_mcbar_btn(self, i):
+		# connect to manual change button
 		betRecord = self.betRecord
 		index = i
 		if printGalgorithm != '':
@@ -2495,8 +2700,8 @@ class GridWindow(QWidget):
 			
 			self.binp_qframe[i].close()
 	
-	# cut stop
 	def connect_csbar_btn(self, i):
+		# connect to cut stop button
 		betRecord = self.betRecord
 		index = i
 		if printGalgorithm != '':
