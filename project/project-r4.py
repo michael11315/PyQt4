@@ -2127,19 +2127,16 @@ class GridWindow(QWidget):
 			self.binp_gl[i].addWidget(self.binp_btn13[i], 2, 3, 2, 1)
 	
 	def initialGlobalAttribute(self):
+		self.UI_hl.setSpacing(1)
+		self.UI_hl.setMargin(0)
+		
 		self.initialGlobalAttribute_Grid()
-		if printGalgorithm != '':
-			# TODO
-			pass
-		else:
-			self.initialGlobalAttribute_BetStatus()
+		self.initialGlobalAttribute_BetStatus()
 		self.initialGlobalAttribute_numberInput()
 	
 	def initialGlobalAttribute_Grid(self):
 		# initail global values of UIcreate
 		#----------------------------------------------------
-		self.UI_hl.setSpacing(1)
-		self.UI_hl.setMargin(0)
 		self.left_vl.setSpacing(1)
 		self.left_vl.setMargin(0)
 		
@@ -2151,6 +2148,7 @@ class GridWindow(QWidget):
 		#----------------------------------------------------
 		for i in range(road_count):
 			self.grid_qframe[i].setStyleSheet('''.QFrame {background-color: gray;}''')
+			#self.grid_qframe[i].setFixedHeight(self.Height_tbar)
 			
 			self.grid_gl[i].setSpacing(1)
 			self.grid_gl[i].setMargin(1)
@@ -2159,6 +2157,7 @@ class GridWindow(QWidget):
 		# initail global values of UIcreate_BarForGrid
 		#----------------------------------------------------
 		for i in range(road_count):
+			#self.bar_qframe[i].setFixedHeight(self.Height_Grid * 6 + 7)
 			self.bar_hl[i].setMargin(0)
 		
 		self.initialGlobalAttribute_GridBar_empty()
@@ -2297,16 +2296,27 @@ class GridWindow(QWidget):
 			self.csbar_qlabel2[i].setFixedHeight(self.sizeHeight_qlabel)
 	
 	def initialGlobalAttribute_BetStatus(self):
-		# initail global values of UIcreate_BetStatus
-		#----------------------------------------------------
-		self.bet_vl.setSpacing(10)
-		self.bet_vl.setMargin(0)
-		
-		self.initialGlobalAttribute_BetStatus_betPrint()
-		self.initialGlobalAttribute_BetStatus_nextBet()
-		self.initialGlobalAttribute_BetStatus_betInningCount()
-		self.initialGlobalAttribute_BetStatus_betPushButton()
-		self.initialGlobalAttribute_BetStatus_betRecord()
+		if printGalgorithm != '':
+			# TODO
+			# initail global values of UIcreate_BetStatus UI2
+			#----------------------------------------------------
+			self.bet_vl.setSpacing(0)
+			self.bet_vl.setMargin(0)
+			
+			self.initialGlobalAttribute_BetStatus_UI2_ar_nextBet()
+			self.initialGlobalAttribute_BetStatus_UI2_ar_betInningCount()
+			self.initialGlobalAttribute_BetStatus_UI2_ar_pushButton()
+		else:
+			# initail global values of UIcreate_BetStatus
+			#----------------------------------------------------
+			self.bet_vl.setSpacing(10)
+			self.bet_vl.setMargin(0)
+			
+			self.initialGlobalAttribute_BetStatus_betPrint()
+			self.initialGlobalAttribute_BetStatus_nextBet()
+			self.initialGlobalAttribute_BetStatus_betInningCount()
+			self.initialGlobalAttribute_BetStatus_betPushButton()
+			self.initialGlobalAttribute_BetStatus_betRecord()
 	
 	def initialGlobalAttribute_BetStatus_betPrint(self):
 		# bet and print area
@@ -2509,6 +2519,101 @@ class GridWindow(QWidget):
 		self.trbet_qlabelspace.setFixedWidth(self.Width_trbet_space)
 		self.trbet_hl.setSpacing(0)
 		self.trbet_hl.setMargin(0)
+	
+	def initialGlobalAttribute_BetStatus_UI2_ar_nextBet(self):
+		# UI2(for algorithm G), all record, next bet area
+		#--------------------------
+		self.arnbet_qframe.setStyleSheet('''.QFrame {background-color: gray; border-top: 1px solid gray; border-left: 1px solid gray; border-right: 1px solid gray;} .QLabel {background-color: white;}''')
+		self.arnbet_qframe.setSizePolicy(self.sizePolicy)
+		self.arnbet_qframe.setFixedWidth(self.Width_BetStatus)
+		self.arnbet_qframe.setFixedHeight(55)
+		
+		self.arnbet_gl.setSpacing(1)
+		self.arnbet_gl.setMargin(0)
+		
+		self.arnbet_qlabel1.setText(self.tr('下局注碼'))
+		self.arnbet_qlabel1.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.arnbet_qlabel1.setAlignment(Qt.AlignCenter)
+		
+		self.arnbet_qlabel2.setText(self.tr('總計'))
+		self.arnbet_qlabel2.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.arnbet_qlabel2.setAlignment(Qt.AlignCenter)
+		
+		self.arnbet_qlabel3.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.arnbet_qlabel3.setAlignment(Qt.AlignCenter)
+		
+		self.arnbet_qlabel4.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.arnbet_qlabel4.setAlignment(Qt.AlignCenter)
+		
+		self.arnbet_qlabel5.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.arnbet_qlabel5.setAlignment(Qt.AlignCenter)
+	
+	def initialGlobalAttribute_BetStatus_UI2_ar_betInningCount(self):
+		# UI2(for algorithm G), all record, bet inning count area
+		#--------------------------
+		self.aribet_qframe.setStyleSheet('''.QFrame {background-color: gray; border-top: 1px solid gray; border-left: 1px solid gray; border-right: 1px solid gray;} .QLabel {background-color: white;}''')
+		self.aribet_qframe.setSizePolicy(self.sizePolicy)
+		self.aribet_qframe.setFixedWidth(self.Width_BetStatus)
+		self.aribet_qframe.setFixedHeight(80)
+		
+		self.aribet_gl.setSpacing(1)
+		self.aribet_gl.setMargin(0)
+		
+		self.aribet_qlabel1.setText('0')
+		self.aribet_qlabel1.setAlignment(Qt.AlignCenter)
+		self.aribet_qlabel1.setStyleSheet('''.QLabel {font-size: %dpt; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		
+		self.aribet_qlabel2.setText(self.tr('0\n局'))
+		self.aribet_qlabel2.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.aribet_qlabel2.setAlignment(Qt.AlignCenter)
+		
+		self.aribet_qlabel3.setText('0')
+		self.aribet_qlabel3.setStyleSheet('''.QLabel {font-size: %dpt; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.aribet_qlabel3.setAlignment(Qt.AlignCenter)
+		
+		self.aribet_qlabel4.setText('0')
+		self.aribet_qlabel4.setStyleSheet('''.QLabel {font-size: %dpt; color: green; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.aribet_qlabel4.setAlignment(Qt.AlignCenter)
+		
+		self.arlibet_qframe.setStyleSheet('''.QFrame {background-color: white; border: 0px;} .QLabel {background-color: white;}''')
+		
+		self.arlibet_gl.setSpacing(0)
+		self.arlibet_gl.setMargin(0)
+		
+		self.aribet_qlabel_banker1.setText(self.tr('莊'))
+		self.aribet_qlabel_banker1.setStyleSheet('''.QLabel {font-size: %dpt; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.aribet_qlabel_banker1.setAlignment(Qt.AlignCenter)
+		self.aribet_qlabel_banker2.setAlignment(Qt.AlignCenter)
+		self.aribet_qlabel_banker3.setAlignment(Qt.AlignCenter)
+		self.aribet_qlabel_banker4.setAlignment(Qt.AlignCenter)
+		
+		self.aribet_qlabel_player1.setText(self.tr('閒'))
+		self.aribet_qlabel_player1.setStyleSheet('''.QLabel {font-size: %dpt; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.aribet_qlabel_player1.setAlignment(Qt.AlignCenter)
+		
+		self.aribet_qlabel_tie1.setText(self.tr('和'))
+		self.aribet_qlabel_tie1.setStyleSheet('''.QLabel {font-size: %dpt; color: green; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.aribet_qlabel_tie1.setAlignment(Qt.AlignCenter)
+	
+	def initialGlobalAttribute_BetStatus_UI2_ar_pushButton(self):
+		# UI2(for algorithm G), all record, restart and print pushButton area
+		#--------------------------
+		self.arrpbet_qframe.setStyleSheet('''.QFrame {background-color: white; border: 1px solid gray;} .QLabel {background-color: white;}''')
+		self.arrpbet_qframe.setSizePolicy(self.sizePolicy)
+		self.arrpbet_qframe.setFixedWidth(self.Width_BetStatus)
+		self.arrpbet_qframe.setFixedHeight(35)
+		
+		self.arrpbet_btn_restart.setText(self.tr('新局'))
+		self.arrpbet_btn_restart.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
+		self.arrpbet_btn_restart.setSizePolicy(self.sizePolicy)
+		self.arrpbet_btn_restart.setFixedWidth(90)
+		self.arrpbet_btn_restart.setFixedHeight(30)
+		
+		self.arrpbet_btn_print.setText(self.tr('列印'))
+		self.arrpbet_btn_print.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
+		self.arrpbet_btn_print.setSizePolicy(self.sizePolicy)
+		self.arrpbet_btn_print.setFixedWidth(90)
+		self.arrpbet_btn_print.setFixedHeight(30)
 	
 	def initialGlobalAttribute_numberInput(self):
 		# initail global values of UIcreate_numberInput
