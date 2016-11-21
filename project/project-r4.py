@@ -2989,8 +2989,8 @@ class GridWindow(QWidget):
 		if printGalgorithm != '':
 			self.initialBtnConnect_BetStatus_UI2_top_pushButton()
 			self.initialBtnConnect_BetStatus_UI2_ar_betInningCount()
+			self.initialBtnConnect_BetStatus_UI2_ar_betPushButton()
 			self.initialBtnConnect_BetStatus_UI2_rb_betInningCount()
-			self.initialBtnConnect_BetStatus_UI2_rb_betPushButton()
 		else:
 			self.initialBtnConnect_BetStatus_betPrint()
 			self.initialBtnConnect_BetStatus_betInningCount()
@@ -3055,6 +3055,13 @@ class GridWindow(QWidget):
 		clickable(self.aribet_qlabel_player3).connect(functools.partial(self.connect_libet_qframe, 1))
 		clickable(self.aribet_qlabel_player4).connect(functools.partial(self.connect_libet_qframe, 1))
 	
+	def initialBtnConnect_BetStatus_UI2_ar_betPushButton(self):
+		# UI2(for algorithm G), all record, bet push button area
+		#----------------------------------------------------
+		clickable(self.arpbet_qlabel1).connect(functools.partial(self.connect_pbet_qlabel, Banker))
+		clickable(self.arpbet_qlabel2).connect(functools.partial(self.connect_pbet_qlabel, Tie))
+		clickable(self.arpbet_qlabel3).connect(functools.partial(self.connect_pbet_qlabel, Player))
+	
 	def initialBtnConnect_BetStatus_UI2_rb_betInningCount(self):
 		# UI2(for algorithm G), red blue(5 road), bet inning count area
 		#----------------------------------------------------
@@ -3068,13 +3075,6 @@ class GridWindow(QWidget):
 			clickable(self.rbibet_qlabel_player3[i]).connect(functools.partial(self.connect_libet_qframe, 1))
 			clickable(self.rbibet_qlabel_player4[i]).connect(functools.partial(self.connect_libet_qframe, 1))
 	
-	def initialBtnConnect_BetStatus_UI2_rb_betPushButton(self):
-		# UI2(for algorithm G), red blue(5 road), bet push button area
-		#----------------------------------------------------
-		clickable(self.arpbet_qlabel1).connect(functools.partial(self.connect_pbet_qlabel, Banker))
-		clickable(self.arpbet_qlabel2).connect(self.connect_pbet_btn)
-		clickable(self.arpbet_qlabel3).connect(functools.partial(self.connect_pbet_qlabel, Player))
-		
 	def initialBtnConnect_numberInput(self):
 		# initail UIcreate_numberInput
 		#----------------------------------------------------
@@ -3310,8 +3310,8 @@ class GridWindow(QWidget):
 			msgBox.exec_()
 			sys.exit()
 		
-		self.controlGridGif()
-		self.initialGridGifList()
+		#self.controlGridGif()
+		#self.initialGridGifList()
 		
 		ret = self.betRecord.bet(winner)
 		self.logGame('result:' + str(winner))
@@ -3335,99 +3335,101 @@ class GridWindow(QWidget):
 				#ret['SugBig_sum'] = ret_DEF.get('SugDEF_sum')
 				#ret['lastSugBig_sum'] = ret_DEF.get('lastSugDEF_sum')
 			
-			if printGalgorithm != '' and winner != Tie:
+			if printGalgorithm != '':
 				lastSugList = [lastSugList[0], (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 				showSugList = [showSugList[0], (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 				showList = [showList[0], (-1, -1, -1), (-1, -1, -1), (-1, -1, -1), (-1, -1, -1), (-1, -1, -1), (-1, -1, -1)]
-				isBet = [isBet[0], False, False, False, False, False, False]
-				sameBet = [sameBet[0], False, False, False, False, False, False]
-				countBet = [countBet[0], 0, 0, 0, 0, 0, 0]
 				
-				ret_G_big = self.betRecord_G_big.bet(winner)
-				lastSugList[1] = ret_G_big.get('lastSugBig')
-				showSugList[1] = ret_G_big.get('SugBig')
-				showList[1] = ret_G_big.get('Big')
-				isBet[1] = ret_G_big.get('isBet')[0]
-				sameBet[1] = ret_G_big.get('sameBet')[0]
-				countBet[1] = ret_G_big.get('countBet')[0]
+				if winner != Tie:
+					isBet = [isBet[0], False, False, False, False, False, False]
+					sameBet = [sameBet[0], False, False, False, False, False, False]
+					countBet = [countBet[0], 0, 0, 0, 0, 0, 0]
 				
-				ret_G = self.betRecord.algorithmG(winner)
-				imgG = ret_G.get('imgG')
-				all_the_same = ret_G.get('all_the_same')
-				
-				if imgG != -1:
-					ret_G = self.betRecord_G_rb.bet(imgG)
-					lastSugList[2] = ret_G.get('lastSugBig_sum')
-					showSugList[2] = ret_G.get('SugBig_sum')
-					showList[2] = ret_G.get('Big')
-					if ret_G.get('lastSugBig_sum')[3] != -1:
-						isBet[2] = True
-						countBet[2] = ret_G.get('lastSugBig_sum')[3]
-						if ret_G.get('lastSugBig_sum')[2] == ret_G.get('Big')[2]:
-							sameBet[2] = True
+					ret_G_big = self.betRecord_G_big.bet(winner)
+					lastSugList[1] = ret_G_big.get('lastSugBig')
+					showSugList[1] = ret_G_big.get('SugBig')
+					showList[1] = ret_G_big.get('Big')
+					isBet[1] = ret_G_big.get('isBet')[0]
+					sameBet[1] = ret_G_big.get('sameBet')[0]
+					countBet[1] = ret_G_big.get('countBet')[0]
 					
-					lastSugList_G = [ret_G.get('lastSugBig'), ret_G.get('lastSugEye'), ret_G.get('lastSugSma'), ret_G.get('lastSugPen')]
-					showSugList_G = [ret_G.get('SugBig'), ret_G.get('SugEye'), ret_G.get('SugSma'), ret_G.get('SugPen')]
-					showList_G = [ret_G.get('Big'), ret_G.get('Eye'), ret_G.get('Sma'), ret_G.get('Pen')]
-					isBet_G = ret_G.get('isBet')
-					sameBet_G = ret_G.get('sameBet')
-					countBet_G = ret_G.get('countBet')
+					ret_G = self.betRecord.algorithmG(winner)
+					imgG = ret_G.get('imgG')
+					all_the_same = ret_G.get('all_the_same')
 					
-					for i in range(4):
-						lastSugList[i+3] = lastSugList_G[i]
-						showSugList[i+3] = showSugList_G[i]
-						showList[i+3] = showList_G[i]
-						isBet[i+3] = isBet_G[i]
-						sameBet[i+3] = sameBet_G[i]
-						countBet[i+3] = countBet_G[i]
-				
-				# get next imgG to check if add sug_sum to road all record (road 1)
-				tmp = self.betRecord.algorithmG(winner, True)
-				tmp_img = tmp.get('imgG')
-				
-				if tmp_img != -1:
-					SugBig_sum = self.betRecord_G_rb.getSugList()[4]
-					if SugBig_sum[2] != -1 and SugBig_sum[3] != -1:
-						if tmp_img != winner:
-							if SugBig_sum[2] == 0:
-								SugBig_sum = (SugBig_sum[0], SugBig_sum[1], 1, SugBig_sum[3])
-							else:
-								SugBig_sum = (SugBig_sum[0], SugBig_sum[1], 0, SugBig_sum[3])
+					if imgG != -1:
+						ret_G = self.betRecord_G_rb.bet(imgG)
+						lastSugList[2] = ret_G.get('lastSugBig_sum')
+						showSugList[2] = ret_G.get('SugBig_sum')
+						showList[2] = ret_G.get('Big')
+						if ret_G.get('lastSugBig_sum')[3] != -1:
+							isBet[2] = True
+							countBet[2] = ret_G.get('lastSugBig_sum')[3]
+							if ret_G.get('lastSugBig_sum')[2] == ret_G.get('Big')[2]:
+								sameBet[2] = True
 						
-						img_big = self.betRecord_G_big.getSugList()[0][2]
-						bet_big = self.betRecord_G_big.getSugList()[0][3]
-						img_rb = SugBig_sum[2]
-						bet_rb = SugBig_sum[3]
+						lastSugList_G = [ret_G.get('lastSugBig'), ret_G.get('lastSugEye'), ret_G.get('lastSugSma'), ret_G.get('lastSugPen')]
+						showSugList_G = [ret_G.get('SugBig'), ret_G.get('SugEye'), ret_G.get('SugSma'), ret_G.get('SugPen')]
+						showList_G = [ret_G.get('Big'), ret_G.get('Eye'), ret_G.get('Sma'), ret_G.get('Pen')]
+						isBet_G = ret_G.get('isBet')
+						sameBet_G = ret_G.get('sameBet')
+						countBet_G = ret_G.get('countBet')
 						
-						if img_big == img_rb:
-							img = img_big
-							bet = bet_big + bet_rb
-						else:
-							if bet_big > bet_rb:
+						for i in range(4):
+							lastSugList[i+3] = lastSugList_G[i]
+							showSugList[i+3] = showSugList_G[i]
+							showList[i+3] = showList_G[i]
+							isBet[i+3] = isBet_G[i]
+							sameBet[i+3] = sameBet_G[i]
+							countBet[i+3] = countBet_G[i]
+					
+					# get next imgG to check if add sug_sum to road all record (road 1)
+					tmp = self.betRecord.algorithmG(winner, True)
+					tmp_img = tmp.get('imgG')
+					
+					if tmp_img != -1:
+						SugBig_sum = self.betRecord_G_rb.getSugList()[4]
+						if SugBig_sum[2] != -1 and SugBig_sum[3] != -1:
+							if tmp_img != winner:
+								if SugBig_sum[2] == 0:
+									SugBig_sum = (SugBig_sum[0], SugBig_sum[1], 1, SugBig_sum[3])
+								else:
+									SugBig_sum = (SugBig_sum[0], SugBig_sum[1], 0, SugBig_sum[3])
+							
+							img_big = self.betRecord_G_big.getSugList()[0][2]
+							bet_big = self.betRecord_G_big.getSugList()[0][3]
+							img_rb = SugBig_sum[2]
+							bet_rb = SugBig_sum[3]
+							
+							if img_big == img_rb:
 								img = img_big
-								bet = bet_big - bet_rb
-							elif bet_big < bet_rb:
-								img = img_rb
-								bet = bet_rb - bet_big
+								bet = bet_big + bet_rb
 							else:
-								img = 0
-								bet = 0
-						
-						retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(0, img, bet, False)
-						showSugList[0] = SugBig_sum
-						ret['SugBig_sum'] = SugBig_sum
+								if bet_big > bet_rb:
+									img = img_big
+									bet = bet_big - bet_rb
+								elif bet_big < bet_rb:
+									img = img_rb
+									bet = bet_rb - bet_big
+								else:
+									img = 0
+									bet = 0
+							
+							retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(0, img, bet, False)
+							showSugList[0] = SugBig_sum
+							ret['SugBig_sum'] = SugBig_sum
+						else:
+							img = self.betRecord_G_big.getSugList()[0][2]
+							bet = self.betRecord_G_big.getSugList()[0][3]
+							retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(0, img, bet, False)
+							showSugList[0] = SugBig_sum
+							ret['SugBig_sum'] = SugBig_sum
 					else:
 						img = self.betRecord_G_big.getSugList()[0][2]
 						bet = self.betRecord_G_big.getSugList()[0][3]
 						retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(0, img, bet, False)
 						showSugList[0] = SugBig_sum
 						ret['SugBig_sum'] = SugBig_sum
-				else:
-					img = self.betRecord_G_big.getSugList()[0][2]
-					bet = self.betRecord_G_big.getSugList()[0][3]
-					retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(0, img, bet, False)
-					showSugList[0] = SugBig_sum
-					ret['SugBig_sum'] = SugBig_sum
 			
 			for i in range(road_count):
 				row = lastSugList[i][0]
@@ -3512,18 +3514,18 @@ class GridWindow(QWidget):
 					Sugsum = ret.get('SugBig_sum')
 					self.update_nbet(Sugsum[2], Sugsum[3], 0)
 					
-					for i in range(5):
-						self.update_nbet(showSugList[i+2][2], showSugList[i+2][3], i+2)
+					for i in range(6):
+						self.update_nbet(showSugList[i+1][2], showSugList[i+1][3], i+1)
 				else:
 					# update next bet area (sum of 4 road)
 					Sugsum = ret.get('SugBig_sum')
 					self.update_nbet(Sugsum[2], Sugsum[3])
 				
 				# add a record in record area
-				#recordEntry = ret.get('lastSugBig_sum')
-				#if recordEntry == (-1, -1, -1, -1):
-					#recordEntry = (0, 0, winner, 0)
-				#self.update_rbet(recordEntry[3], (recordEntry[2] == winner), recordEntry[2])
+				recordEntry = ret.get('lastSugBig_sum')
+				if recordEntry == (-1, -1, -1, -1):
+					recordEntry = (0, 0, winner, 0)
+				self.update_rbet(recordEntry[3], (recordEntry[2] == winner), recordEntry[2])
 			
 		elif ret.get('status') == Still_Tie:
 			pass
@@ -3537,14 +3539,14 @@ class GridWindow(QWidget):
 		elif ret.get('status') == Game_End:
 			self.gameEndMessage()
 		
-		#self.update_lbar()
-		#self.update_rbar()
-		#self.update_bbet()
+		self.update_lbar()
+		self.update_rbar()
+		self.update_bbet()
 		self.update_ibet()
 	
 	def connect_pbet_btn(self):
-		self.controlGridGif()
-		self.initialGridGifList()
+		#self.controlGridGif()
+		#self.initialGridGifList()
 		
 		ret = self.betRecord.backOneStep()
 		self.logGame('back')
@@ -3633,12 +3635,6 @@ class GridWindow(QWidget):
 					self.grid_qlabelList[i][row][col].movie().start()
 					self.grid_qlabelList[i][row][col].movie().stop()
 			
-			#self.betRecord.principalPopEntry()
-			#self.popRecordForHtml()
-			#removeQframe = self.rbet_qscrollarea_vl.itemAt(self.rbet_qscrollarea_vl.count()-1).widget()
-			#removeQframe.close()
-			#self.rbet_qscrollarea_vl.removeWidget(removeQframe)
-			
 			if printGalgorithm != '':
 				lastSugBig_sum = ret.get('lastSugBig_sum')
 				if removeList[0][0] == 0 and removeList[0][1] == 0:
@@ -3646,17 +3642,26 @@ class GridWindow(QWidget):
 				else:
 					self.update_nbet(lastSugBig_sum[2], lastSugBig_sum[3], 0)
 					
-				for i in range(5):
+				for i in range(6):
 					if removeList[0][0] == 0 and removeList[0][1] == 0:
-						self.update_nbet(-2, -2, i+2)
+						self.update_nbet(-2, -2, i+1)
 					else:
-						self.update_nbet(ShowLastSugList[i+2][2], ShowLastSugList[i+2][3], i+2)
+						self.update_nbet(ShowLastSugList[i+1][2], ShowLastSugList[i+1][3], i+1)
 			else:
 				lastSugBig_sum = ret.get('lastSugBig_sum')
 				if removeList[0][0] == 0 and removeList[0][1] == 0:
 					self.update_nbet(-2, -2)
 				else:
 					self.update_nbet(lastSugBig_sum[2], lastSugBig_sum[3])
+				
+			self.betRecord.principalPopEntry()
+			#self.popRecordForHtml()
+			if printGalgorithm != '':
+				pass
+			else:
+				removeQframe = self.rbet_qscrollarea_vl.itemAt(self.rbet_qscrollarea_vl.count()-1).widget()
+				removeQframe.close()
+				self.rbet_qscrollarea_vl.removeWidget(removeQframe)
 			
 			# handle cut stop
 			#self.backFromCutStop(removeList)
@@ -3675,9 +3680,9 @@ class GridWindow(QWidget):
 		elif ret.get('status') == Back_From_First_Tie:
 			self.grid_qlabelList[0][0][0].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''')
 		
-		#self.update_lbar()
-		#self.update_rbar()
-		#self.update_bbet()
+		self.update_lbar()
+		self.update_rbar()
+		self.update_bbet()
 		self.update_ibet()
 	
 	# cut stop all
@@ -3739,48 +3744,49 @@ class GridWindow(QWidget):
 	
 	def update_lbar(self):
 		check_color = []
-		sugList = self.betRecord.getSugList()
-		sugList_img = [sugList[0][2], sugList[1][2], sugList[2][2], sugList[3][2]]
-		if sugList_img[0] != -1:
-			# predict next status
-			ret = self.betRecord.predictNextStatus()
-			
-			check_color.append(sugList_img[0])
-			check_color.append(ret['nextStatus'][sugList_img[0]][0])
-			check_color.append(ret['nextStatus'][sugList_img[0]][1])
-			check_color.append(ret['nextStatus'][sugList_img[0]][2])
-		else:
-			check_color = [-1, -1, -1, -1]
 		
 		if printGalgorithm != '':
-			sugList_G = self.betRecord_G_rb.getSugList()
-			sugList_img_G = [sugList_G[0][2], sugList_G[1][2], sugList_G[2][2], sugList_G[3][2]]
-			if sugList_img_G[0] != -1:
+			check_color = [-1, -1, -1, -1, -1, -1, -1]
+			sugList_img = [-1, -1, -1, -1, -1, -1, -1]
+			
+			sugList_img[0] = self.betRecord.getSugList()[0][2]
+			check_color[0] = sugList_img[0]
+			
+			sugList_img[1] = self.betRecord_G_big.getSugList()[0][2]
+			check_color[1] = sugList_img[1]
+			
+			sugList_G_rb = self.betRecord_G_rb.getSugList()
+			if sugList_G_rb[0][2] != -1:
 				ret_G = self.betRecord.algorithmG(sugList_img[0], True)
 				imgG = ret_G.get('imgG')
 				if imgG != -1:
+					sugList_img[2] = sugList_G_rb[4][2]
+					sugList_img[3] = sugList_G_rb[0][2]
+					sugList_img[4] = sugList_G_rb[1][2]
+					sugList_img[5] = sugList_G_rb[2][2]
+					sugList_img[6] = sugList_G_rb[3][2]
+					
 					# predict next status
 					ret = self.betRecord_G_rb.predictNextStatus()
 					
-					for i in range(3):
-						del check_color[-1]
-						del sugList_img[-1]
-					
-					check_color.append(imgG)
-					check_color.append(ret['nextStatus'][imgG][0])
-					check_color.append(ret['nextStatus'][imgG][1])
-					check_color.append(ret['nextStatus'][imgG][2])
-					
-					sugList_img.append(sugList_G[0][2])
-					sugList_img.append(sugList_G[1][2])
-					sugList_img.append(sugList_G[2][2])
-					sugList_img.append(sugList_G[3][2])
-				else:
-					check_color = [sugList_img[0], -1, -1, -1, -1]
-					sugList_img = [sugList_img[0], -1, -1, -1, -1]
+					check_color[2] = imgG
+					check_color[3] = imgG
+					check_color[4] = ret['nextStatus'][imgG][0]
+					check_color[5] = ret['nextStatus'][imgG][1]
+					check_color[6] = ret['nextStatus'][imgG][2]
+		else:
+			sugList = self.betRecord.getSugList()
+			sugList_img = [sugList[0][2], sugList[1][2], sugList[2][2], sugList[3][2]]
+			if sugList_img[0] != -1:
+				# predict next status
+				ret = self.betRecord.predictNextStatus()
+				
+				check_color.append(sugList_img[0])
+				check_color.append(ret['nextStatus'][sugList_img[0]][0])
+				check_color.append(ret['nextStatus'][sugList_img[0]][1])
+				check_color.append(ret['nextStatus'][sugList_img[0]][2])
 			else:
-				check_color = [sugList_img[0], -1, -1, -1, -1]
-				sugList_img = [sugList_img[0], -1, -1, -1, -1]
+				check_color = [-1, -1, -1, -1]
 		
 		for i in range(road_count):
 			# reset lbar
@@ -3834,45 +3840,62 @@ class GridWindow(QWidget):
 				self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;}''')
 	
 	def update_rbar(self):
-		if len(self.betRecord.betCountBig) > 0:
-			smallCount = [self.betRecord.betCountBig[-1], self.betRecord.betCountEye[-1], self.betRecord.betCountSma[-1], self.betRecord.betCountPen[-1]]
-		else:
-			smallCount = [0, 0, 0, 0]
-		
 		if printGalgorithm != '':
 			if len(self.betRecord.betCountBig) > 0:
 				if len(self.betRecord_G_rb.betCountBig) > 0:
-					smallCount = [self.betRecord.betCountBig[-1], self.betRecord_G_rb.betCountBig[-1], self.betRecord_G_rb.betCountEye[-1], self.betRecord_G_rb.betCountSma[-1], self.betRecord_G_rb.betCountPen[-1]]
+					betCountBig_rb = self.betRecord_G_rb.betCountBig[-1]
+					betCountEye_rb = self.betRecord_G_rb.betCountEye[-1]
+					betCountSma_rb = self.betRecord_G_rb.betCountSma[-1]
+					betCountPen_rb = self.betRecord_G_rb.betCountPen[-1]
+					betCount_rb_sum = betCountBig_rb + betCountEye_rb + betCountSma_rb + betCountPen_rb
+					
+					smallCount = [self.betRecord.betCountBig[-1], self.betRecord_G_big.betCountBig[-1], betCount_rb_sum, betCountBig_rb, betCountEye_rb, betCountSma_rb, betCountPen_rb]
 				else:
-					smallCount = [self.betRecord.betCountBig[-1], 0, 0, 0, 0]
+					smallCount = [self.betRecord.betCountBig[-1], self.betRecord_G_big.betCountBig[-1], 0, 0, 0, 0, 0]
 			else:
-				smallCount = [0, 0, 0, 0, 0]
+				smallCount = [0, 0, 0, 0, 0, 0, 0]
+		else:
+			if len(self.betRecord.betCountBig) > 0:
+				smallCount = [self.betRecord.betCountBig[-1], self.betRecord.betCountEye[-1], self.betRecord.betCountSma[-1], self.betRecord.betCountPen[-1]]
+			else:
+				smallCount = [0, 0, 0, 0]
 		
 		for i in range(road_count):
 			self.csbar_qlabel1[i].setText(self.tr(' 小計 : %s' % str(smallCount[i])))
 		
-		if len(self.betRecord.betSumCountBig) > 0:
-			sumCount = [self.betRecord.betSumCountBig[-1], self.betRecord.betSumCountEye[-1], self.betRecord.betSumCountSma[-1], self.betRecord.betSumCountPen[-1]]
-		else:
-			sumCount = [0, 0, 0, 0]
-		
 		if printGalgorithm != '':
 			if len(self.betRecord.betSumCountBig) > 0:
 				if len(self.betRecord_G_rb.betSumCountBig) > 0:
-					sumCount = [self.betRecord.betSumCountBig[-1], self.betRecord_G_rb.betSumCountBig[-1], self.betRecord_G_rb.betSumCountEye[-1], self.betRecord_G_rb.betSumCountSma[-1], self.betRecord_G_rb.betSumCountPen[-1]]
+					betSumCountBig_rb = self.betRecord_G_rb.betSumCountBig[-1]
+					betSumCountEye_rb = self.betRecord_G_rb.betSumCountEye[-1]
+					betSumCountSma_rb = self.betRecord_G_rb.betSumCountSma[-1]
+					betSumCountPen_rb = self.betRecord_G_rb.betSumCountPen[-1]
+					betSumCount_rb_sum = betSumCountBig_rb + betSumCountEye_rb + betSumCountSma_rb + betSumCountPen_rb
+					sumCount = [self.betRecord.betSumCountBig[-1], self.betRecord_G_big.betSumCountBig[-1], betSumCount_rb_sum, betSumCountBig_rb, betSumCountEye_rb, betSumCountSma_rb, betSumCountPen_rb]
 				else:
-					sumCount = [self.betRecord.betSumCountBig[-1], 0, 0, 0, 0]
+					sumCount = [self.betRecord.betSumCountBig[-1], self.betRecord_G_big.betSumCountBig[-1], 0, 0, 0, 0, 0]
 			else:
-				sumCount = [0, 0, 0, 0, 0]
+				sumCount = [0, 0, 0, 0, 0, 0, 0]
+		else:
+			if len(self.betRecord.betSumCountBig) > 0:
+				sumCount = [self.betRecord.betSumCountBig[-1], self.betRecord.betSumCountEye[-1], self.betRecord.betSumCountSma[-1], self.betRecord.betSumCountPen[-1]]
+			else:
+				sumCount = [0, 0, 0, 0]
 		
 		for i in range(road_count):
 			self.csbar_qlabel2[i].setText(self.tr(' 合計 : %s' % str(sumCount[i])))
 	
 	def update_bbet(self):
-		tmp = self.betRecord.getPrincipal() + self.betRecord.principalSum()
-		self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %tmp))
-		tmp = self.betRecord.principalSumNegative() * -1
-		self.bbet_qlabel2.setText(self.tr('轉碼 : %d' %tmp))
+		if printGalgorithm != '':
+			tmp = self.betRecord.getPrincipal() + self.betRecord.principalSum()
+			self.dbar_qlabel2_number.setText(self.tr('%.3f' %tmp))
+			tmp = self.betRecord.principalSumNegative() * -1
+			self.dbar_qlabel4_number.setText(self.tr('%.3f' %tmp))
+		else:
+			tmp = self.betRecord.getPrincipal() + self.betRecord.principalSum()
+			self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %tmp))
+			tmp = self.betRecord.principalSumNegative() * -1
+			self.bbet_qlabel2.setText(self.tr('轉碼 : %d' %tmp))
 	
 	def update_nbet(self, img, bet, i = 0):
 		if printGalgorithm != '':
@@ -3886,7 +3909,8 @@ class GridWindow(QWidget):
 					self.arnbet_qlabel3.setStyleSheet('''.QLabel {font-size: %dpt; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}'''  % self.sizeFontSize_Label)
 					self.arnbet_qlabel4.setText(str(bet))
 				elif img == -1:
-					pass
+					self.arnbet_qlabel3.setText('')
+					self.arnbet_qlabel4.setText('')
 				elif img == -2:
 					self.arnbet_qlabel3.setText('')
 					self.arnbet_qlabel4.setText('')
@@ -3897,7 +3921,26 @@ class GridWindow(QWidget):
 					sumCount = 0
 				self.arnbet_qlabel5.setText(str(sumCount))
 			elif i == 1:
-				pass
+				if img == 0:
+					self.bignbet_qlabel3.setText(self.tr('莊'))
+					self.bignbet_qlabel3.setStyleSheet('''.QLabel {font-size: %dpt; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}'''  % self.sizeFontSize_Label)
+					self.bignbet_qlabel4.setText(str(bet))
+				elif img == 1:
+					self.bignbet_qlabel3.setText(self.tr('閒'))
+					self.bignbet_qlabel3.setStyleSheet('''.QLabel {font-size: %dpt; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}'''  % self.sizeFontSize_Label)
+					self.bignbet_qlabel4.setText(str(bet))
+				elif img == -1:
+					self.bignbet_qlabel3.setText('')
+					self.bignbet_qlabel4.setText('')
+				elif img == -2:
+					self.bignbet_qlabel3.setText('')
+					self.bignbet_qlabel4.setText('')
+				
+				if len(self.betRecord.betSumCountBig) > 0:
+					sumCount = self.betRecord_G_big.betSumCountBig[-1]
+				else:
+					sumCount = 0
+				self.bignbet_qlabel5.setText(str(sumCount))
 			elif i in [2, 3, 4, 5, 6]:
 				if img in [0, 1]:
 					ret = self.betRecord.predictNextStatus()
@@ -3977,7 +4020,7 @@ class GridWindow(QWidget):
 	
 	def update_ibet(self):
 		if printGalgorithm != '':
-			# predict next status
+			# predict all record next status
 			ret = self.betRecord.predictNextStatus()
 			if ret.get('status') == 0:
 				if ret['nextStatus'][0][0] != -1:
@@ -4005,11 +4048,43 @@ class GridWindow(QWidget):
 				else:
 					self.aribet_qlabel_player4.setStyleSheet('''.QLabel {}''')
 			
-			self.aribet_qlabel1.setText(str(self.betRecord.countResult[0]))
-			self.aribet_qlabel3.setText(str(self.betRecord.countResult[1]))
-			self.aribet_qlabel4.setText(str(self.betRecord.countResult[2]))
-			sumRecord = self.betRecord.countResult[0] + self.betRecord.countResult[1] + self.betRecord.countResult[2]
-			self.aribet_qlabel2.setText(self.tr(str(sumRecord) + '\n局'))
+				self.aribet_qlabel1.setText(str(self.betRecord.countResult[0]))
+				self.aribet_qlabel3.setText(str(self.betRecord.countResult[1]))
+				sumRecord = self.betRecord.countResult[0] + self.betRecord.countResult[1]
+				self.aribet_qlabel2.setText(self.tr(str(sumRecord) + '\n局'))
+			
+			# predict big road next status
+			ret = self.betRecord_G_big.predictNextStatus()
+			if ret.get('status') == 0:
+				if ret['nextStatus'][0][0] != -1:
+					self.bigibet_qlabel_banker2.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[1][ret['nextStatus'][0][0]])
+				else:
+					self.bigibet_qlabel_banker2.setStyleSheet('''.QLabel {}''')
+				if ret['nextStatus'][0][1] != -1:
+					self.bigibet_qlabel_banker3.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[2][ret['nextStatus'][0][1]])
+				else:
+					self.bigibet_qlabel_banker3.setStyleSheet('''.QLabel {}''')
+				if ret['nextStatus'][0][2] != -1:
+					self.bigibet_qlabel_banker4.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[3][ret['nextStatus'][0][2]])
+				else:
+					self.bigibet_qlabel_banker4.setStyleSheet('''.QLabel {}''')
+				if ret['nextStatus'][1][0] != -1:
+					self.bigibet_qlabel_player2.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[1][ret['nextStatus'][1][0]])
+				else:
+					self.bigibet_qlabel_player2.setStyleSheet('''.QLabel {}''')
+				if ret['nextStatus'][1][1] != -1:
+					self.bigibet_qlabel_player3.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[2][ret['nextStatus'][1][1]])
+				else:
+					self.bigibet_qlabel_player3.setStyleSheet('''.QLabel {}''')
+				if ret['nextStatus'][1][2] != -1:
+					self.bigibet_qlabel_player4.setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord.imgNextStatusPath[3][ret['nextStatus'][1][2]])
+				else:
+					self.bigibet_qlabel_player4.setStyleSheet('''.QLabel {}''')
+			
+				self.bigibet_qlabel1.setText(str(self.betRecord.countResult[0]))
+				self.bigibet_qlabel3.setText(str(self.betRecord.countResult[1]))
+				sumRecord = self.betRecord.countResult[0] + self.betRecord.countResult[1]
+				self.bigibet_qlabel2.setText(self.tr(str(sumRecord) + '\n局'))
 			
 			# predict red blue road next status
 			ret = self.betRecord_G_rb.predictNextStatus()
@@ -4140,7 +4215,11 @@ class GridWindow(QWidget):
 				self.betRecord.principalAddEntry(pointBet)
 			else:
 				self.betRecord.principalAddEntry(-1 * pointBet)
-			self.addOneRecord(countBet, sameBet, colorBet, pointBet)
+			
+			if printGalgorithm != '':
+				pass
+			else:
+				self.addOneRecord(countBet, sameBet, colorBet, pointBet)
 	
 	def addOneRecord(self, countBet, sameBet, colorBet, pointBet):
 		if colorBet != 2:
