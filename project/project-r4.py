@@ -1731,6 +1731,9 @@ class GridWindow(QWidget):
 			self.UIcreate_BetStatus_UI2_ar_nextBet()
 			self.UIcreate_BetStatus_UI2_ar_betInningCount()
 			self.UIcreate_BetStatus_UI2_ar_betPushButton()
+			self.UIcreate_BetStatus_UI2_big_nextBet()
+			self.UIcreate_BetStatus_UI2_big_betInningCount()
+			self.UIcreate_BetStatus_UI2_big_empty()
 			self.UIcreate_BetStatus_UI2_rb_nextBet()
 			self.UIcreate_BetStatus_UI2_rb_betInningCount()
 			self.UIcreate_BetStatus_UI2_rb_empty()
@@ -1739,15 +1742,14 @@ class GridWindow(QWidget):
 			self.bet_vl.addWidget(self.arnbet_qframe)
 			self.bet_vl.addWidget(self.aribet_qframe)
 			self.bet_vl.addWidget(self.arpbet_qframe)
-			
-			tmpframe = QFrame(self.bet_qframe)
-			tmpframe.setFixedHeight(170)
-			self.bet_vl.addWidget(tmpframe)
+			self.bet_vl.addWidget(self.bignbet_qframe)
+			self.bet_vl.addWidget(self.bigibet_qframe)
+			self.bet_vl.addWidget(self.bigebet_qframe)
 			
 			for i in range(5):
 				self.bet_vl.addWidget(self.rbnbet_qframe[i])
 				self.bet_vl.addWidget(self.rbibet_qframe[i])
-				self.bet_vl.addWidget(self.eibet_qframe[i])
+				self.bet_vl.addWidget(self.rbebet_qframe[i])
 		else:
 			self.UIcreate_BetStatus_betPrint()
 			self.UIcreate_BetStatus_nextBet()
@@ -1993,6 +1995,70 @@ class GridWindow(QWidget):
 		self.arpbet_hl.addWidget(self.arpbet_qlabel2)
 		self.arpbet_hl.addWidget(self.arpbet_qlabel3)
 	
+	def UIcreate_BetStatus_UI2_big_nextBet(self):
+		# UI2(for algorithm G), big road, next bet area
+		#----------------------------------------------------
+		# bet inning count area global data
+		# initial
+		self.bignbet_qframe = QFrame(self.bet_qframe)
+		self.bignbet_gl = QGridLayout(self.bignbet_qframe)
+		self.bignbet_qlabel1 = QLabel(self.bignbet_qframe)
+		self.bignbet_qlabel2 = QLabel(self.bignbet_qframe)
+		self.bignbet_qlabel3 = QLabel(self.bignbet_qframe)
+		self.bignbet_qlabel4 = QLabel(self.bignbet_qframe)
+		self.bignbet_qlabel5 = QLabel(self.bignbet_qframe)
+		
+		# set relationship
+		self.bignbet_qframe.setLayout(self.bignbet_gl)
+		self.bignbet_gl.addWidget(self.bignbet_qlabel1, 0, 0, 1, 3)
+		self.bignbet_gl.addWidget(self.bignbet_qlabel2, 0, 3)
+		self.bignbet_gl.addWidget(self.bignbet_qlabel3, 1, 0, 1, 2)
+		self.bignbet_gl.addWidget(self.bignbet_qlabel4, 1, 2)
+		self.bignbet_gl.addWidget(self.bignbet_qlabel5, 1, 3)
+	
+	def UIcreate_BetStatus_UI2_big_betInningCount(self):
+		# UI2(for algorithm G), big road, bet inning count area
+		#----------------------------------------------------
+		# initial
+		self.bigibet_qframe = QFrame(self.bet_qframe)
+		self.bigibet_gl = QGridLayout(self.bigibet_qframe)
+		self.bigibet_qlabel1 = QLabel(self.bigibet_qframe)
+		self.bigibet_qlabel2 = QLabel(self.bigibet_qframe)
+		self.bigibet_qlabel3 = QLabel(self.bigibet_qframe)
+		
+		self.biglibet_qframe = QFrame(self.bigibet_qframe)
+		self.biglibet_gl = QGridLayout(self.biglibet_qframe)
+		self.bigibet_qlabel_banker1 = QLabel(self.biglibet_qframe)
+		self.bigibet_qlabel_banker2 = QLabel(self.biglibet_qframe)
+		self.bigibet_qlabel_banker3 = QLabel(self.biglibet_qframe)
+		self.bigibet_qlabel_banker4 = QLabel(self.biglibet_qframe)
+		self.bigibet_qlabel_player1 = QLabel(self.biglibet_qframe)
+		self.bigibet_qlabel_player2 = QLabel(self.biglibet_qframe)
+		self.bigibet_qlabel_player3 = QLabel(self.biglibet_qframe)
+		self.bigibet_qlabel_player4 = QLabel(self.biglibet_qframe)
+		
+		# set relationship
+		self.bigibet_qframe.setLayout(self.aribet_gl)
+		self.bigibet_gl.addWidget(self.bigibet_qlabel1, 0, 4, 1, 2)
+		self.bigibet_gl.addWidget(self.bigibet_qlabel2, 0, 6, 2, 2)
+		self.bigibet_gl.addWidget(self.bigibet_qlabel3, 1, 4, 1, 2)
+		self.bigibet_gl.addWidget(self.biglibet_qframe, 0, 0, 2, 4)
+		
+		self.biglibet_qframe.setLayout(self.biglibet_gl)
+		self.biglibet_gl.addWidget(self.bigibet_qlabel_banker1, 0, 0)
+		self.biglibet_gl.addWidget(self.bigibet_qlabel_banker2, 0, 1)
+		self.biglibet_gl.addWidget(self.bigibet_qlabel_banker3, 0, 2)
+		self.biglibet_gl.addWidget(self.bigibet_qlabel_banker4, 0, 3)
+		self.biglibet_gl.addWidget(self.bigibet_qlabel_player1, 1, 0)
+		self.biglibet_gl.addWidget(self.bigibet_qlabel_player2, 1, 1)
+		self.biglibet_gl.addWidget(self.bigibet_qlabel_player3, 1, 2)
+		self.biglibet_gl.addWidget(self.bigibet_qlabel_player4, 1, 3)
+	
+	def UIcreate_BetStatus_UI2_big_empty(self):
+		# bet empty area
+		#----------------------------------------------------
+		self.bigebet_qframe = QFrame(self.bet_qframe)
+	
 	def UIcreate_BetStatus_UI2_rb_nextBet(self):
 		# UI2(for algorithm G), red blue(5 road), next bet area
 		#----------------------------------------------------
@@ -2083,11 +2149,11 @@ class GridWindow(QWidget):
 	def UIcreate_BetStatus_UI2_rb_empty(self):
 		# bet empty area
 		#----------------------------------------------------
-		self.eibet_qframe = []
+		self.rbebet_qframe = []
 		
 		for i in range(5):
 			# initial
-			self.eibet_qframe.append(QFrame(self.bet_qframe))
+			self.rbebet_qframe.append(QFrame(self.bet_qframe))
 	
 	def UIcreate_numberInput(self):
 		self.binp_qframe = []
@@ -2369,8 +2435,12 @@ class GridWindow(QWidget):
 			self.initialGlobalAttribute_BetStatus_UI2_ar_nextBet()
 			self.initialGlobalAttribute_BetStatus_UI2_ar_betInningCount()
 			self.initialGlobalAttribute_BetStatus_UI2_ar_betPushButton()
+			self.initialGlobalAttribute_BetStatus_UI2_big_nextBet()
+			self.initialGlobalAttribute_BetStatus_UI2_big_betInningCount()
+			self.initialGlobalAttribute_BetStatus_UI2_big_empty()
 			self.initialGlobalAttribute_BetStatus_UI2_rb_nextBet()
 			self.initialGlobalAttribute_BetStatus_UI2_rb_betInningCount()
+			self.initialGlobalAttribute_BetStatus_UI2_rb_empty()
 		else:
 			# initail global values of UIcreate_BetStatus
 			#----------------------------------------------------
@@ -2698,6 +2768,75 @@ class GridWindow(QWidget):
 		self.arpbet_qlabel3.setStyleSheet('''.QLabel {font-size: 16pt; font-weight:bold; color: white; font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 													background-image: url(%s);}''' % UI2_imgBlueBtn)
 	
+	def initialGlobalAttribute_BetStatus_UI2_big_nextBet(self):
+		# UI2(for algorithm G), big road, next bet area
+		#--------------------------
+		self.bignbet_qframe.setStyleSheet('''.QFrame {background-color: gray; border-top: 1px solid gray; border-left: 1px solid gray; border-right: 1px solid gray;} .QLabel {background-color: white;}''')
+		self.bignbet_qframe.setSizePolicy(self.sizePolicy)
+		self.bignbet_qframe.setFixedWidth(self.Width_BetStatus)
+		self.bignbet_qframe.setFixedHeight(55)
+		
+		self.bignbet_gl.setSpacing(1)
+		self.bignbet_gl.setMargin(0)
+		
+		self.bignbet_qlabel1.setText(self.tr('下局注碼'))
+		self.bignbet_qlabel1.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.bignbet_qlabel1.setAlignment(Qt.AlignCenter)
+		
+		self.bignbet_qlabel2.setText(self.tr('總計'))
+		self.bignbet_qlabel2.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.bignbet_qlabel2.setAlignment(Qt.AlignCenter)
+		
+		self.bignbet_qlabel3.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.bignbet_qlabel3.setAlignment(Qt.AlignCenter)
+		
+		self.bignbet_qlabel4.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.bignbet_qlabel4.setAlignment(Qt.AlignCenter)
+		
+		self.bignbet_qlabel5.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.bignbet_qlabel5.setAlignment(Qt.AlignCenter)
+	
+	def initialGlobalAttribute_BetStatus_UI2_big_betInningCount(self):
+		# UI2(for algorithm G), big road, bet inning count area
+		#--------------------------
+		self.bigibet_qframe.setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;} .QLabel {background-color: white;}''')
+		self.bigibet_qframe.setSizePolicy(self.sizePolicy)
+		self.bigibet_qframe.setFixedWidth(self.Width_BetStatus)
+		self.bigibet_qframe.setFixedHeight(55)
+		
+		self.bigibet_gl.setSpacing(1)
+		self.bigibet_gl.setMargin(0)
+		
+		self.bigibet_qlabel1.setText('0')
+		self.bigibet_qlabel1.setAlignment(Qt.AlignCenter)
+		self.bigibet_qlabel1.setStyleSheet('''.QLabel {font-size: %dpt; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		
+		self.bigibet_qlabel2.setText(self.tr('0\n局'))
+		self.bigibet_qlabel2.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.bigibet_qlabel2.setAlignment(Qt.AlignCenter)
+		
+		self.bigibet_qlabel3.setText('0')
+		self.bigibet_qlabel3.setStyleSheet('''.QLabel {font-size: %dpt; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.bigibet_qlabel3.setAlignment(Qt.AlignCenter)
+		
+		self.biglibet_qframe.setStyleSheet('''.QFrame {background-color: white; border: 0px;} .QLabel {background-color: white;}''')
+		
+		self.biglibet_gl.setSpacing(0)
+		self.biglibet_gl.setMargin(0)
+		
+		self.bigibet_qlabel_banker1.setText(self.tr('莊'))
+		self.bigibet_qlabel_banker1.setStyleSheet('''.QLabel {font-size: %dpt; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.bigibet_qlabel_banker1.setAlignment(Qt.AlignCenter)
+		
+		self.bigibet_qlabel_player1.setText(self.tr('閒'))
+		self.bigibet_qlabel_player1.setStyleSheet('''.QLabel {font-size: %dpt; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+		self.bigibet_qlabel_player1.setAlignment(Qt.AlignCenter)
+	
+	def initialGlobalAttribute_BetStatus_UI2_big_empty(self):
+		# UI2(for algorithm G), big road, bet empty area
+		#--------------------------
+		self.bigebet_qframe.setFixedHeight(61)
+	
 	def initialGlobalAttribute_BetStatus_UI2_rb_nextBet(self):
 		# UI2(for algorithm G), red blue(5 road), next bet area
 		#--------------------------
@@ -2771,7 +2910,7 @@ class GridWindow(QWidget):
 		# UI2(for algorithm G), red blue(5 road), bet empty area
 		#--------------------------
 		for i in range(5):
-			self.eibet_qframe[i].setFixedHeight(60)
+			self.rbebet_qframe[i].setFixedHeight(61)
 		
 	def initialGlobalAttribute_numberInput(self):
 		# initail global values of UIcreate_numberInput
