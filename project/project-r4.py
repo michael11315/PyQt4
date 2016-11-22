@@ -606,7 +606,7 @@ class betRecord():
 					Sug[i] = (-1, -1, -1, -1)
 				elif betStatus[i][-1] == -1:
 					lastBet = record[i][-1]
-					sugBet = 1
+					sugBet = 5
 					tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
 					Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
 				elif betStatus[i][-1] == 0:
@@ -618,6 +618,8 @@ class betRecord():
 					lastBet = record[i][-1]
 					if betSug_origin[i][-1][3] > 1:
 						sugBet = betSug_origin[i][-1][3] - 1
+						if sugBet < 5:
+							sugBet = 0
 						tmp = self.PosChangeCol(map[i], lastBet[2])
 						Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
 					else:
@@ -1705,6 +1707,8 @@ class GridWindow(QWidget):
 		self.dbar_qlabel2_number = QLabel(self.dbar_qframe)
 		self.dbar_qlabel3_number = QLabel(self.dbar_qframe)
 		self.dbar_qlabel4_number = QLabel(self.dbar_qframe)
+		self.dbar_btn_back = QPushButton(self.dbar_qframe)
+		self.dbar_btn_allcut = QPushButton(self.dbar_qframe)
 		
 		# set relationship
 		self.dbar_qframe.setLayout(self.dbar_hl)
@@ -1717,6 +1721,8 @@ class GridWindow(QWidget):
 		self.dbar_hl.addWidget(self.dbar_qlabel3_number)
 		self.dbar_hl.addWidget(self.dbar_qlabel4)
 		self.dbar_hl.addWidget(self.dbar_qlabel4_number)
+		self.dbar_hl.addWidget(self.dbar_btn_back)
+		self.dbar_hl.addWidget(self.dbar_btn_allcut)
 	
 	def UIcreate_Vline(self):
 		self.vline = QFrame(self)
@@ -2412,16 +2418,30 @@ class GridWindow(QWidget):
 		self.dbar_qlabel4.setFixedWidth(50)
 		
 		self.dbar_qlabel1_number.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-		self.dbar_qlabel1_number.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+		self.dbar_qlabel1_number.setAlignment(Qt.AlignCenter)
+		self.dbar_qlabel1_number.setFixedWidth(172)
 		
 		self.dbar_qlabel2_number.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-		self.dbar_qlabel2_number.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+		self.dbar_qlabel2_number.setAlignment(Qt.AlignCenter)
+		self.dbar_qlabel2_number.setFixedWidth(172)
 		
 		self.dbar_qlabel3_number.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-		self.dbar_qlabel3_number.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+		self.dbar_qlabel3_number.setAlignment(Qt.AlignCenter)
+		self.dbar_qlabel3_number.setFixedWidth(172)
 		
 		self.dbar_qlabel4_number.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-		self.dbar_qlabel4_number.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+		self.dbar_qlabel4_number.setAlignment(Qt.AlignCenter)
+		self.dbar_qlabel4_number.setFixedWidth(172)
+		
+		self.dbar_btn_back.setText(self.tr('返回'))
+		self.dbar_btn_back.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
+		self.dbar_btn_back.setSizePolicy(self.sizePolicy)
+		self.dbar_btn_back.setFixedWidth(90)
+		
+		self.dbar_btn_allcut.setText(self.tr('全切'))
+		self.dbar_btn_allcut.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
+		self.dbar_btn_allcut.setSizePolicy(self.sizePolicy)
+		self.dbar_btn_allcut.setFixedWidth(90)
 	
 	def initialGlobalAttribute_BetStatus(self):
 		if printGalgorithm != '':
@@ -2987,6 +3007,7 @@ class GridWindow(QWidget):
 		self.initialBtnConnect_GridBar_cutStop()
 		
 		if printGalgorithm != '':
+			self.initialBtnConnect_GridBar_UI2_detailInfo()
 			self.initialBtnConnect_BetStatus_UI2_top_pushButton()
 			self.initialBtnConnect_BetStatus_UI2_ar_betInningCount()
 			self.initialBtnConnect_BetStatus_UI2_ar_betPushButton()
@@ -3008,6 +3029,12 @@ class GridWindow(QWidget):
 		#----------------------------------------------------
 		for i in range(road_count):
 			self.csbar_btn[i].clicked.connect(functools.partial(self.connect_csbar_btn, i))
+	
+	def initialBtnConnect_GridBar_UI2_detailInfo(self):
+		# initail push button area in UIcreate_GridBar_UI2_detailInfo
+		#----------------------------------------------------
+		self.dbar_btn_back.clicked.connect(self.connect_pbet_btn)
+		self.dbar_btn_allcut.clicked.connect(self.connect_pbet_btn_allcut)
 	
 	def initialBtnConnect_BetStatus_betPrint(self):
 		# initail bet and print area in UIcreate_BetStatus
@@ -3104,7 +3131,6 @@ class GridWindow(QWidget):
 				betRecord = self.betRecord_G_big
 			elif i == 2:
 				betRecord = self.betRecord_G_rb
-				return
 			elif i in [3, 4, 5, 6]:
 				index = i - 3
 				betRecord = self.betRecord_G_rb
@@ -3119,35 +3145,27 @@ class GridWindow(QWidget):
 			self.mcbar_btn[i].setText(self.tr('手動'))
 			if betRecord.gameIsBegin():
 				if len(self.mcbar_qlineedit[i].text()) > 0:
-					img = 0
 					bet = int(self.mcbar_qlineedit[i].text())
-					if self.mcbar_qlabel[i].text().toUtf8() == '莊':
-						img = 0
-					else:
-						img = 1
-					
-					if index != 0:
-						ret = betRecord.predictNextStatus()
-						if ret.get('status') == 0:
-							img = ret['nextStatus'][img][index-1]
 					
 					if printGalgorithm != '':
-						if i == 1:
-							pass
-						elif i == 2:
-							pass
-						elif i in [3, 4, 5, 6]:
-							sugList_G = self.betRecord_G_rb.getSugList()
-							ret_G = self.betRecord.algorithmG(sugList_G[0][2], True)
-							imgG = ret_G.get('imgG')
-							if imgG != -1:
-								if sugList_G[0][2] != imgG:
-									if img == 0:
-										img = 1
-									elif img == 1:
-										img = 0
-									else:
-										img = -1
+						if 'background-color: red' in str(self.mcbar_qframe[i].styleSheet()):
+							img = 0
+						elif 'background-color: blue' in str(self.mcbar_qframe[i].styleSheet()):
+							img = 1
+						else:
+							img = -1
+							self.binp_qframe[i].close()
+							return
+					else:
+						if self.mcbar_qlabel[i].text().toUtf8() == '莊':
+							img = 0
+						else:
+							img = 1
+						
+						if index != 0:
+							ret = betRecord.predictNextStatus()
+							if ret.get('status') == 0:
+								img = ret['nextStatus'][img][index-1]
 					
 					self.changeSug(i, img, bet, True)
 					self.logGame('手動: (road = %d, img = %d, bet = %d)' % (i, img, bet))
@@ -3753,7 +3771,7 @@ class GridWindow(QWidget):
 			check_color[0] = sugList_img[0]
 			
 			sugList_img[1] = self.betRecord_G_big.getSugList()[0][2]
-			check_color[1] = sugList_img[1]
+			check_color[1] = sugList_img[0]
 			
 			sugList_G_rb = self.betRecord_G_rb.getSugList()
 			if sugList_G_rb[0][2] != -1:
@@ -4294,20 +4312,63 @@ class GridWindow(QWidget):
 		self.controlGridGif()
 		self.initialGridGifList()
 		
-		betRecord = self.betRecord
-		index = i
 		if printGalgorithm != '':
-			if i == 1:
-				index == 0
+			justChange_SugBig_sum = False
+			
+			if i == 0:
+				index = 0
+				betRecord = self.betRecord
+			elif i == 1:
+				index = 0
 				betRecord = self.betRecord_G_big
 			elif i == 2:
-				# TODO
-				return
+				justChange_SugBig_sum = True
+				betRecord = self.betRecord_G_rb
 			elif i in [3, 4, 5, 6]:
 				index = i - 3
 				betRecord = self.betRecord_G_rb
+			
+			if i in [0, 1]:
+				img_index = 0
+			elif i == 2:
+				img_index = 1
+			elif i in [3, 4, 5, 6]:
+				img_index = i - 3
+		else:
+			betRecord = self.betRecord
+			index = i
+			img_index = i
 		
-		retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = betRecord.manualChangeSug(index, img, bet, isManual)
+		if printGalgorithm != '' and justChange_SugBig_sum:
+			# only i == 2 will going here
+			img_old = betRecord.betSugBig_sum[-1][2]
+			
+			if img_old == img:
+				eraseSug = betRecord.betSugBig_sum[-1]
+				retSug = betRecord.betSugBig_sum[-1]
+			else:
+				img_SugBig = betRecord.betSugBig[-1][2]
+				bet_SugBig = betRecord.betSugBig[-1][3]
+				if img_SugBig == 0:
+					img_SugBig_other = 1
+				elif img_SugBig == 1:
+					img_SugBig_other = 0
+				
+				retSug_1, eraseSug, SugBig_sum, SugBig_sum_otherimg = betRecord.manualChangeSug(0, img_SugBig_other, bet_SugBig, False)
+				retSug_2, eraseSug, SugBig_sum, SugBig_sum_otherimg = betRecord.manualChangeSug(0, img_SugBig, bet_SugBig, False)
+				
+				if img_old == img_SugBig:
+					eraseSug = retSug_2
+					retSug = retSug_1
+				else:
+					eraseSug = retSug_1
+					retSug = retSug_2
+			
+			betRecord.betSugBig_sum[-1] = (retSug[0], retSug[1], img, bet)
+			SugBig_sum = (retSug[0], retSug[1], img, bet)
+			retSug = (retSug[0], retSug[1], img, bet)
+		else:
+			retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = betRecord.manualChangeSug(index, img, bet, isManual)
 		
 		row = eraseSug[0]
 		col = eraseSug[1]
@@ -4329,7 +4390,7 @@ class GridWindow(QWidget):
 				self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
 				self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 																								color: black; font-weight: bold; font-size: %dpt;}''' % self.sizeFontSize_Grid)
-				self.grid_qlabelList[i][row][col].movie().setFileName(betRecord.imgSugPath[i][img])
+				self.grid_qlabelList[i][row][col].movie().setFileName(betRecord.imgSugPath[img_index][img])
 			
 			self.grid_qlabelList[i][row][col].movie().start()
 			self.grid_qlabelList[i][row][col].movie().stop()
@@ -4338,46 +4399,62 @@ class GridWindow(QWidget):
 		bet = SugBig_sum[3]
 		
 		if printGalgorithm != '':
-			ret_G = self.betRecord.algorithmG(img, True)
-			imgG = ret_G.get('imgG')
-			if imgG != -1:
-				if img != imgG:
-					img = imgG
-			else:
-				img = imgG
+			self.update_nbet(img, bet, i)
+		else:
+			self.update_nbet(img, bet)
 		
-		self.update_nbet(img, bet)
-		
-		if printGalgorithm != '' and imgG != -1:
-			if i > 0:
-				img_big = self.betRecord_G_big.getSugList()[0][2]
-				bet_big = self.betRecord_G_big.getSugList()[0][3]
-				img_rb = img
-				bet_rb = self.betRecord_G_rb.getSugList()[4][3]
-				
-				if img_big == img_rb:
-					bet = bet_big + bet_rb
-				else:
-					if bet_big > bet_rb:
-						img = img_big
-						bet = bet_big - bet_rb
-					elif bet_big < bet_rb:
-						img = img_rb
-						bet = bet_rb - bet_big
-					else:
-						img = 0
-						bet = 0
+		if printGalgorithm != '' and i in [1, 3, 4, 5, 6]:
+			# get next imgG to check if add sug_sum to road all record (road 1)
+			tmp = self.betRecord.algorithmG(0, True)
+			tmp_img = tmp.get('imgG')
 			
-			i = 0
-			retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(i, img, bet, isManual)
+			if tmp_img != -1:
+				SugBig_sum = self.betRecord_G_rb.getSugList()[4]
+				if SugBig_sum[2] != -1 and SugBig_sum[3] != -1:
+					if tmp_img != 0:
+						if SugBig_sum[2] == 0:
+							SugBig_sum = (SugBig_sum[0], SugBig_sum[1], 1, SugBig_sum[3])
+						else:
+							SugBig_sum = (SugBig_sum[0], SugBig_sum[1], 0, SugBig_sum[3])
+					
+					img_big = self.betRecord_G_big.getSugList()[0][2]
+					bet_big = self.betRecord_G_big.getSugList()[0][3]
+					img_rb = SugBig_sum[2]
+					bet_rb = SugBig_sum[3]
+					
+					if img_big == img_rb:
+						img = img_big
+						bet = bet_big + bet_rb
+					else:
+						if bet_big > bet_rb:
+							img = img_big
+							bet = bet_big - bet_rb
+						elif bet_big < bet_rb:
+							img = img_rb
+							bet = bet_rb - bet_big
+						else:
+							img = 0
+							bet = 0
+					
+					retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(0, img, bet, isManual)
+				else:
+					img = self.betRecord_G_big.getSugList()[0][2]
+					bet = self.betRecord_G_big.getSugList()[0][3]
+					retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(0, img, bet, isManual)
+			else:
+				img = self.betRecord_G_big.getSugList()[0][2]
+				bet = self.betRecord_G_big.getSugList()[0][3]
+				retSug, eraseSug, SugBig_sum, SugBig_sum_otherimg = self.betRecord.manualChangeSug(0, img, bet, isManual)
+			
+			self.update_nbet(SugBig_sum[2], SugBig_sum[3], 0)
 			
 			row = SugBig_sum_otherimg[0]
 			col = SugBig_sum_otherimg[1]
 			if row >= 0 and col >= 0:
-				self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
-				self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
-				self.grid_qlabelList[i][row][col].movie().start()
-				self.grid_qlabelList[i][row][col].movie().stop()
+				self.grid_qlabelList[0][row][col].layout().itemAt(0).widget().setText('')
+				self.grid_qlabelList[0][row][col].movie().setFileName(imgCell)
+				self.grid_qlabelList[0][row][col].movie().start()
+				self.grid_qlabelList[0][row][col].movie().stop()
 			
 			row = SugBig_sum[0]
 			col = SugBig_sum[1]
@@ -4385,16 +4462,16 @@ class GridWindow(QWidget):
 			bet = SugBig_sum[3]
 			if row >= 0 and col >= 0:
 				if bet == 0:
-					self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText('')
-					self.grid_qlabelList[i][row][col].movie().setFileName(imgCell)
+					self.grid_qlabelList[0][row][col].layout().itemAt(0).widget().setText('')
+					self.grid_qlabelList[0][row][col].movie().setFileName(imgCell)
 				else:
-					self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setText(str(bet))
-					self.grid_qlabelList[i][row][col].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
+					self.grid_qlabelList[0][row][col].layout().itemAt(0).widget().setText(str(bet))
+					self.grid_qlabelList[0][row][col].layout().itemAt(0).widget().setStyleSheet('''.QLabel { font-family: Arial, Microsoft JhengHei, serif, sans-serif;
 																									color: black; font-weight: bold; font-size: %dpt;}''' % self.sizeFontSize_Grid)
-					self.grid_qlabelList[i][row][col].movie().setFileName(betRecord.imgSugPath[i][img])
+					self.grid_qlabelList[0][row][col].movie().setFileName(betRecord.imgSugPath[img_index][img])
 				
-				self.grid_qlabelList[i][row][col].movie().start()
-				self.grid_qlabelList[i][row][col].movie().stop()
+				self.grid_qlabelList[0][row][col].movie().start()
+				self.grid_qlabelList[0][row][col].movie().stop()
 	
 	def changeGridGif(self, i, row, col, img):
 		self.controlGridGif()
