@@ -708,6 +708,16 @@ class betRecord():
 		self.lastPredictCount.pop()
 		return {'imgG': img}
 	
+	def algorithmG_all_the_same(self):
+		all_the_same = False
+		if len(self.lastPredictCount) > 1:
+			if self.lastPredictCount[-2][0][0] != 0 and self.lastPredictCount[-2][0][1] == 0:
+				all_the_same = True
+			elif self.lastPredictCount[-2][0][1] != 0 and self.lastPredictCount[-2][0][0] == 0:
+				all_the_same = True
+		
+		return all_the_same
+	
 	def algorithmDEF(self):
 		predictCount = self.predictNextStatus().get('countImg')
 		ret_D = self.sugAlgorithm_D(predictCount)
@@ -1467,17 +1477,18 @@ class GridWindow(QWidget):
 	
 	def globalValue(self):
 		self.betRecord = betRecord()
-		# TODO
-		self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 		self.recordHtml_list = []
 		
 		if printGalgorithm != '':
+			self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 			self.betRecord.setIsNotAlgorithmSug(True)
 			self.betRecord_G_big = betRecord()
 			self.betRecord_G_rb = betRecord()
 			
 			global road_count
 			road_count = 7
+		else:
+			self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 	
 	def sizeDefine(self):
 		# special size define
@@ -1708,7 +1719,7 @@ class GridWindow(QWidget):
 		self.dbar_qlabel3_number = QLabel(self.dbar_qframe)
 		self.dbar_qlabel4_number = QLabel(self.dbar_qframe)
 		self.dbar_btn_back = QPushButton(self.dbar_qframe)
-		self.dbar_btn_allcut = QPushButton(self.dbar_qframe)
+		#self.dbar_btn_allcut = QPushButton(self.dbar_qframe)
 		
 		# set relationship
 		self.dbar_qframe.setLayout(self.dbar_hl)
@@ -1722,7 +1733,7 @@ class GridWindow(QWidget):
 		self.dbar_hl.addWidget(self.dbar_qlabel4)
 		self.dbar_hl.addWidget(self.dbar_qlabel4_number)
 		self.dbar_hl.addWidget(self.dbar_btn_back)
-		self.dbar_hl.addWidget(self.dbar_btn_allcut)
+		#self.dbar_hl.addWidget(self.dbar_btn_allcut)
 	
 	def UIcreate_Vline(self):
 		self.vline = QFrame(self)
@@ -2419,33 +2430,32 @@ class GridWindow(QWidget):
 		
 		self.dbar_qlabel1_number.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 		self.dbar_qlabel1_number.setAlignment(Qt.AlignCenter)
-		self.dbar_qlabel1_number.setFixedWidth(172)
+		self.dbar_qlabel1_number.setFixedWidth(194)
 		
 		self.dbar_qlabel2_number.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 		self.dbar_qlabel2_number.setAlignment(Qt.AlignCenter)
-		self.dbar_qlabel2_number.setFixedWidth(172)
+		self.dbar_qlabel2_number.setFixedWidth(194)
 		
 		self.dbar_qlabel3_number.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 		self.dbar_qlabel3_number.setAlignment(Qt.AlignCenter)
-		self.dbar_qlabel3_number.setFixedWidth(172)
+		self.dbar_qlabel3_number.setFixedWidth(194)
 		
 		self.dbar_qlabel4_number.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 		self.dbar_qlabel4_number.setAlignment(Qt.AlignCenter)
-		self.dbar_qlabel4_number.setFixedWidth(172)
+		self.dbar_qlabel4_number.setFixedWidth(194)
 		
 		self.dbar_btn_back.setText(self.tr('返回'))
 		self.dbar_btn_back.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 		self.dbar_btn_back.setSizePolicy(self.sizePolicy)
 		self.dbar_btn_back.setFixedWidth(90)
 		
-		self.dbar_btn_allcut.setText(self.tr('全切'))
-		self.dbar_btn_allcut.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
-		self.dbar_btn_allcut.setSizePolicy(self.sizePolicy)
-		self.dbar_btn_allcut.setFixedWidth(90)
+		#self.dbar_btn_allcut.setText(self.tr('全切'))
+		#self.dbar_btn_allcut.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
+		#self.dbar_btn_allcut.setSizePolicy(self.sizePolicy)
+		#self.dbar_btn_allcut.setFixedWidth(90)
 	
 	def initialGlobalAttribute_BetStatus(self):
 		if printGalgorithm != '':
-			# TODO
 			# initail global values of UIcreate_BetStatus UI2
 			#----------------------------------------------------
 			self.bet_vl.setSpacing(0)
@@ -3034,7 +3044,7 @@ class GridWindow(QWidget):
 		# initail push button area in UIcreate_GridBar_UI2_detailInfo
 		#----------------------------------------------------
 		self.dbar_btn_back.clicked.connect(self.connect_pbet_btn)
-		self.dbar_btn_allcut.clicked.connect(self.connect_pbet_btn_allcut)
+		#self.dbar_btn_allcut.clicked.connect(self.connect_pbet_btn_allcut)
 	
 	def initialBtnConnect_BetStatus_betPrint(self):
 		# initail bet and print area in UIcreate_BetStatus
@@ -3177,8 +3187,22 @@ class GridWindow(QWidget):
 		betRecord = self.betRecord
 		index = i
 		if printGalgorithm != '':
-			if i != 0:
-				index -= 1
+			if i == 0:
+				LastCutStopStatus = self.betRecord_G_big.getLastCutStopStatus()
+				if not LastCutStopStatus[0]:
+					self.connect_csbar_btn(1)
+				return
+			elif i == 1:
+				index = 0
+				betRecord = self.betRecord_G_big
+			elif i == 2:
+				LastCutStopStatus = self.betRecord_G_rb.getLastCutStopStatus()
+				for j in range(4):
+					if not LastCutStopStatus[j]:
+						self.connect_csbar_btn(j+3)
+				return
+			elif i in [3, 4, 5, 6]:
+				index = i - 3
 				betRecord = self.betRecord_G_rb
 		
 		ret = betRecord.cutStop(index)
@@ -3298,12 +3322,52 @@ class GridWindow(QWidget):
 	
 	def connect_libet_qframe(self, img):
 		self.controlGridGif()
-		nextStatus = self.betRecord.predictNextStatus().get('nextStatus')
-		PossibleSugPosition = self.betRecord.getPossibleSugPosition()
-		
 		self.initialGridGifList()
 		
-		for i in range(4):
+		if printGalgorithm != '':
+			ret_G = self.betRecord.algorithmG(0, True)
+			imgG = ret_G.get('imgG')
+			if imgG == 0:
+				imgG_other = 1
+			elif imgG == 1:
+				imgG_other = 0
+			else:
+				imgG_other = -1
+			
+			if imgG != -1:
+				nextStatus_G_rb = self.betRecord_G_rb.predictNextStatus().get('nextStatus')
+				nextStatus = []
+				nextStatus.append([0, imgG, imgG, nextStatus_G_rb[imgG][0], nextStatus_G_rb[imgG][1], nextStatus_G_rb[imgG][2]])
+				nextStatus.append([1, imgG_other, imgG_other, nextStatus_G_rb[imgG_other][0], nextStatus_G_rb[imgG_other][1], nextStatus_G_rb[imgG_other][2]])
+				
+				PossibleSugPosition_tmp = self.betRecord.getPossibleSugPosition()
+				PossibleSugPosition_G_rb = self.betRecord_G_rb.getPossibleSugPosition()
+				PossibleSugPosition = []
+				PossibleSugPosition.append(PossibleSugPosition_tmp[0])
+				PossibleSugPosition.append(PossibleSugPosition_tmp[0])
+				PossibleSugPosition.append(PossibleSugPosition_G_rb[0])
+				PossibleSugPosition.append(PossibleSugPosition_G_rb[0])
+				PossibleSugPosition.append(PossibleSugPosition_G_rb[1])
+				PossibleSugPosition.append(PossibleSugPosition_G_rb[2])
+				PossibleSugPosition.append(PossibleSugPosition_G_rb[3])
+			else:
+				nextStatus = [[0, -1, -1, -1, -1, -1], [1, -1, -1, -1, -1, -1]]
+				
+				PossibleSugPosition_tmp = self.betRecord.getPossibleSugPosition()
+				PossibleSugPosition = []
+				PossibleSugPosition.append(PossibleSugPosition_tmp[0])
+				PossibleSugPosition.append(PossibleSugPosition_tmp[0])
+				PossibleSugPosition.append([(-1, -1), (-1, -1)])
+				PossibleSugPosition.append([(-1, -1), (-1, -1)])
+				PossibleSugPosition.append([(-1, -1), (-1, -1)])
+				PossibleSugPosition.append([(-1, -1), (-1, -1)])
+				PossibleSugPosition.append([(-1, -1), (-1, -1)])
+				PossibleSugPosition.append([(-1, -1), (-1, -1)])
+		else:
+			nextStatus = self.betRecord.predictNextStatus().get('nextStatus')
+			PossibleSugPosition = self.betRecord.getPossibleSugPosition()
+			
+		for i in range(road_count):
 			tmp_img = img
 			if i != 0:
 				tmp_img = nextStatus[img][i-1]
@@ -3328,8 +3392,8 @@ class GridWindow(QWidget):
 			msgBox.exec_()
 			sys.exit()
 		
-		#self.controlGridGif()
-		#self.initialGridGifList()
+		self.controlGridGif()
+		self.initialGridGifList()
 		
 		ret = self.betRecord.bet(winner)
 		self.logGame('result:' + str(winner))
@@ -3563,8 +3627,8 @@ class GridWindow(QWidget):
 		self.update_ibet()
 	
 	def connect_pbet_btn(self):
-		#self.controlGridGif()
-		#self.initialGridGifList()
+		self.controlGridGif()
+		self.initialGridGifList()
 		
 		ret = self.betRecord.backOneStep()
 		self.logGame('back')
@@ -3722,11 +3786,11 @@ class GridWindow(QWidget):
 			ret_G = self.betRecord.algorithmG(0, True)
 			imgG = ret_G.get('imgG')
 			if imgG == 0:
-				nextStatus = [[0, nextStatus_G[0][0], nextStatus_G[0][1], nextStatus_G[0][2]], [1, nextStatus_G[1][0], nextStatus_G[1][1], nextStatus_G[1][2]]]
+				nextStatus = [[0, 0, 0, nextStatus_G[0][0], nextStatus_G[0][1], nextStatus_G[0][2]], [1, 1, 1, nextStatus_G[1][0], nextStatus_G[1][1], nextStatus_G[1][2]]]
 			elif imgG == 1:
-				nextStatus = [[1, nextStatus_G[1][0], nextStatus_G[1][1], nextStatus_G[1][2]], [0, nextStatus_G[0][0], nextStatus_G[0][1], nextStatus_G[0][2]]]
+				nextStatus = [[0, 1, 1, nextStatus_G[1][0], nextStatus_G[1][1], nextStatus_G[1][2]], [1, 0, 0, nextStatus_G[0][0], nextStatus_G[0][1], nextStatus_G[0][2]]]
 			else:
-				nextStatus = [[0, nextStatus_G[0][0], nextStatus_G[0][1], nextStatus_G[0][2]], [1, nextStatus_G[1][0], nextStatus_G[1][1], nextStatus_G[1][2]]]
+				nextStatus = [[0, -1, -1, -1, -1, -1], [1, -1, -1, -1, -1, -1]]
 		
 		if number in range(10):
 			tmp = self.mcbar_qlineedit[i].text() + str(number)
@@ -3742,7 +3806,7 @@ class GridWindow(QWidget):
 				elif nextStatus[0][i-1] == 1:
 					self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 				else:
-					self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: red; border: 1px solid gray;}''')
+					self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;}''')
 		elif number == 11:
 			self.mcbar_qlabel[i].setText(self.tr('閒'))
 			
@@ -3754,7 +3818,7 @@ class GridWindow(QWidget):
 				elif nextStatus[1][i-1] == 1:
 					self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
 				else:
-					self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: blue; border: 1px solid gray;}''')
+					self.mcbar_qframe[i].setStyleSheet('''.QFrame {background-color: gray; border: 1px solid gray;}''')
 		elif number == 12:
 			self.mcbar_qlineedit[i].setText('')
 		elif number == 13:
@@ -3906,14 +3970,24 @@ class GridWindow(QWidget):
 	def update_bbet(self):
 		if printGalgorithm != '':
 			tmp = self.betRecord.getPrincipal() + self.betRecord.principalSum()
-			self.dbar_qlabel2_number.setText(self.tr('%.3f' %tmp))
+			self.dbar_qlabel2_number.setText(self.tr('%.3f' % tmp))
+			
+			tmp = self.betRecord.principalSum()
+			if tmp >= 0:
+				self.dbar_qlabel3_number.setText(self.tr('%.3f' % tmp))
+				self.dbar_qlabel3_number.setStyleSheet('''.QLabel {font-size: %dpt; color: black; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+			else:
+				self.dbar_qlabel3_number.setText(self.tr('%.3f' % tmp * -1))
+				self.dbar_qlabel3_number.setStyleSheet('''.QLabel {font-size: %dpt; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+			
 			tmp = self.betRecord.principalSumNegative() * -1
-			self.dbar_qlabel4_number.setText(self.tr('%.3f' %tmp))
+			self.dbar_qlabel4_number.setText(self.tr('%.3f' % tmp))
+			
 		else:
 			tmp = self.betRecord.getPrincipal() + self.betRecord.principalSum()
-			self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' %tmp))
+			self.bbet_qlabel1.setText(self.tr('檯面數 : %.2f' % tmp))
 			tmp = self.betRecord.principalSumNegative() * -1
-			self.bbet_qlabel2.setText(self.tr('轉碼 : %d' %tmp))
+			self.bbet_qlabel2.setText(self.tr('轉碼 : %d' % tmp))
 	
 	def update_nbet(self, img, bet, i = 0):
 		if printGalgorithm != '':
@@ -4475,14 +4549,25 @@ class GridWindow(QWidget):
 	
 	def changeGridGif(self, i, row, col, img):
 		self.controlGridGif()
+		
+		if printGalgorithm != '':
+			if i in [0, 1]:
+				img_index = 0
+			elif i == 2:
+				img_index = 1
+			elif i in [3, 4, 5, 6]:
+				img_index = i - 3
+		else:
+			img_index = i
+		
 		if row >= 0 and col >= 0:
-			self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[i][img])
+			self.grid_qlabelList[i][row][col].movie().setFileName(self.betRecord.imgSugPath[img_index][img])
 			self.grid_qlabelList[i][row][col].movie().start()
 			self.grid_qlabelList[i][row][col].movie().stop()
 	
 	# control about sug GridGif
 	def controlGridGif(self, control = False):
-		for i in range(4):
+		for i in range(road_count):
 			row = self.listForMovie[i][0]
 			col = self.listForMovie[i][1]
 			bet = self.listForMovie[i][3]
@@ -4497,7 +4582,7 @@ class GridWindow(QWidget):
 	def restartGridGif(self):
 		self.controlGridGif()
 		
-		for i in range(4):
+		for i in range(road_count):
 			row = self.listForMovie[i][0]
 			col = self.listForMovie[i][1]
 			img = self.listForMovie[i][2]
@@ -4512,7 +4597,10 @@ class GridWindow(QWidget):
 		self.controlGridGif(True)
 	
 	def initialGridGifList(self):
-		self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
+		if printGalgorithm != '':
+			self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
+		else:
+			self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 	
 	def storeRecordForHtml(self, countBet, sameBet, colorBet, pointBet):
 		self.recordHtml_list.append((countBet, sameBet, colorBet, pointBet))
