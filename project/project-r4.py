@@ -52,6 +52,8 @@ imgSugSmaRedCir = imgDir + 'sug_sma_red_cir.gif'
 imgSugSmaBlueCir = imgDir + 'sug_sma_blue_cir.gif'
 imgSugPenRedCir = imgDir + 'sug_pen_red_cir.gif'
 imgSugPenBlueCir = imgDir + 'sug_pen_blue_cir.gif'
+imgSugGRedCir = imgDir + 'sug_G_red_cir.gif' 
+imgSugGBlueCir = imgDir + 'sug_G_blue_cir.gif'
 
 imgNextStatusEyeRedCir = imgDir + 'next_eye_red_cir.png'
 imgNextStatusEyeBlueCir = imgDir + 'next_eye_blue_cir.png'
@@ -173,17 +175,12 @@ class betRecord():
 		self.imgPath.append([imgGRedCir, imgGBlueCir, imgGRedCir_all_the_same, imgGBlueCir_all_the_same])
 		
 		self.imgSugPath = []
-		if printGalgorithm == '':
-			self.imgSugPath.append([imgSugBigRedCir, imgSugBigBlueCir])
-			self.imgSugPath.append([imgSugEyeRedCir, imgSugEyeBlueCir])
-			self.imgSugPath.append([imgSugSmaRedCir, imgSugSmaBlueCir])
-			self.imgSugPath.append([imgSugPenRedCir, imgSugPenBlueCir])
-		else:
-			self.imgSugPath.append([imgSugBigRedCir, imgSugBigBlueCir])
-			self.imgSugPath.append([imgSugBigRedCir, imgSugBigBlueCir])
-			self.imgSugPath.append([imgSugEyeRedCir, imgSugEyeBlueCir])
-			self.imgSugPath.append([imgSugSmaRedCir, imgSugSmaBlueCir])
-			self.imgSugPath.append([imgSugPenRedCir, imgSugPenBlueCir])
+		self.imgSugPath.append([imgSugBigRedCir, imgSugBigBlueCir])
+		self.imgSugPath.append([imgSugEyeRedCir, imgSugEyeBlueCir])
+		self.imgSugPath.append([imgSugSmaRedCir, imgSugSmaBlueCir])
+		self.imgSugPath.append([imgSugPenRedCir, imgSugPenBlueCir])
+		if printGalgorithm != '':
+			self.imgSugPath.append([imgSugGRedCir, imgSugGBlueCir])
 		
 		self.imgNextStatusPath = []
 		self.imgNextStatusPath.append(['', ''])
@@ -1285,7 +1282,7 @@ class GridWindow(QWidget):
 		UI_width = 239 + column_size * (self.Width_Grid + 1) - 18
 		UI_height = 170 * road_count + road_count - 1
 		if printGalgorithm != '':
-			UI_height += 25
+			UI_height += 26
 		
 		self.setFixedSize(UI_width, UI_height)
 		print self.sizeHint()
@@ -1723,6 +1720,7 @@ class GridWindow(QWidget):
 		self.dbar_qlabel2_number = QLabel(self.dbar_qframe)
 		self.dbar_qlabel3_number = QLabel(self.dbar_qframe)
 		self.dbar_qlabel4_number = QLabel(self.dbar_qframe)
+		self.dbar_qlabel_empty_2 = QLabel(self.dbar_qframe)
 		self.dbar_btn_back = QPushButton(self.dbar_qframe)
 		#self.dbar_btn_allcut = QPushButton(self.dbar_qframe)
 		
@@ -1737,6 +1735,7 @@ class GridWindow(QWidget):
 		self.dbar_hl.addWidget(self.dbar_qlabel3_number)
 		self.dbar_hl.addWidget(self.dbar_qlabel4)
 		self.dbar_hl.addWidget(self.dbar_qlabel4_number)
+		self.dbar_hl.addWidget(self.dbar_qlabel_empty_2)
 		self.dbar_hl.addWidget(self.dbar_btn_back)
 		#self.dbar_hl.addWidget(self.dbar_btn_allcut)
 	
@@ -2419,46 +2418,48 @@ class GridWindow(QWidget):
 		# detailInfo bar
 		#--------------------------
 		self.dbar_qframe.setStyleSheet('''.QFrame {background-color: white; border: 1px solid gray;}''')
-		self.dbar_qframe.setFixedHeight(self.Height_tbar)
+		self.dbar_qframe.setFixedHeight(self.Height_tbar+1)
 		self.dbar_hl.setMargin(0)
 		
-		self.dbar_qlabel_empty.setFixedWidth(26)
+		self.dbar_qlabel_empty.setFixedWidth(20)
 		
 		self.dbar_qlabel1.setText(self.tr('本金:'))
 		self.dbar_qlabel1.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 		self.dbar_qlabel1.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-		self.dbar_qlabel1.setFixedWidth(50)
+		self.dbar_qlabel1.setFixedWidth(45)
 		
 		self.dbar_qlabel2.setText(self.tr('檯面:'))
 		self.dbar_qlabel2.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 		self.dbar_qlabel2.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-		self.dbar_qlabel2.setFixedWidth(50)
+		self.dbar_qlabel2.setFixedWidth(45)
 		
 		self.dbar_qlabel3.setText(self.tr('上下:'))
 		self.dbar_qlabel3.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 		self.dbar_qlabel3.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-		self.dbar_qlabel3.setFixedWidth(50)
+		self.dbar_qlabel3.setFixedWidth(45)
 		
 		self.dbar_qlabel4.setText(self.tr('轉碼:'))
 		self.dbar_qlabel4.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 		self.dbar_qlabel4.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
-		self.dbar_qlabel4.setFixedWidth(50)
+		self.dbar_qlabel4.setFixedWidth(45)
 		
 		self.dbar_qlabel1_number.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-		self.dbar_qlabel1_number.setAlignment(Qt.AlignCenter)
-		self.dbar_qlabel1_number.setFixedWidth(194)
+		self.dbar_qlabel1_number.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+		self.dbar_qlabel1_number.setFixedWidth(100)
 		
 		self.dbar_qlabel2_number.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-		self.dbar_qlabel2_number.setAlignment(Qt.AlignCenter)
-		self.dbar_qlabel2_number.setFixedWidth(194)
+		self.dbar_qlabel2_number.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+		self.dbar_qlabel2_number.setFixedWidth(100)
 		
 		self.dbar_qlabel3_number.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-		self.dbar_qlabel3_number.setAlignment(Qt.AlignCenter)
-		self.dbar_qlabel3_number.setFixedWidth(194)
+		self.dbar_qlabel3_number.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+		self.dbar_qlabel3_number.setFixedWidth(100)
 		
 		self.dbar_qlabel4_number.setStyleSheet('''.QLabel {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-		self.dbar_qlabel4_number.setAlignment(Qt.AlignCenter)
-		self.dbar_qlabel4_number.setFixedWidth(194)
+		self.dbar_qlabel4_number.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+		self.dbar_qlabel4_number.setFixedWidth(100)
+		
+		self.dbar_qlabel_empty_2.setFixedWidth(365)
 		
 		self.dbar_btn_back.setText(self.tr('返回'))
 		self.dbar_btn_back.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
@@ -3266,7 +3267,7 @@ class GridWindow(QWidget):
 				show = betRecord.lastShow(index)
 				if show[0] != -1 and show[1] != -1:
 					style = str(self.grid_qlabelList[i][show[0]][show[1]].layout().itemAt(0).widget().styleSheet())
-					style = style.replace('{', '{ border: 1px solid black;')
+					style = style.replace('{', '{ border: 2px solid black;')
 					self.grid_qlabelList[i][show[0]][show[1]].layout().itemAt(0).widget().setStyleSheet('''%s'''%style)
 				
 				# change Sug to 0
@@ -3278,12 +3279,12 @@ class GridWindow(QWidget):
 				show = betRecord.lastShow(index)
 				# algorithm v1
 				if sugAlgorithm == 'A':
-					self.changeSug(i, show[2], 1, False)
+					self.changeSug(i, show[2], 5, False)
 				# algorithm v2
 				elif sugAlgorithm == 'B':
 					self.changeSug(i, show[2], 0, False)
 				elif sugAlgorithm == 'G':
-					self.changeSug(i, show[2], 0, False)
+					self.changeSug(i, show[2], 5, False)
 			
 			self.update_lbar()
 			self.update_rbar()
@@ -3307,8 +3308,12 @@ class GridWindow(QWidget):
 				log('重開失敗，檔名不對')
 	
 	def connect_bbet_btn2(self):
-		filename_list = ['gridShot_big', 'gridShot_eye', 'gridShot_sma', 'gridShot_pen']
-		image_description = ['大路', '眼路', '小路', '筆路']
+		if printGalgorithm != '':
+			filename_list = ['gridShot_record', 'gridShot_big', 'gridShot_rb_record', 'gridShot_rb_big', 'gridShot_rb_eye', 'gridShot_rb_sma', 'gridShot_rb_pen']
+			image_description = ['紀錄', '大路', '紅藍紀錄', '紅藍大路', '紅藍眼路', '紅藍小路', '紅藍筆路']
+		else:
+			filename_list = ['gridShot_big', 'gridShot_eye', 'gridShot_sma', 'gridShot_pen']
+			image_description = ['大路', '眼路', '小路', '筆路']
 		nowPath = os.getcwd()
 		nowPath = nowPath.replace('\\', '/')
 		url = nowPath + '/print/baccarat_print.html'
@@ -3342,7 +3347,7 @@ class GridWindow(QWidget):
 				pointBet = recordHtml[3]
 				
 				file.write('<tr>\n')
-				file.write('<td><span style="color: gray; %s">%d</span></td>\n' %(fontFamily, index))
+				file.write('<td><span style="color: gray; %s">%d</span></td>\n' %(fontFamily, index+1))
 				
 				if countBet == 0:
 					file.write('<td><span style="%s">%d</span></td>\n' % (fontFamily, countBet))
@@ -3788,10 +3793,10 @@ class GridWindow(QWidget):
 					self.update_nbet(lastSugBig_sum[2], lastSugBig_sum[3])
 				
 			self.betRecord.principalPopEntry()
-			#self.popRecordForHtml()
 			if printGalgorithm != '':
 				pass
 			else:
+				self.popRecordForHtml()
 				removeQframe = self.rbet_qscrollarea_vl.itemAt(self.rbet_qscrollarea_vl.count()-1).widget()
 				removeQframe.close()
 				self.rbet_qscrollarea_vl.removeWidget(removeQframe)
@@ -4089,7 +4094,7 @@ class GridWindow(QWidget):
 				self.bignbet_qlabel5.setText(str(sumCount))
 			elif i in [2, 3, 4, 5, 6]:
 				if img in [0, 1]:
-					ret = self.betRecord.predictNextStatus()
+					ret = self.betRecord_G_rb.predictNextStatus()
 					if ret.get('status') == 0:
 						ret_G = self.betRecord.algorithmG(0, True)
 						imgG = ret_G.get('imgG')
@@ -4269,33 +4274,40 @@ class GridWindow(QWidget):
 				else:
 					self.rbibet_qlabel_player4[0].setStyleSheet('''.QLabel {}''')
 				
+				
+				rbibet_qlabel_banker = [self.rbibet_qlabel_banker2, self.rbibet_qlabel_banker3, self.rbibet_qlabel_banker4]
+				rbibet_qlabel_player = [self.rbibet_qlabel_player2, self.rbibet_qlabel_player3, self.rbibet_qlabel_player4]
 				for i in range(4):
+					if i == 0:
+						index = 0
+					else:
+						index = i - 1
 					if imgG != -1:
 						if i == 0:
 							if imgG == 0:
-								self.rbibet_qlabel_banker4[i+1].setText(self.tr('紅'))
-								self.rbibet_qlabel_banker4[i+1].setStyleSheet('''.QLabel {font-size: %dpt; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-								self.rbibet_qlabel_player4[i+1].setText(self.tr('藍'))
-								self.rbibet_qlabel_player4[i+1].setStyleSheet('''.QLabel {font-size: %dpt; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+								rbibet_qlabel_banker[index][i+1].setText(self.tr('紅'))
+								rbibet_qlabel_banker[index][i+1].setStyleSheet('''.QLabel {font-size: %dpt; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+								rbibet_qlabel_player[index][i+1].setText(self.tr('藍'))
+								rbibet_qlabel_player[index][i+1].setStyleSheet('''.QLabel {font-size: %dpt; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 							else:
-								self.rbibet_qlabel_banker4[i+1].setText(self.tr('藍'))
-								self.rbibet_qlabel_banker4[i+1].setStyleSheet('''.QLabel {font-size: %dpt; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
-								self.rbibet_qlabel_player4[i+1].setText(self.tr('紅'))
-								self.rbibet_qlabel_player4[i+1].setStyleSheet('''.QLabel {font-size: %dpt; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+								rbibet_qlabel_banker[index][i+1].setText(self.tr('藍'))
+								rbibet_qlabel_banker[index][i+1].setStyleSheet('''.QLabel {font-size: %dpt; color: blue; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+								rbibet_qlabel_player[index][i+1].setText(self.tr('紅'))
+								rbibet_qlabel_player[index][i+1].setStyleSheet('''.QLabel {font-size: %dpt; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 						else:
 							if ret['nextStatus'][imgBanker][i-1] != -1:
-								self.rbibet_qlabel_banker4[i+1].setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord_G_rb.imgNextStatusPath[i][ret['nextStatus'][imgBanker][i-1]])
+								rbibet_qlabel_banker[index][i+1].setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord_G_rb.imgNextStatusPath[i][ret['nextStatus'][imgBanker][i-1]])
 							else:
-								self.rbibet_qlabel_banker4[i+1].setStyleSheet('''.QLabel {}''')
+								rbibet_qlabel_banker[index][i+1].setStyleSheet('''.QLabel {}''')
 							if ret['nextStatus'][imgPlayer][i-1] != -1:
-								self.rbibet_qlabel_player4[i+1].setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord_G_rb.imgNextStatusPath[i][ret['nextStatus'][imgPlayer][i-1]])
+								rbibet_qlabel_player[index][i+1].setStyleSheet('''.QLabel {background-image: url(%s)}'''%self.betRecord_G_rb.imgNextStatusPath[i][ret['nextStatus'][imgPlayer][i-1]])
 							else:
-								self.rbibet_qlabel_player4[i+1].setStyleSheet('''.QLabel {}''')
+								rbibet_qlabel_player[index][i+1].setStyleSheet('''.QLabel {}''')
 					else:
-						self.rbibet_qlabel_banker4[i+1].setText('')
-						self.rbibet_qlabel_banker4[i+1].setStyleSheet('''.QLabel {}''')
-						self.rbibet_qlabel_player4[i+1].setText('')
-						self.rbibet_qlabel_player4[i+1].setStyleSheet('''.QLabel {}''')
+						rbibet_qlabel_banker[index][i+1].setText('')
+						rbibet_qlabel_banker[index][i+1].setStyleSheet('''.QLabel {}''')
+						rbibet_qlabel_player[index][i+1].setText('')
+						rbibet_qlabel_player[index][i+1].setStyleSheet('''.QLabel {}''')
 				
 				self.rbibet_qlabel1[0].setText(str(self.betRecord_G_rb.countResult[0]))
 				self.rbibet_qlabel3[0].setText(str(self.betRecord_G_rb.countResult[1]))
@@ -4476,8 +4488,8 @@ class GridWindow(QWidget):
 			elif img_SugBig == 1:
 				img_SugBig_other = 0
 			
-			retSug_1, eraseSug, SugBig_sum, SugBig_sum_otherimg = betRecord.manualChangeSug(0, img_SugBig_other, bet_SugBig, False)
-			retSug_2, eraseSug, SugBig_sum, SugBig_sum_otherimg = betRecord.manualChangeSug(0, img_SugBig, bet_SugBig, False)
+			retSug_1, eraseSug, SugBig_sum, SugBig_sum_otherimg = betRecord.manualChangeSug(0, img_SugBig_other, bet_SugBig, True)
+			retSug_2, eraseSug, SugBig_sum, SugBig_sum_otherimg = betRecord.manualChangeSug(0, img_SugBig, bet_SugBig, True)
 			
 			if img == img_SugBig:
 				eraseSug = retSug_1
@@ -4522,7 +4534,7 @@ class GridWindow(QWidget):
 		else:
 			self.update_nbet(SugBig_sum[2], SugBig_sum[3])
 		
-		if printGalgorithm != '' and i in [1, 3, 4, 5, 6]:
+		if printGalgorithm != '' and i in [1, 2, 3, 4, 5, 6]:
 			# get next imgG to check if add sug_sum to road all record (road 1)
 			tmp = self.betRecord.algorithmG(0, True)
 			tmp_img = tmp.get('imgG')
@@ -4578,7 +4590,12 @@ class GridWindow(QWidget):
 			if i in [0, 1]:
 				img_index = 0
 			elif i == 2:
-				img_index = 1
+				ret_G = self.betRecord.algorithmG(0)
+				all_the_same = ret_G.get('all_the_same')
+				if all_the_same:
+					img_index = 4
+				else:
+					img_index = 1
 			elif i in [3, 4, 5, 6]:
 				img_index = i - 3
 		else:
@@ -4650,7 +4667,7 @@ class GridWindow(QWidget):
 				self.csbar_btn[i].setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 			
 			style = str(self.grid_qlabelList[i][removeList[i][0]][removeList[i][1]].layout().itemAt(0).widget().styleSheet())
-			style = style.replace('{ border: 1px solid black;','{')
+			style = style.replace('{ border: 2px solid black;','{')
 			self.grid_qlabelList[i][removeList[i][0]][removeList[i][1]].layout().itemAt(0).widget().setStyleSheet('''%s'''%style)
 	
 	def checkPosNegtive(self):
