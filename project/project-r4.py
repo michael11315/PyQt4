@@ -3056,8 +3056,8 @@ class GridWindow(QWidget):
 	
 	def initialBtnConnect_GridBar_empty(self):
 		for i in [1, 3, 4, 5, 6]:
-			self.ebar_qradiobtn1[i].clicked.connect(functools.partial(self.connect_ebar_qradiobtn, i))
-			self.ebar_qradiobtn2[i].clicked.connect(functools.partial(self.connect_ebar_qradiobtn, i))
+			self.ebar_qradiobtn1[i].clicked.connect(functools.partial(self.connect_ebar_qradiobtn, i, 'positive'))
+			self.ebar_qradiobtn2[i].clicked.connect(functools.partial(self.connect_ebar_qradiobtn, i, 'negative'))
 	
 	def initialBtnConnect_GridBar_manualChange(self):
 		# initail manual change bar btn in UIcreate_Grid
@@ -3162,25 +3162,23 @@ class GridWindow(QWidget):
 			self.binp_btn12[i].clicked.connect(functools.partial(self.connect_binp_btn, i , 12))
 			self.binp_btn13[i].clicked.connect(functools.partial(self.connect_binp_btn, i, 13))
 	
-	def connect_ebar_qradiobtn(self, i):
-		if printGalgorithm != '':
-			if i == 1:
-				Sug = self.betRecord_G_big.getSugList()[0]
-			elif i in [3, 4, 5, 6]:
-				Sug = self.betRecord_G_rb.getSugList()[i-3]
-			else:
+	def test_toolbar(self):
+		self.toolbar_qframe = QFrame(self)
+		self.toolbar_vl = QVBoxLayout(self.toolbar_qframe)
+		self.toolbar_btn0 = QPushButton(self.toolbar_qframe)
+		self.toolbar_btn1 = QPushButton(self.toolbar_qframe)
+		self.toolbar_btn2 = QPushButton(self.toolbar_qframe)
+		self.toolbar_btn3 = QPushButton(self.toolbar_qframe)
+	
+	def connect_ebar_qradiobtn(self, i, direction):
+		if direction == 'positive':
+			if self.ebar_qradiobtn1[i].isChecked():
 				return
-		else:
-			pass
+		elif direction == 'negative':
+			if self.ebar_qradiobtn2[i].isChecked():
+				return
 		
-		if Sug[2] == 0:
-			img_other = 1
-		elif Sug[2] == 1:
-			img_other = 0
-		else:
-			return
-		
-		self.changeSug(i, img_other, Sug[3], True)
+		self.inverseSug(i)
 	
 	def connect_mcbar_btn(self, i):
 		# connect to manual change button
@@ -3285,6 +3283,7 @@ class GridWindow(QWidget):
 					self.changeSug(i, show[2], 0, False)
 				elif sugAlgorithm == 'G':
 					self.changeSug(i, show[2], 5, False)
+					self.checkPosNegtive(i)
 			
 			self.update_lbar()
 			self.update_rbar()
@@ -3653,7 +3652,8 @@ class GridWindow(QWidget):
 					for i in range(6):
 						self.update_nbet(showSugList[i+1][2], showSugList[i+1][3], i+1)
 					
-					self.checkPosNegtive()
+					for i in [1, 3, 4, 5, 6]:
+						self.checkPosNegtive(i)
 				else:
 					# update next bet area (sum of 4 road)
 					Sugsum = ret.get('SugBig_sum')
@@ -4036,7 +4036,7 @@ class GridWindow(QWidget):
 				self.dbar_qlabel3_number.setText(self.tr('%.3f' % tmp))
 				self.dbar_qlabel3_number.setStyleSheet('''.QLabel {font-size: %dpt; color: black; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 			else:
-				self.dbar_qlabel3_number.setText(self.tr('%.3f' % tmp * -1))
+				self.dbar_qlabel3_number.setText(self.tr('%.3f' % (tmp * -1)))
 				self.dbar_qlabel3_number.setStyleSheet('''.QLabel {font-size: %dpt; color: red; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
 			
 			tmp = self.betRecord.principalSumNegative() * -1
@@ -4670,10 +4670,29 @@ class GridWindow(QWidget):
 			style = style.replace('{ border: 2px solid black;','{')
 			self.grid_qlabelList[i][removeList[i][0]][removeList[i][1]].layout().itemAt(0).widget().setStyleSheet('''%s'''%style)
 	
-	def checkPosNegtive(self):
-		for i in [1, 3, 4, 5, 6]:
-			if self.ebar_qradiobtn2[i].isChecked():
-				self.connect_ebar_qradiobtn(i)
+	def checkPosNegtive(self, i):
+		if self.ebar_qradiobtn2[i].isChecked():
+			self.inverseSug(i)
+	
+	def inverseSug(self, i):
+		if printGalgorithm != '':
+			if i == 1:
+				Sug = self.betRecord_G_big.getSugList()[0]
+			elif i in [3, 4, 5, 6]:
+				Sug = self.betRecord_G_rb.getSugList()[i-3]
+			else:
+				return
+		else:
+			return
+		
+		if Sug[2] == 0:
+			img_other = 1
+		elif Sug[2] == 1:
+			img_other = 0
+		else:
+			return
+		
+		self.changeSug(i, img_other, Sug[3], True)
 	
 	def logGame(self, msg):
 		log(msg)
