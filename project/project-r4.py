@@ -1279,12 +1279,12 @@ class GridWindow(QWidget):
 		self.logGame('start game')
 		
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-		UI_width = 239 + column_size * (self.Width_Grid + 1) - 18
-		UI_height = 170 * road_count + road_count - 1
+		self.UI_width = 239 + column_size * (self.Width_Grid + 1) - 18
+		self.UI_height = 170 * road_count + road_count - 1
 		if printGalgorithm != '':
-			UI_height += 26
+			self.UI_height += 26
 		
-		self.setFixedSize(UI_width, UI_height)
+		self.setFixedSize(self.UI_width, self.UI_height)
 		print self.sizeHint()
 		self.vline.setFixedHeight(self.sizeHint().height()-10)
 	
@@ -3056,8 +3056,8 @@ class GridWindow(QWidget):
 	
 	def initialBtnConnect_GridBar_empty(self):
 		for i in [1, 3, 4, 5, 6]:
-			self.ebar_qradiobtn1[i].clicked.connect(functools.partial(self.connect_ebar_qradiobtn, i, 'positive'))
-			self.ebar_qradiobtn2[i].clicked.connect(functools.partial(self.connect_ebar_qradiobtn, i, 'negative'))
+			self.ebar_qradiobtn1[i].toggled.connect(functools.partial(self.connect_ebar_qradiobtn, i, 'positive'))
+			self.ebar_qradiobtn2[i].toggled.connect(functools.partial(self.connect_ebar_qradiobtn, i, 'negative'))
 	
 	def initialBtnConnect_GridBar_manualChange(self):
 		# initail manual change bar btn in UIcreate_Grid
@@ -3172,10 +3172,10 @@ class GridWindow(QWidget):
 	
 	def connect_ebar_qradiobtn(self, i, direction):
 		if direction == 'positive':
-			if self.ebar_qradiobtn1[i].isChecked():
+			if not self.ebar_qradiobtn1[i].isChecked():
 				return
 		elif direction == 'negative':
-			if self.ebar_qradiobtn2[i].isChecked():
+			if not self.ebar_qradiobtn2[i].isChecked():
 				return
 		
 		self.inverseSug(i)
