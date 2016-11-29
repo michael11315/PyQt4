@@ -3227,6 +3227,7 @@ class GridWindow(QWidget):
 								img = ret['nextStatus'][img][index-1]
 					
 					self.changeSug(i, img, bet, True)
+					self.update_lbar()
 					self.logGame('手動: (road = %d, img = %d, bet = %d)' % (i, img, bet))
 			
 			self.binp_qframe[i].close()
