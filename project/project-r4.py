@@ -1291,9 +1291,19 @@ class GridWindow(QWidget):
 	def welcomeBaccarat(self):
 		self.Dialog = QDialog()
 		self.Dialog.setWindowTitle('welcome Baccarat')
+		
+		dia_vl = QVBoxLayout()
+		self.Dialog.setLayout(dia_vl)
+		
 		qlabel1 = QLabel()
 		qlabel1.setText(self.tr('請開啟驗證程式以及做好以下設定後按 OK'))
 		qlabel2 = QLabel()
+		dia_vl.addWidget(qlabel1)
+		dia_vl.addWidget(qlabel2)
+		
+		# algorithm and principal qframe
+		dia_ap_qframe = QFrame(self.Dialog)
+		dia_ap_gl = QGridLayout(dia_ap_qframe)
 		qlabel3 = QLabel()
 		qlabel3.setText(self.tr('選擇演算法 : '))
 		self.comboBox = QComboBox()
@@ -1303,21 +1313,21 @@ class GridWindow(QWidget):
 		self.comboBox.addItem('E')
 		self.comboBox.addItem('F')
 		self.comboBox.addItem('G')
+		self.comboBox.addItem('AB')
 		qlabel4 = QLabel()
 		qlabel4.setText(self.tr('本金 : '))
 		self.Lineedit = QLineEdit()
+		dia_ap_gl.addWidget(qlabel3, 0, 0)
+		dia_ap_gl.addWidget(qlabel4, 0, 1)
+		dia_ap_gl.addWidget(self.comboBox, 1, 0)
+		dia_ap_gl.addWidget(self.Lineedit, 1, 1)
+		dia_vl.addWidget(dia_ap_qframe)
 		
 		DialogButtonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
-		
-		dia_vl = QVBoxLayout()
-		dia_vl.addWidget(qlabel1)
-		dia_vl.addWidget(qlabel2)
-		dia_vl.addWidget(qlabel3)
-		dia_vl.addWidget(self.comboBox)
-		dia_vl.addWidget(qlabel4)
-		dia_vl.addWidget(self.Lineedit)
 		dia_vl.addWidget(DialogButtonBox)
-		self.Dialog.setLayout(dia_vl)
+		
+		#multi_left_vl = QVBoxLayout()
+		#multi_right_vl = QVBoxLayout()
 		
 		DialogButtonBox.accepted.connect(self.welcomeBaccarat_accept)
 		DialogButtonBox.rejected.connect(self.welcomeBaccarat_reject)
@@ -1338,9 +1348,16 @@ class GridWindow(QWidget):
 			elif algorithm in ['G']:
 				printGalgorithm = algorithm
 				sugAlgorithm = algorithm
-			else:
+			elif algorithm in ['AB']:
+				printGalgorithm = 'G'
+				sugAlgorithm = 'G'
+			elif algorithm in ['D', 'E', 'F']:
 				printDEFalgorithm = algorithm
 				sugAlgorithm = 'A'
+			else:
+				sys.exit()
+			
+			self.algorithm_name = algorithm
 			
 			number = int(number)
 			self.betPrincipal = number
@@ -2324,10 +2341,7 @@ class GridWindow(QWidget):
 			self.ebar_qlineedit_name.setFixedWidth(140)
 			self.ebar_qlineedit_name.setFixedHeight(self.sizeHeight_qlabel)
 		
-		name = sugAlgorithm
-		if printDEFalgorithm != '':
-			name = printDEFalgorithm
-		self.ebar_qlabel[0].setText(self.tr(name))
+		self.ebar_qlabel[0].setText(self.tr(self.algorithm_name))
 	
 	def initialGlobalAttribute_GridBar_title(self):
 		# bar's title
