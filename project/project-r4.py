@@ -1323,11 +1323,40 @@ class GridWindow(QWidget):
 		dia_ap_gl.addWidget(self.Lineedit, 1, 1)
 		dia_vl.addWidget(dia_ap_qframe)
 		
+		# multi button qframe
+		dia_mb_qframe = QFrame(self.Dialog)
+		dia_mb_hl = QHBoxLayout(dia_mb_qframe)
+		
+		dia_mb_left_qframe = QFrame(dia_mb_qframe)
+		multi_left_vl = QVBoxLayout(dia_mb_left_qframe)
+		self.checkBox_1 = QCheckBox()
+		self.checkBox_1.setText(self.tr('2切停'))
+		self.checkBox_2 = QCheckBox()
+		self.checkBox_2.setText(self.tr('4顆斬'))
+		self.checkBox_3 = QCheckBox()
+		self.checkBox_3.setText(self.tr('4顆歸零'))
+		multi_left_vl.addWidget(self.checkBox_1)
+		multi_left_vl.addWidget(self.checkBox_2)
+		multi_left_vl.addWidget(self.checkBox_3)
+		dia_mb_hl.addWidget(dia_mb_left_qframe)
+		
+		dia_mb_right_qframe = QFrame(dia_mb_qframe)
+		multi_right_vl = QVBoxLayout(dia_mb_right_qframe)
+		self.radioBtn_1 = QRadioButton()
+		self.radioBtn_1.setText(self.tr('1, 2, 3, 4'))
+		self.radioBtn_2 = QRadioButton()
+		self.radioBtn_2.setText(self.tr('5, 6, 7, 8'))
+		self.radioBtn_3 = QRadioButton()
+		self.radioBtn_3.setText(self.tr('10, 11, 12, 13'))
+		multi_right_vl.addWidget(self.radioBtn_1)
+		multi_right_vl.addWidget(self.radioBtn_2)
+		multi_right_vl.addWidget(self.radioBtn_3)
+		dia_mb_hl.addWidget(dia_mb_right_qframe)
+		
+		dia_vl.addWidget(dia_mb_qframe)
+		
 		DialogButtonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
 		dia_vl.addWidget(DialogButtonBox)
-		
-		#multi_left_vl = QVBoxLayout()
-		#multi_right_vl = QVBoxLayout()
 		
 		DialogButtonBox.accepted.connect(self.welcomeBaccarat_accept)
 		DialogButtonBox.rejected.connect(self.welcomeBaccarat_reject)
