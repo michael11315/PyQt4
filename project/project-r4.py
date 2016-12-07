@@ -1279,12 +1279,7 @@ class GridWindow(QWidget):
 		self.logGame('start game')
 		
 		self.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-		self.UI_width = 239 + column_size * (self.Width_Grid + 1) - 18
-		self.UI_height = 170 * road_count + road_count - 1
-		if printGalgorithm != '':
-			self.UI_height += 26
 		
-		self.setFixedSize(self.UI_width, self.UI_height)
 		print self.sizeHint()
 		self.vline.setFixedHeight(self.sizeHint().height()-10)
 	
@@ -1314,6 +1309,7 @@ class GridWindow(QWidget):
 		self.comboBox.addItem('F')
 		self.comboBox.addItem('G')
 		self.comboBox.addItem('AB')
+		self.comboBox.addItem('AB_nohide')
 		qlabel4 = QLabel()
 		qlabel4.setText(self.tr('本金 : '))
 		self.Lineedit = QLineEdit()
@@ -1326,7 +1322,9 @@ class GridWindow(QWidget):
 		# multi button qframe
 		dia_mb_qframe = QFrame(self.Dialog)
 		dia_mb_hl = QHBoxLayout(dia_mb_qframe)
+		dia_vl.addWidget(dia_mb_qframe)
 		
+		# multi button qframe - left checkbox
 		dia_mb_left_qframe = QFrame(dia_mb_qframe)
 		multi_left_vl = QVBoxLayout(dia_mb_left_qframe)
 		self.checkBox_1 = QCheckBox()
@@ -1339,11 +1337,15 @@ class GridWindow(QWidget):
 		multi_left_vl.addWidget(self.checkBox_2)
 		multi_left_vl.addWidget(self.checkBox_3)
 		dia_mb_hl.addWidget(dia_mb_left_qframe)
+		self.checkBox_2.toggled.connect(functools.partial(self.connect_left_checkbox, self.checkBox_2, self.checkBox_3))
+		self.checkBox_3.toggled.connect(functools.partial(self.connect_left_checkbox, self.checkBox_3, self.checkBox_2))
 		
+		# multi button qframe - right radiobox
 		dia_mb_right_qframe = QFrame(dia_mb_qframe)
 		multi_right_vl = QVBoxLayout(dia_mb_right_qframe)
 		self.radioBtn_1 = QRadioButton()
 		self.radioBtn_1.setText(self.tr('1, 2, 3, 4'))
+		self.radioBtn_1.setChecked(True)
 		self.radioBtn_2 = QRadioButton()
 		self.radioBtn_2.setText(self.tr('5, 6, 7, 8'))
 		self.radioBtn_3 = QRadioButton()
@@ -1353,15 +1355,17 @@ class GridWindow(QWidget):
 		multi_right_vl.addWidget(self.radioBtn_3)
 		dia_mb_hl.addWidget(dia_mb_right_qframe)
 		
-		dia_vl.addWidget(dia_mb_qframe)
-		
+		# Ok Cancel button
 		DialogButtonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
 		dia_vl.addWidget(DialogButtonBox)
-		
 		DialogButtonBox.accepted.connect(self.welcomeBaccarat_accept)
 		DialogButtonBox.rejected.connect(self.welcomeBaccarat_reject)
 		
 		self.Dialog.exec_()
+	
+	def connect_left_checkbox(self, checkBox_self, checkBox_other):
+		if checkBox_self.isChecked():
+			checkBox_other.setChecked(False)
 	
 	def welcomeBaccarat_accept(self):
 		algorithm = self.comboBox.currentText()
@@ -1378,6 +1382,9 @@ class GridWindow(QWidget):
 				printGalgorithm = algorithm
 				sugAlgorithm = algorithm
 			elif algorithm in ['AB']:
+				printGalgorithm = 'G'
+				sugAlgorithm = 'G'
+			elif algorithm in ['AB_nohide']:
 				printGalgorithm = 'G'
 				sugAlgorithm = 'G'
 			elif algorithm in ['D', 'E', 'F']:
@@ -1557,6 +1564,16 @@ class GridWindow(QWidget):
 		self.sizeFontSize_Button = 11
 		self.sizeFontSize_Grid = 11
 	
+	def setUI_width_height(self):
+		self.UI_width = 239 + column_size * (self.Width_Grid + 1) - 18
+		self.UI_height = 170 * road_count + road_count - 1
+		if printGalgorithm != '':
+			self.UI_height += 26
+		if self.algorithm_name == 'AB':
+			self.UI_height = self.UI_height - 171 * 6 - 1
+		
+		self.setFixedSize(self.UI_width, self.UI_height)
+	
 	def UIcreate(self):
 		self.UIcreate_Grid()
 		self.UIcreate_Vline()
@@ -1571,6 +1588,11 @@ class GridWindow(QWidget):
 		self.initialBtnConnect()
 		
 		self.setLayout(self.UI_hl)
+		
+		if self.algorithm_name == 'AB':
+			self.UIhide_AB()
+			
+		self.setUI_width_height()
 	
 	def UIcreate_Grid(self):
 		if printGalgorithm != '':
@@ -1766,7 +1788,7 @@ class GridWindow(QWidget):
 		self.dbar_qlabel2_number = QLabel(self.dbar_qframe)
 		self.dbar_qlabel3_number = QLabel(self.dbar_qframe)
 		self.dbar_qlabel4_number = QLabel(self.dbar_qframe)
-		self.dbar_qlabel_empty_2 = QLabel(self.dbar_qframe)
+		self.dbar_qframe_empty_2 = QFrame(self.dbar_qframe)
 		self.dbar_btn_back = QPushButton(self.dbar_qframe)
 		#self.dbar_btn_allcut = QPushButton(self.dbar_qframe)
 		
@@ -1781,9 +1803,21 @@ class GridWindow(QWidget):
 		self.dbar_hl.addWidget(self.dbar_qlabel3_number)
 		self.dbar_hl.addWidget(self.dbar_qlabel4)
 		self.dbar_hl.addWidget(self.dbar_qlabel4_number)
-		self.dbar_hl.addWidget(self.dbar_qlabel_empty_2)
+		self.dbar_hl.addWidget(self.dbar_qframe_empty_2)
 		self.dbar_hl.addWidget(self.dbar_btn_back)
 		#self.dbar_hl.addWidget(self.dbar_btn_allcut)
+		
+		# positive and negative radiobox for algorithm AB
+		if self.algorithm_name in ['AB', 'AB_nohide']:
+			self.dbar_qframe_emtpy_2_hl = QHBoxLayout(self.dbar_qframe_empty_2)
+			self.dbar_qframe_emtpy_2_qradiobtn1 = QRadioButton()
+			self.dbar_qframe_emtpy_2_empty = QLabel(self.dbar_qframe_empty_2)
+			self.dbar_qframe_emtpy_2_qradiobtn2 = QRadioButton()
+			
+			self.dbar_qframe_empty_2.setLayout(self.dbar_qframe_emtpy_2_hl)
+			self.dbar_qframe_emtpy_2_hl.addWidget(self.dbar_qframe_emtpy_2_qradiobtn1)
+			self.dbar_qframe_emtpy_2_hl.addWidget(self.dbar_qframe_emtpy_2_empty)
+			self.dbar_qframe_emtpy_2_hl.addWidget(self.dbar_qframe_emtpy_2_qradiobtn2)
 	
 	def UIcreate_Vline(self):
 		self.vline = QFrame(self)
@@ -2276,6 +2310,20 @@ class GridWindow(QWidget):
 			self.binp_gl[i].addWidget(self.binp_btn12[i], 0, 3, 2, 1)
 			self.binp_gl[i].addWidget(self.binp_btn13[i], 2, 3, 2, 1)
 	
+	def UIhide_AB(self):
+		self.bar_qframe[1].close()
+		self.grid_qframe[1].close()
+		self.bignbet_qframe.close()
+		self.bigibet_qframe.close()
+		self.bigebet_qframe.close()
+		
+		for i in range(5):
+			self.bar_qframe[i+2].close()
+			self.grid_qframe[i+2].close()
+			self.rbnbet_qframe[i].close()
+			self.rbibet_qframe[i].close()
+			self.rbebet_qframe[i].close()
+	
 	def initialGlobalAttribute(self):
 		self.UI_hl.setSpacing(1)
 		self.UI_hl.setMargin(0)
@@ -2371,6 +2419,8 @@ class GridWindow(QWidget):
 			self.ebar_qlineedit_name.setFixedHeight(self.sizeHeight_qlabel)
 		
 		self.ebar_qlabel[0].setText(self.tr(self.algorithm_name))
+		if self.algorithm_name == 'AB_nohide':
+			self.ebar_qlabel[0].setText(self.tr('AB'))
 	
 	def initialGlobalAttribute_GridBar_title(self):
 		# bar's title
@@ -2502,7 +2552,8 @@ class GridWindow(QWidget):
 		self.dbar_qlabel4_number.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 		self.dbar_qlabel4_number.setFixedWidth(100)
 		
-		self.dbar_qlabel_empty_2.setFixedWidth(365)
+		self.dbar_qframe_empty_2.setStyleSheet('''.QFrame {background-color: white; border: 0px solid gray;}''')
+		self.dbar_qframe_empty_2.setFixedWidth(365)
 		
 		self.dbar_btn_back.setText(self.tr('返回'))
 		self.dbar_btn_back.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
@@ -2513,6 +2564,27 @@ class GridWindow(QWidget):
 		#self.dbar_btn_allcut.setStyleSheet('''.QPushButton {font-size: %dpt; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Button)
 		#self.dbar_btn_allcut.setSizePolicy(self.sizePolicy)
 		#self.dbar_btn_allcut.setFixedWidth(90)
+		
+		# positive and negative radiobox for algorithm AB
+		if self.algorithm_name in ['AB', 'AB_nohide']:
+			self.dbar_qframe_emtpy_2_hl.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+			self.dbar_qframe_emtpy_2_hl.setSpacing(0)
+			self.dbar_qframe_emtpy_2_hl.setMargin(0)
+			
+			self.dbar_qframe_emtpy_2_qradiobtn1.setText(self.tr('正'))
+			self.dbar_qframe_emtpy_2_qradiobtn1.setStyleSheet('''.QRadioButton {font-size: %dpt; color: black; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+			self.dbar_qframe_emtpy_2_qradiobtn1.setSizePolicy(self.sizePolicy)
+			self.dbar_qframe_emtpy_2_qradiobtn1.setFixedWidth(45)
+			self.dbar_qframe_emtpy_2_qradiobtn1.setFixedHeight(self.sizeHeight_qlabel)
+			self.dbar_qframe_emtpy_2_qradiobtn1.setChecked(True)
+			
+			self.dbar_qframe_emtpy_2_empty.setFixedWidth(26)
+			
+			self.dbar_qframe_emtpy_2_qradiobtn2.setText(self.tr('反'))
+			self.dbar_qframe_emtpy_2_qradiobtn2.setStyleSheet('''.QRadioButton {font-size: %dpt; color: black; font-family: Arial, Microsoft JhengHei, serif, sans-serif;}''' % self.sizeFontSize_Label)
+			self.dbar_qframe_emtpy_2_qradiobtn2.setSizePolicy(self.sizePolicy)
+			self.dbar_qframe_emtpy_2_qradiobtn2.setFixedWidth(45)
+			self.dbar_qframe_emtpy_2_qradiobtn2.setFixedHeight(self.sizeHeight_qlabel)
 	
 	def initialGlobalAttribute_BetStatus(self):
 		if printGalgorithm != '':
@@ -3101,6 +3173,11 @@ class GridWindow(QWidget):
 		for i in [1, 3, 4, 5, 6]:
 			self.ebar_qradiobtn1[i].toggled.connect(functools.partial(self.connect_ebar_qradiobtn, i, 'positive'))
 			self.ebar_qradiobtn2[i].toggled.connect(functools.partial(self.connect_ebar_qradiobtn, i, 'negative'))
+		
+		# positive and negative radiobox for algorithm AB
+		if self.algorithm_name in ['AB', 'AB_nohide']:
+			self.dbar_qframe_emtpy_2_qradiobtn1.toggled.connect(functools.partial(self.connect_dbar_qframe_emtpy_2_qradiobtn, 'positive'))
+			self.dbar_qframe_emtpy_2_qradiobtn2.toggled.connect(functools.partial(self.connect_dbar_qframe_emtpy_2_qradiobtn, 'negative'))
 	
 	def initialBtnConnect_GridBar_manualChange(self):
 		# initail manual change bar btn in UIcreate_Grid
@@ -3212,6 +3289,55 @@ class GridWindow(QWidget):
 		self.toolbar_btn1 = QPushButton(self.toolbar_qframe)
 		self.toolbar_btn2 = QPushButton(self.toolbar_qframe)
 		self.toolbar_btn3 = QPushButton(self.toolbar_qframe)
+		
+		self.toolbar_vl.addWidget(self.toolbar_btn0)
+		self.toolbar_vl.addWidget(self.toolbar_btn1)
+		self.toolbar_vl.addWidget(self.toolbar_btn2)
+		self.toolbar_vl.addWidget(self.toolbar_btn3)
+		
+		self.toolbar_btn0.setText('0')
+		self.toolbar_btn1.setText('1')
+		self.toolbar_btn2.setText('2')
+		self.toolbar_btn3.setText('3')
+		
+		self.toolbar_btn0.clicked.connect(self.connect_toolbar_btn0)
+		self.toolbar_btn1.clicked.connect(self.connect_toolbar_btn1)
+		#self.toolbar_btn2.clicked.connect(self.connect_bbet_btn2)
+		#self.toolbar_btn3.clicked.connect(self.connect_bbet_btn2)
+		
+		self.toolbar_qframe.setGeometry(QRect(900, 50, 300, 300))
+	
+	def connect_toolbar_btn0(self):
+		self.bar_qframe[1].close()
+		self.grid_qframe[1].close()
+		self.bignbet_qframe.close()
+		self.bigibet_qframe.close()
+		self.bigebet_qframe.close()
+		
+		self.setFixedSize(self.UI_width, self.UI_height-171)
+	
+	def connect_toolbar_btn1(self):
+		self.bar_qframe[1].show()
+		self.grid_qframe[1].show()
+		self.bignbet_qframe.show()
+		self.bigibet_qframe.show()
+		self.bigebet_qframe.show()
+		
+		self.setFixedSize(self.UI_width, self.UI_height)
+	
+	def connect_dbar_qframe_emtpy_2_qradiobtn(self, direction):
+		if direction == 'positive':
+			if not self.dbar_qframe_emtpy_2_qradiobtn1.isChecked():
+				return
+		elif direction == 'negative':
+			if not self.dbar_qframe_emtpy_2_qradiobtn2.isChecked():
+				return
+		
+		for i in [1, 3, 4, 5, 6]:
+			if direction == 'positive':
+				self.ebar_qradiobtn1[i].setChecked(True)
+			elif direction == 'negative':
+				self.ebar_qradiobtn2[i].setChecked(True)
 	
 	def connect_ebar_qradiobtn(self, i, direction):
 		if direction == 'positive':
@@ -3366,7 +3492,7 @@ class GridWindow(QWidget):
 			os.mkdir(os.path.join(os.getcwd(), 'print'))
 		
 		# store screenshot_grid image
-		for i in range(4):
+		for i in range(road_count):
 			screenshot_grid = QPixmap.grabWidget(self.grid_qframe[i])
 			screenshot_grid.save('print/' + filename_list[i] + '.png', 'PNG')
 		
