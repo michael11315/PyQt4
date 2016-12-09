@@ -1267,6 +1267,7 @@ class GridWindow(QWidget):
 		startTime = time.strftime('%Y%m%d %H-%M-%S', time.localtime(time.time()))
 		
 		self.betPrincipal = 0
+		#self.login()
 		self.welcomeBaccarat()
 		self.sizeDefine()
 		self.globalValue()
@@ -1282,6 +1283,51 @@ class GridWindow(QWidget):
 		
 		print self.sizeHint()
 		self.vline.setFixedHeight(self.sizeHint().height()-10)
+	
+	def login(self):
+		self.loginDialog = QDialog()
+		self.loginDialog.setWindowTitle('login')
+		
+		loginDia_vl = QVBoxLayout()
+		loginDia_vl.setMargin(0)
+		loginDia_vl.setSpacing(5)
+		self.loginDialog.setLayout(loginDia_vl)
+		
+		dia_AcPa_qframe = QFrame(self.loginDialog)
+		dia_AcPa_gl = QGridLayout(dia_AcPa_qframe)
+		dia_AcPa_gl.setMargin(0)
+		dia_AcPa_gl.setSpacing(3)
+		qlabelAcc = QLabel()
+		qlabelAcc.setText(self.tr('帳號 : '))
+		self.LineeditAcc = QLineEdit()
+		qlabelPass = QLabel()
+		qlabelPass.setText(self.tr('密碼 : '))
+		self.LineeditPass = QLineEdit()
+		dia_AcPa_gl.addWidget(qlabelAcc, 0, 0)
+		dia_AcPa_gl.addWidget(qlabelPass, 1, 0)
+		dia_AcPa_gl.addWidget(self.LineeditAcc, 0, 1)
+		dia_AcPa_gl.addWidget(self.LineeditPass, 1, 1)
+		loginDia_vl.addWidget(dia_AcPa_qframe)
+		
+		# Ok Cancel button
+		loginDialogButtonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
+		loginDia_vl.addWidget(loginDialogButtonBox)
+		loginDialogButtonBox.accepted.connect(self.login_accept)
+		loginDialogButtonBox.rejected.connect(self.login_reject)
+		
+		self.loginDialog.exec_()
+	
+	def login_accept(self):
+		account = self.LineeditAcc.text()
+		passowrd = self.LineeditPass.text()
+		
+		print 'account', account
+		print 'passowrd', passowrd
+		
+		sys.exit()
+	
+	def login_reject(self):
+		sys.exit()
 	
 	def welcomeBaccarat(self):
 		self.Dialog = QDialog()
