@@ -1112,6 +1112,17 @@ class betRecord():
 	def lastShow(self, i):
 		return self.record[i][-1]
 	
+	def lastNumShow(self, i, number):
+		ret_list = []
+		
+		for index in range(number):
+			if len(self.record[i]) > index:
+				ret_list.insert(0, self.record[i][-1-index])
+			else:
+				break
+		
+		return ret_list
+	
 	def enterPrincipal(self, principal):
 		self.principal = principal
 		self.startGame = True
@@ -1365,6 +1376,10 @@ class GridWindow(QWidget):
 		dia_ap_gl.addWidget(self.Lineedit, 1, 1)
 		dia_vl.addWidget(dia_ap_qframe)
 		
+		qlabel5 = QLabel()
+		qlabel5.setText(self.tr('以下選擇項目只適用於演算法AB'))
+		dia_vl.addWidget(qlabel5)
+		
 		# multi button qframe
 		dia_mb_qframe = QFrame(self.Dialog)
 		dia_mb_hl = QHBoxLayout(dia_mb_qframe)
@@ -1391,9 +1406,9 @@ class GridWindow(QWidget):
 		multi_right_vl = QVBoxLayout(dia_mb_right_qframe)
 		self.radioBtn_1 = QRadioButton()
 		self.radioBtn_1.setText(self.tr('1, 2, 3, 4'))
-		self.radioBtn_1.setChecked(True)
 		self.radioBtn_2 = QRadioButton()
 		self.radioBtn_2.setText(self.tr('5, 6, 7, 8'))
+		self.radioBtn_2.setChecked(True)
 		self.radioBtn_3 = QRadioButton()
 		self.radioBtn_3.setText(self.tr('10, 11, 12, 13'))
 		multi_right_vl.addWidget(self.radioBtn_1)
@@ -1580,6 +1595,10 @@ class GridWindow(QWidget):
 			self.betRecord.setIsNotAlgorithmSug(True)
 			self.betRecord_G_big = betRecord()
 			self.betRecord_G_rb = betRecord()
+			
+			if self.algorithm_name in ['AB', 'AB_nohide']:
+				self.fourChop = []
+				self.jumpColor = []
 			
 			global road_count
 			road_count = 7
@@ -3868,6 +3887,9 @@ class GridWindow(QWidget):
 					for i in range(6):
 						self.update_nbet(showSugList[i+1][2], showSugList[i+1][3], i+1)
 					
+					if self.algorithm_name in ['AB', 'AB_nohide']:
+						self.checkFourChop()
+					
 					for i in [1, 3, 4, 5, 6]:
 						self.checkPosNegtive(i)
 				else:
@@ -4001,6 +4023,10 @@ class GridWindow(QWidget):
 						self.update_nbet(-2, -2, i+1)
 					else:
 						self.update_nbet(ShowLastSugList[i+1][2], ShowLastSugList[i+1][3], i+1)
+				
+				if self.algorithm_name in ['AB', 'AB_nohide']:
+					self.fourChop.pop()
+					self.jumpColor.pop()
 			else:
 				lastSugBig_sum = ret.get('lastSugBig_sum')
 				if removeList[0][0] == 0 and removeList[0][1] == 0:
@@ -4663,6 +4689,151 @@ class GridWindow(QWidget):
 			self.rbet_qscrollarea_vl.addWidget(tmp_qframe)
 			
 			self.storeRecordForHtml(countBet, sameBet, colorBet, pointBet)
+	
+	def checkFourChop(self):
+		if self.checkBox_2.isChecked():
+			if len(self.betRecord_G_big.record[0]) < 4:
+				self.fourChop.append(-1)
+				self.jumpColor.append(False)
+				return
+			
+			last4record = []
+			last4record.append(self.betRecord_G_big.lastNumShow(0, 4))
+			last4record.append(self.betRecord_G_rb.lastNumShow(0, 4))
+			last4record.append(self.betRecord_G_rb.lastNumShow(1, 4))
+			last4record.append(self.betRecord_G_rb.lastNumShow(2, 4))
+			last4record.append(self.betRecord_G_rb.lastNumShow(3, 4))
+			
+			# if not four same color, check jump clolor
+			if self.fourChop[-1] in [0, 1, 2, 3, 4]:
+				self.jumpColor.append(False)
+			else:
+				if self.jumpColor[-1]:
+					if last4record[0][-1][2] != last4record[0][-2][2]:
+						self.jumpColor.append(True)
+					else:
+						self.jumpColor.append(False)
+				else:
+					jump = True
+					for i in range(4):
+						if last4record[0][i][2] == -1:
+							jump = False
+							break
+						
+						if i != 0:
+							if last4record[0][i-1][2] != last4record[0][i][2]:
+								continue
+							else:
+								jump = False
+								break
+					
+					self.jumpColor.append(jump)
+			
+			# if not jump color, check four same clolor
+			if self.jumpColor[-1]:
+				self.fourChop.append(-1)
+			else:
+				continueFourChop = False
+				if self.fourChop[-1] in [0, 1, 2, 3, 4]:
+					if last4record[self.fourChop[-1]][-1][2] == last4record[self.fourChop[-1]][-2][2]:
+						self.fourChop.append(self.fourChop[-1])
+						continueFourChop = True
+				
+				if not continueFourChop:
+					thisFourChop = -1
+					for i in range(5):
+						if len(last4record[i]) < 4:
+							continue
+						
+						sameColor = True
+						for j in range(4):
+							if j == 0:
+								startColor = last4record[i][j][2]
+								if startColor == -1:
+									sameColor = False
+									break
+							elif startColor == last4record[i][j][2]:
+								continue
+							else:
+								sameColor = False
+								break
+						
+						if sameColor:
+							thisFourChop = i
+							break
+					
+					self.fourChop.append(thisFourChop)
+			
+			# jump color
+			if self.jumpColor[-1]:
+				#print 'jump!!!'
+				self.inverseSug(1)
+				for i in [1, 2, 3, 4]:
+					self.changeSugBP(i+2, Player)
+			# four same clolor
+			elif self.fourChop[-1] in [0, 1, 2, 3, 4]:
+				#print 'GOGOGO: ', self.fourChop[-1]
+				if self.fourChop[-1] == 0:
+					self.inverseSug(self.fourChop[-1]+1)
+				elif self.fourChop[-1] in [1, 2, 3, 4]:
+					self.inverseSug(self.fourChop[-1]+2)
+				
+				for i in [0, 1, 2, 3, 4]:
+					if self.fourChop[-1] == i:
+						continue
+					else:
+						if i == 0:
+							self.changeSugBP(i+1, Player)
+						elif i in [1, 2, 3, 4]:
+							self.changeSugBP(i+2, Player)
+		else:
+			self.fourChop.append(-1)
+			self.jumpColor.append(False)
+	
+	def changeSugBP(self, i, BP):
+		# change sug correspond to Banker/Player
+		if printGalgorithm != '':
+			if i == 0:
+				img = BP
+			elif i == 1:
+				img = BP
+			elif i in [2, 3, 4, 5, 6]:
+				ret = self.betRecord_G_rb.predictNextStatus()
+				if ret.get('status') == 0:
+					ret_G = self.betRecord.algorithmG(0, True)
+					imgG = ret_G.get('imgG')
+					if imgG == -1:
+						return
+					
+					if i in [2, 3]:
+						if imgG == 0:
+							img = BP
+						else:
+							if BP == Banker:
+								img = 1
+							else:
+								img = 0
+					else:
+						if imgG == 0:
+							img = ret['nextStatus'][BP][i-4]
+						else:
+							if BP == Banker:
+								BP_other = Player
+							else:
+								BP_other = Banker
+							
+							img = ret['nextStatus'][BP_other][i-4]
+			
+			if i == 0:
+				Sug = self.betRecord.getSugList()[0]
+			elif i == 1:
+				Sug = self.betRecord_G_big.getSugList()[0]
+			elif i == 2:
+				Sug = self.betRecord_G_rb.getSugList()[4]
+			elif i in [3, 4, 5, 6]:
+				Sug = self.betRecord_G_rb.getSugList()[i-3]
+			
+			self.changeSug(i, img, Sug[3], True)
 	
 	def changeSug(self, i, img, bet, isManual):
 		self.controlGridGif()
