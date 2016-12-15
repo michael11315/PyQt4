@@ -617,7 +617,10 @@ class betRecord():
 						sugBet = betSug_origin[i][-1][3] - 1
 						if sugBet < 5:
 							sugBet = 0
-						tmp = self.PosChangeCol(map[i], lastBet[2])
+						if sugBet != 0:
+							tmp = self.PosChangeCol(map[i], lastBet[2])
+						else:
+							tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
 						Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
 					else:
 						Sug[i] = (-1, -1, lastBet[2], 0)
@@ -1110,7 +1113,10 @@ class betRecord():
 			return (False, False, False, False)
 	
 	def lastShow(self, i):
-		return self.record[i][-1]
+		try:
+			return self.record[i][-1]
+		except:
+			return (-1, -1, -1)
 	
 	def lastNumShow(self, i, number):
 		ret_list = []
@@ -1118,6 +1124,26 @@ class betRecord():
 		for index in range(number):
 			if len(self.record[i]) > index:
 				ret_list.insert(0, self.record[i][-1-index])
+			else:
+				break
+		
+		return ret_list
+	
+	def lastNumBetStatus(self, i, number):
+		# return format, -1: no bet, 0:, same bet, 1: wrong bet
+		ret_list = []
+		betSug = [self.betSugBig, self.betSugEye, self.betSugSma, self.betSugPen]
+		
+		for index in range(number):
+			if len(self.record[i]) > index and len(betSug[i]) > index + 1:
+				if self.record[i][-1-index][2] == -1 or betSug[i][-2-index][2] == -1 or betSug[i][-2-index][3] == 0:
+					betStatus = -1
+				elif self.record[i][-1-index][2] == betSug[i][-2-index][2]:
+					betStatus = 0
+				else:
+					betStatus = 1
+				
+				ret_list.insert(0, betStatus)
 			else:
 				break
 		
@@ -1359,14 +1385,13 @@ class GridWindow(QWidget):
 		qlabel3 = QLabel()
 		qlabel3.setText(self.tr('選擇演算法 : '))
 		self.comboBox = QComboBox()
+		self.comboBox.addItem('G1')
+		self.comboBox.addItem('G')
 		self.comboBox.addItem('A')
 		self.comboBox.addItem('B')
 		self.comboBox.addItem('D')
 		self.comboBox.addItem('E')
 		self.comboBox.addItem('F')
-		self.comboBox.addItem('G')
-		self.comboBox.addItem('AB')
-		self.comboBox.addItem('AB_nohide')
 		qlabel4 = QLabel()
 		qlabel4.setText(self.tr('本金 : '))
 		self.Lineedit = QLineEdit()
@@ -1442,10 +1467,7 @@ class GridWindow(QWidget):
 			elif algorithm in ['G']:
 				printGalgorithm = algorithm
 				sugAlgorithm = algorithm
-			elif algorithm in ['AB']:
-				printGalgorithm = 'G'
-				sugAlgorithm = 'G'
-			elif algorithm in ['AB_nohide']:
+			elif algorithm in ['G1']:
 				printGalgorithm = 'G'
 				sugAlgorithm = 'G'
 			elif algorithm in ['D', 'E', 'F']:
@@ -1594,11 +1616,17 @@ class GridWindow(QWidget):
 			self.listForMovie = [(-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1), (-1, -1, -1, -1)]
 			self.betRecord.setIsNotAlgorithmSug(True)
 			self.betRecord_G_big = betRecord()
+			if self.algorithm_name == 'G1':
+				self.betRecord_G_big.setIsNotAlgorithmSug(True)
 			self.betRecord_G_rb = betRecord()
 			
-			if self.algorithm_name in ['AB', 'AB_nohide']:
-				self.fourChop = []
-				self.jumpColor = []
+			if self.algorithm_name in ['G', 'G1']:
+				self.fourChop_big = []
+				self.fourChop_rb = []
+				self.jumpColor_big = []
+				self.jumpColor_rb = []
+				self.fourZero = []
+				self.TwoCut = []
 			
 			global road_count
 			road_count = 7
@@ -1634,7 +1662,7 @@ class GridWindow(QWidget):
 		self.UI_height = 170 * road_count + road_count - 1
 		if printGalgorithm != '':
 			self.UI_height += 26
-		if self.algorithm_name == 'AB':
+		if self.algorithm_name == 'G1':
 			self.UI_height = self.UI_height - 171 * 6 - 1
 		
 		self.setFixedSize(self.UI_width, self.UI_height)
@@ -1654,8 +1682,8 @@ class GridWindow(QWidget):
 		
 		self.setLayout(self.UI_hl)
 		
-		if self.algorithm_name == 'AB':
-			self.UIhide_AB()
+		if self.algorithm_name == 'G1':
+			self.UIhide_G()
 			
 		self.setUI_width_height()
 	
@@ -1872,8 +1900,8 @@ class GridWindow(QWidget):
 		self.dbar_hl.addWidget(self.dbar_btn_back)
 		#self.dbar_hl.addWidget(self.dbar_btn_allcut)
 		
-		# positive and negative radiobox for algorithm AB
-		if self.algorithm_name in ['AB', 'AB_nohide']:
+		# positive and negative radiobox for algorithm G1
+		if self.algorithm_name in ['G', 'G1']:
 			self.dbar_qframe_emtpy_2_hl = QHBoxLayout(self.dbar_qframe_empty_2)
 			self.dbar_qframe_emtpy_2_qradiobtn1 = QRadioButton()
 			self.dbar_qframe_emtpy_2_empty = QLabel(self.dbar_qframe_empty_2)
@@ -2375,7 +2403,7 @@ class GridWindow(QWidget):
 			self.binp_gl[i].addWidget(self.binp_btn12[i], 0, 3, 2, 1)
 			self.binp_gl[i].addWidget(self.binp_btn13[i], 2, 3, 2, 1)
 	
-	def UIhide_AB(self):
+	def UIhide_G(self):
 		self.bar_qframe[1].close()
 		self.grid_qframe[1].close()
 		self.bignbet_qframe.close()
@@ -2484,8 +2512,6 @@ class GridWindow(QWidget):
 			self.ebar_qlineedit_name.setFixedHeight(self.sizeHeight_qlabel)
 		
 		self.ebar_qlabel[0].setText(self.tr(self.algorithm_name))
-		if self.algorithm_name == 'AB_nohide':
-			self.ebar_qlabel[0].setText(self.tr('AB'))
 	
 	def initialGlobalAttribute_GridBar_title(self):
 		# bar's title
@@ -2630,8 +2656,8 @@ class GridWindow(QWidget):
 		#self.dbar_btn_allcut.setSizePolicy(self.sizePolicy)
 		#self.dbar_btn_allcut.setFixedWidth(90)
 		
-		# positive and negative radiobox for algorithm AB
-		if self.algorithm_name in ['AB', 'AB_nohide']:
+		# positive and negative radiobox for algorithm G1
+		if self.algorithm_name in ['G', 'G1']:
 			self.dbar_qframe_emtpy_2_hl.setAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 			self.dbar_qframe_emtpy_2_hl.setSpacing(0)
 			self.dbar_qframe_emtpy_2_hl.setMargin(0)
@@ -3239,8 +3265,8 @@ class GridWindow(QWidget):
 			self.ebar_qradiobtn1[i].toggled.connect(functools.partial(self.connect_ebar_qradiobtn, i, 'positive'))
 			self.ebar_qradiobtn2[i].toggled.connect(functools.partial(self.connect_ebar_qradiobtn, i, 'negative'))
 		
-		# positive and negative radiobox for algorithm AB
-		if self.algorithm_name in ['AB', 'AB_nohide']:
+		# positive and negative radiobox for algorithm G1
+		if self.algorithm_name in ['G', 'G1']:
 			self.dbar_qframe_emtpy_2_qradiobtn1.toggled.connect(functools.partial(self.connect_dbar_qframe_emtpy_2_qradiobtn, 'positive'))
 			self.dbar_qframe_emtpy_2_qradiobtn2.toggled.connect(functools.partial(self.connect_dbar_qframe_emtpy_2_qradiobtn, 'negative'))
 	
@@ -3887,8 +3913,10 @@ class GridWindow(QWidget):
 					for i in range(6):
 						self.update_nbet(showSugList[i+1][2], showSugList[i+1][3], i+1)
 					
-					if self.algorithm_name in ['AB', 'AB_nohide']:
+					if self.algorithm_name in ['G', 'G1']:
 						self.checkFourChop()
+						self.checkFourZero()
+						self.checkTwoCut()
 					
 					for i in [1, 3, 4, 5, 6]:
 						self.checkPosNegtive(i)
@@ -4024,9 +4052,13 @@ class GridWindow(QWidget):
 					else:
 						self.update_nbet(ShowLastSugList[i+1][2], ShowLastSugList[i+1][3], i+1)
 				
-				if self.algorithm_name in ['AB', 'AB_nohide']:
-					self.fourChop.pop()
-					self.jumpColor.pop()
+				if self.algorithm_name in ['G', 'G1']:
+					self.fourChop_big.pop()
+					self.fourChop_rb.pop()
+					self.jumpColor_big.pop()
+					self.jumpColor_rb.pop()
+					self.fourZero.pop()
+					self.TwoCut.pop()
 			else:
 				lastSugBig_sum = ret.get('lastSugBig_sum')
 				if removeList[0][0] == 0 and removeList[0][1] == 0:
@@ -4690,63 +4722,70 @@ class GridWindow(QWidget):
 			
 			self.storeRecordForHtml(countBet, sameBet, colorBet, pointBet)
 	
-	def checkFourChop(self):
+	def fourChopStatus(self, betRecord, lastFourChop, lastJumpColor):
+		thisFourChop = -1
+		thisJumpColor = False
 		if self.checkBox_2.isChecked():
-			if len(self.betRecord_G_big.record[0]) < 4:
-				self.fourChop.append(-1)
-				self.jumpColor.append(False)
-				return
+			continueNum = 4
+			if len(self.betRecord.record[0]) < continueNum:
+				return {'thisFourChop': thisFourChop, 'thisJumpColor': thisJumpColor}
 			
 			last4record = []
-			last4record.append(self.betRecord_G_big.lastNumShow(0, 4))
-			last4record.append(self.betRecord_G_rb.lastNumShow(0, 4))
-			last4record.append(self.betRecord_G_rb.lastNumShow(1, 4))
-			last4record.append(self.betRecord_G_rb.lastNumShow(2, 4))
-			last4record.append(self.betRecord_G_rb.lastNumShow(3, 4))
+			last4record.append(betRecord.lastNumShow(0, continueNum))
+			last4record.append(betRecord.lastNumShow(1, continueNum))
+			last4record.append(betRecord.lastNumShow(2, continueNum))
+			last4record.append(betRecord.lastNumShow(3, continueNum))
 			
 			# if not four same color, check jump clolor
-			if self.fourChop[-1] in [0, 1, 2, 3, 4]:
-				self.jumpColor.append(False)
-			else:
-				if self.jumpColor[-1]:
+			continueFourChop = False
+			if lastFourChop in [0, 1, 2, 3]:
+				if last4record[lastFourChop][-1][2] == last4record[lastFourChop][-2][2]:
+					thisFourChop = lastFourChop
+					continueFourChop = True
+			
+			if not continueFourChop:
+				continueJump = False
+				if lastJumpColor:
 					if last4record[0][-1][2] != last4record[0][-2][2]:
-						self.jumpColor.append(True)
-					else:
-						self.jumpColor.append(False)
-				else:
-					jump = True
-					for i in range(4):
-						if last4record[0][i][2] == -1:
-							jump = False
-							break
-						
-						if i != 0:
-							if last4record[0][i-1][2] != last4record[0][i][2]:
-								continue
-							else:
+						thisJumpColor = lastJumpColor
+						continueJump = True
+				
+				if not continueJump:
+					if len(last4record[0]) >= continueNum:
+						jump = True
+						for i in range(continueNum):
+							if last4record[0][i][2] == -1:
 								jump = False
 								break
-					
-					self.jumpColor.append(jump)
+							
+							if last4record[0][i][0] != 0:
+								jump = False
+								break
+							
+							if i != 0:
+								if last4record[0][i-1][2] != last4record[0][i][2]:
+									continue
+								else:
+									jump = False
+									break
+						
+						thisJumpColor = jump
 			
 			# if not jump color, check four same clolor
-			if self.jumpColor[-1]:
-				self.fourChop.append(-1)
-			else:
+			if not thisJumpColor:
 				continueFourChop = False
-				if self.fourChop[-1] in [0, 1, 2, 3, 4]:
-					if last4record[self.fourChop[-1]][-1][2] == last4record[self.fourChop[-1]][-2][2]:
-						self.fourChop.append(self.fourChop[-1])
+				if lastFourChop in [0, 1, 2, 3]:
+					if last4record[lastFourChop][-1][2] == last4record[lastFourChop][-2][2]:
+						thisFourChop = lastFourChop
 						continueFourChop = True
 				
 				if not continueFourChop:
-					thisFourChop = -1
-					for i in range(5):
-						if len(last4record[i]) < 4:
+					for i in range(4):
+						if len(last4record[i]) < continueNum:
 							continue
 						
 						sameColor = True
-						for j in range(4):
+						for j in range(continueNum):
 							if j == 0:
 								startColor = last4record[i][j][2]
 								if startColor == -1:
@@ -4761,37 +4800,255 @@ class GridWindow(QWidget):
 						if sameColor:
 							thisFourChop = i
 							break
-					
-					self.fourChop.append(thisFourChop)
-			
-			# jump color
-			if self.jumpColor[-1]:
-				#print 'jump!!!'
-				self.inverseSug(1)
-				for i in [1, 2, 3, 4]:
-					self.changeSugBP(i+2, Player)
-			# four same clolor
-			elif self.fourChop[-1] in [0, 1, 2, 3, 4]:
-				#print 'GOGOGO: ', self.fourChop[-1]
-				if self.fourChop[-1] == 0:
-					self.inverseSug(self.fourChop[-1]+1)
-				elif self.fourChop[-1] in [1, 2, 3, 4]:
-					self.inverseSug(self.fourChop[-1]+2)
-				
-				for i in [0, 1, 2, 3, 4]:
-					if self.fourChop[-1] == i:
-						continue
-					else:
-						if i == 0:
-							self.changeSugBP(i+1, Player)
-						elif i in [1, 2, 3, 4]:
-							self.changeSugBP(i+2, Player)
-		else:
-			self.fourChop.append(-1)
-			self.jumpColor.append(False)
+		
+		return {'thisFourChop': thisFourChop, 'thisJumpColor': thisJumpColor}
 	
-	def changeSugBP(self, i, BP):
-		# change sug correspond to Banker/Player
+	def checkFourChop(self):
+		if printGalgorithm != '':
+			allItem = 2
+			betRecord = [self.betRecord_G_big, self.betRecord_G_rb]
+			fourChop = [self.fourChop_big, self.fourChop_rb]
+			jumpColor = [self.jumpColor_big, self.jumpColor_rb]
+			
+			for item in range(allItem):
+				if len(fourChop[item]) == 0:
+					lastFourChop = -1
+					lastJumpColor = False
+				else:
+					lastFourChop = fourChop[item][-1]
+					lastJumpColor = jumpColor[item][-1]
+				
+				ret = self.fourChopStatus(betRecord[item], lastFourChop, lastJumpColor)
+				thisFourChop = ret['thisFourChop']
+				thisJumpColor = ret['thisJumpColor']
+				
+				# in algorithm G, betRecord_G_big only has big road
+				if item == 0 and thisFourChop in [1, 2, 3]:
+					thisFourChop = -1
+				
+				fourChop[item].append(thisFourChop)
+				jumpColor[item].append(thisJumpColor)
+			
+				# jump color
+				if thisJumpColor:
+					#print 'item:', item
+					#print 'jump!!!'
+					if item == 0:
+						img = betRecord[item].lastShow(0)[2]
+						#img_other = self.imgOther(img)
+						bet = betRecord[item].getSugList()[0][3]
+						self.changeSug(1, img, bet, True)
+					elif item == 1:
+						img = betRecord[item].lastShow(0)[2]
+						#img_other = self.imgOther(img)
+						bet = betRecord[item].getSugList()[0][3]
+						self.changeSug(3, img, bet, True)
+						BP = self.imgToBP(3, img)
+						if BP != -1:
+							self.changeSugBP(4, BP)
+							self.changeSugBP(5, BP)
+							self.changeSugBP(6, BP)
+				# four same clolor
+				elif thisFourChop in [0, 1, 2, 3]:
+					#print 'item:', item
+					#print 'GOGOGO:', thisFourChop
+					if item == 0:
+						img = betRecord[item].lastShow(0)[2]
+						img_other = self.imgOther(img)
+						bet = betRecord[item].getSugList()[0][3]
+						self.changeSug(1, img_other, bet, True)
+					elif item == 1:
+						img = betRecord[item].lastShow(thisFourChop)[2]
+						img_other = self.imgOther(img)
+						bet = betRecord[item].getSugList()[thisFourChop][3]
+						self.changeSug(thisFourChop+3, img_other, bet, True)
+						BP = self.imgToBP(thisFourChop+3, img_other)
+						if BP != -1:
+							for i in [0, 1, 2, 3]:
+								if thisFourChop == i:
+									continue
+								else:
+									self.changeSugBP(i+3, BP)
+	
+	def checkFourZero(self):
+		thisFourZero = [False, False, False, False, False]
+		if self.checkBox_3.isChecked():
+			continueNum = 4
+			if len(self.betRecord_G_big.record[0]) < continueNum:
+				self.fourZero.append(thisFourZero)
+				return
+			
+			last4record = []
+			last4record.append(self.betRecord_G_big.lastNumShow(0, continueNum))
+			last4record.append(self.betRecord_G_rb.lastNumShow(0, continueNum))
+			last4record.append(self.betRecord_G_rb.lastNumShow(1, continueNum))
+			last4record.append(self.betRecord_G_rb.lastNumShow(2, continueNum))
+			last4record.append(self.betRecord_G_rb.lastNumShow(3, continueNum))
+			
+			lastSug_big = self.betRecord_G_big.getSugList()
+			lastSug_rb = self.betRecord_G_rb.getSugList()
+			lastSug = []
+			lastSug.append(lastSug_big[0])
+			lastSug.append(lastSug_rb[0])
+			lastSug.append(lastSug_rb[1])
+			lastSug.append(lastSug_rb[2])
+			lastSug.append(lastSug_rb[3])
+			
+			# check four same clolor
+			for i in range(5):
+				if self.fourZero[-1][i]:
+					if last4record[i][-1][2] == last4record[i][-2][2]:
+						thisFourZero[i] = True
+				else:
+					if len(last4record[i]) < continueNum:
+						continue
+					
+					sameColor = True
+					for j in range(continueNum):
+						if j == 0:
+							startColor = last4record[i][j][2]
+							if startColor == -1:
+								sameColor = False
+								break
+						elif startColor == last4record[i][j][2]:
+							continue
+						else:
+							sameColor = False
+							break
+					
+					if sameColor:
+						# check sug is the same color
+						if startColor == lastSug[i][2]:
+							thisFourZero[i] = True
+				
+				if thisFourZero[i]:
+					if i == 0:
+						self.changeSug(i+1, last4record[i][-1][2], 0, True)
+					elif i in [1, 2, 3, 4]:
+						self.changeSug(i+2, last4record[i][-1][2], 0, True)
+			
+			self.fourZero.append(thisFourZero)
+		else:
+			self.fourZero.append(thisFourZero)
+	
+	def checkTwoCut(self):
+		thisTwoCut = [False, False, False, False, False]
+		if self.checkBox_1.isChecked():
+			continueNum = 2
+			if len(self.betRecord_G_big.record[0]) < continueNum or len(self.betRecord_G_big.betSugBig) < continueNum + 1:
+				self.TwoCut.append(thisTwoCut)
+				return
+			
+			last2BetStatus = []
+			last2BetStatus.append(self.betRecord_G_big.lastNumBetStatus(0, continueNum))
+			last2BetStatus.append(self.betRecord_G_rb.lastNumBetStatus(0, continueNum))
+			last2BetStatus.append(self.betRecord_G_rb.lastNumBetStatus(1, continueNum))
+			last2BetStatus.append(self.betRecord_G_rb.lastNumBetStatus(2, continueNum))
+			last2BetStatus.append(self.betRecord_G_rb.lastNumBetStatus(3, continueNum))
+			
+			LastCutStopStatus = []
+			LastCutStopStatus.append(self.betRecord_G_big.getLastCutStopStatus()[0])
+			LastCutStopStatus.append(self.betRecord_G_rb.getLastCutStopStatus()[0])
+			LastCutStopStatus.append(self.betRecord_G_rb.getLastCutStopStatus()[1])
+			LastCutStopStatus.append(self.betRecord_G_rb.getLastCutStopStatus()[2])
+			LastCutStopStatus.append(self.betRecord_G_rb.getLastCutStopStatus()[3])
+			
+			# restore cut stop
+			for i in range(5):
+				if self.TwoCut[-1][i] and LastCutStopStatus[i]:
+					if i == 0:
+						self.connect_csbar_btn(i+1)
+					elif i in [1, 2, 3, 4]:
+						self.connect_csbar_btn(i+2)
+			
+			# check two wrong bet
+			for i in range(5):
+				wrongBet = True
+				for j in range(continueNum):
+					if len(last2BetStatus[i]) < j + 1:
+						wrongBet = False
+						break
+					
+					if last2BetStatus[i][j] == -1:
+						wrongBet = False
+						break
+					elif last2BetStatus[i][j] == 0:
+						wrongBet = False
+						break
+				
+				if wrongBet:
+					thisTwoCut[i] = True
+				
+				if thisTwoCut[i]:
+					#print 'TwoCut: ', i
+					if i == 0:
+						self.connect_csbar_btn(i+1)
+					elif i in [1, 2, 3, 4]:
+						self.connect_csbar_btn(i+2)
+			
+			self.TwoCut.append(thisTwoCut)
+		else:
+			self.TwoCut.append(thisTwoCut)
+	
+	def imgOther(self, img):
+		if img == 0:
+			img_other = 1
+		elif img == 1:
+			img_other = 0
+		else:
+			img_other = -1
+		
+		return img_other
+	
+	def imgToBP(self, i, img):
+		# check this img is Banker or Player
+		if printGalgorithm != '':
+			if i in [0, 1]:
+				if img == 0:
+					BP = Banker
+				elif img == 1:
+					BP = Player
+				else:
+					BP = -1
+			elif i in [2, 3, 4, 5, 6]:
+				if img in [0, 1]:
+					ret = self.betRecord_G_rb.predictNextStatus()
+					if ret.get('status') == 0:
+						ret_G = self.betRecord.algorithmG(0, True)
+						imgG = ret_G.get('imgG')
+						
+						if imgG != -1:
+							if i in [2, 3]:
+								if imgG == 0:
+									if img == 0:
+										BP = Banker
+									else:
+										BP = Player
+								else:
+									if img == 0:
+										BP = Player
+									else:
+										BP = Banker
+							else:
+								if imgG == 0:
+									if img == ret['nextStatus'][0][i-4]:
+										BP = Banker
+									else:
+										BP = Player
+								else:
+									if img == ret['nextStatus'][0][i-4]:
+										BP = Player
+									else:
+										BP = Banker
+						else:
+							BP = -1
+				else:
+					BP = -1
+			
+			return BP
+	
+	def BPToImg(self, i, BP):
+		# check the img of this Banker/Player
 		if printGalgorithm != '':
 			if i == 0:
 				img = BP
@@ -4802,27 +5059,37 @@ class GridWindow(QWidget):
 				if ret.get('status') == 0:
 					ret_G = self.betRecord.algorithmG(0, True)
 					imgG = ret_G.get('imgG')
-					if imgG == -1:
-						return
 					
-					if i in [2, 3]:
-						if imgG == 0:
-							img = BP
-						else:
-							if BP == Banker:
-								img = 1
+					if imgG != -1:
+						if i in [2, 3]:
+							if imgG == 0:
+								img = BP
 							else:
-								img = 0
+								if BP == Banker:
+									img = 1
+								else:
+									img = 0
+						else:
+							if imgG == 0:
+								img = ret['nextStatus'][BP][i-4]
+							else:
+								if BP == Banker:
+									BP_other = Player
+								else:
+									BP_other = Banker
+								
+								img = ret['nextStatus'][BP_other][i-4]
 					else:
-						if imgG == 0:
-							img = ret['nextStatus'][BP][i-4]
-						else:
-							if BP == Banker:
-								BP_other = Player
-							else:
-								BP_other = Banker
-							
-							img = ret['nextStatus'][BP_other][i-4]
+						img = -1
+			
+			return img
+	
+	def changeSugBP(self, i, BP):
+		# change sug correspond to Banker/Player
+		if printGalgorithm != '':
+			img = self.BPToImg(i, BP)
+			if img == -1:
+				return
 			
 			if i == 0:
 				Sug = self.betRecord.getSugList()[0]
