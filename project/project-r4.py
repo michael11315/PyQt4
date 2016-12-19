@@ -1483,16 +1483,21 @@ class GridWindow(QWidget):
 		# Ok Cancel button
 		DialogButtonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel)
 		dia_vl.addWidget(DialogButtonBox)
+		self.exitButton = True
 		DialogButtonBox.accepted.connect(self.welcomeBaccarat_accept)
 		DialogButtonBox.rejected.connect(self.welcomeBaccarat_reject)
 		
 		self.Dialog.exec_()
+		
+		if self.exitButton:
+			sys.exit()
 	
 	def connect_left_checkbox(self, checkBox_self, checkBox_other):
 		if checkBox_self.isChecked():
 			checkBox_other.setChecked(False)
 	
 	def welcomeBaccarat_accept(self):
+		self.exitButton = False
 		algorithm = self.comboBox.currentText()
 		number = self.Lineedit.text()
 		
@@ -1536,6 +1541,7 @@ class GridWindow(QWidget):
 			self.welcomeBaccarat()
 
 	def welcomeBaccarat_reject(self):
+		self.exitButton = False
 		sys.exit()
 	
 	def setPrincipal(self, betPrincipal):
