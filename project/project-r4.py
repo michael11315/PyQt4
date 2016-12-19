@@ -96,6 +96,9 @@ printGalgorithm = ''
 
 LOGLEVEL = 0
 
+# sug start count
+sugStartNum = 5
+
 class betRecord():
 	def __init__(self):
 		self.recordAll = []
@@ -603,7 +606,7 @@ class betRecord():
 					Sug[i] = (-1, -1, -1, -1)
 				elif betStatus[i][-1] == -1:
 					lastBet = record[i][-1]
-					sugBet = 5
+					sugBet = sugStartNum
 					tmp = self.PosNext(map[i], lastBet[0], lastBet[1], lastBet[2])
 					Sug[i] = (tmp[0], tmp[1], tmp[2], sugBet)
 				elif betStatus[i][-1] == 0:
@@ -615,7 +618,7 @@ class betRecord():
 					lastBet = record[i][-1]
 					if betSug_origin[i][-1][3] > 1:
 						sugBet = betSug_origin[i][-1][3] - 1
-						if sugBet < 5:
+						if sugBet < sugStartNum:
 							sugBet = 0
 						if sugBet != 0:
 							tmp = self.PosChangeCol(map[i], lastBet[2])
@@ -1149,6 +1152,42 @@ class betRecord():
 		
 		return ret_list
 	
+	def lastSameShowNum(self, i):
+		continueNum = 0
+		for index in range(len(self.record[i])):
+			if self.record[i][-1-index][2] == -1:
+				break
+			
+			if index == 0:
+				continueNum += 1
+				color = self.record[i][-1-index][2]
+			elif self.record[i][-1-index][2] == color:
+				continueNum += 1
+				color = self.record[i][-1-index][2]
+			else:
+				break
+		
+		return continueNum
+	
+	def lastDiffShowNum(self, i):
+		continueNum = 0
+		for index in range(len(self.record[i])):
+			if self.record[i][-1-index][2] == -1:
+				break
+			elif self.record[i][-1-index][0] > 0:
+				break
+			
+			if index == 0:
+				continueNum += 1
+				color = self.record[i][-1-index][2]
+			elif self.record[i][-1-index][2] != color:
+				continueNum += 1
+				color = self.record[i][-1-index][2]
+			else:
+				break
+		
+		return continueNum
+	
 	def enterPrincipal(self, principal):
 		self.principal = principal
 		self.startGame = True
@@ -1461,6 +1500,7 @@ class GridWindow(QWidget):
 			global sugAlgorithm
 			global printDEFalgorithm
 			global printGalgorithm
+			global sugStartNum
 			
 			if algorithm in ['A', 'B']:
 				sugAlgorithm = algorithm
@@ -1480,6 +1520,14 @@ class GridWindow(QWidget):
 			
 			number = int(number)
 			self.betPrincipal = number
+			
+			if algorithm in ['A', 'G', 'G1']:
+				if self.radioBtn_1.isChecked():
+					sugStartNum = 1
+				elif self.radioBtn_2.isChecked():
+					sugStartNum = 5
+				elif self.radioBtn_3.isChecked():
+					sugStartNum = 10
 			
 			self.Dialog.close()
 		except:
@@ -3538,12 +3586,12 @@ class GridWindow(QWidget):
 				show = betRecord.lastShow(index)
 				# algorithm v1
 				if sugAlgorithm == 'A':
-					self.changeSug(i, show[2], 5, False)
+					self.changeSug(i, show[2], sugStartNum, False)
 				# algorithm v2
 				elif sugAlgorithm == 'B':
 					self.changeSug(i, show[2], 0, False)
 				elif sugAlgorithm == 'G':
-					self.changeSug(i, show[2], 5, False)
+					self.changeSug(i, show[2], sugStartNum, False)
 					self.checkPosNegtive(i)
 			
 			self.update_lbar()
@@ -4736,70 +4784,40 @@ class GridWindow(QWidget):
 			last4record.append(betRecord.lastNumShow(2, continueNum))
 			last4record.append(betRecord.lastNumShow(3, continueNum))
 			
-			# if not four same color, check jump clolor
+			# check continueFourChop
 			continueFourChop = False
 			if lastFourChop in [0, 1, 2, 3]:
 				if last4record[lastFourChop][-1][2] == last4record[lastFourChop][-2][2]:
 					thisFourChop = lastFourChop
 					continueFourChop = True
 			
-			if not continueFourChop:
-				continueJump = False
-				if lastJumpColor:
-					if last4record[0][-1][2] != last4record[0][-2][2]:
-						thisJumpColor = lastJumpColor
-						continueJump = True
-				
-				if not continueJump:
-					if len(last4record[0]) >= continueNum:
-						jump = True
-						for i in range(continueNum):
-							if last4record[0][i][2] == -1:
-								jump = False
-								break
-							
-							if last4record[0][i][0] != 0:
-								jump = False
-								break
-							
-							if i != 0:
-								if last4record[0][i-1][2] != last4record[0][i][2]:
-									continue
-								else:
-									jump = False
-									break
-						
-						thisJumpColor = jump
+			# check continueJump
+			continueJump = False
+			if lastJumpColor:
+				if last4record[0][-1][2] != last4record[0][-2][2]:
+					thisJumpColor = lastJumpColor
+					continueJump = True
 			
-			# if not jump color, check four same clolor
-			if not thisJumpColor:
-				continueFourChop = False
-				if lastFourChop in [0, 1, 2, 3]:
-					if last4record[lastFourChop][-1][2] == last4record[lastFourChop][-2][2]:
-						thisFourChop = lastFourChop
-						continueFourChop = True
+			if not continueFourChop and not continueJump:
+				continueJumpNum = betRecord.lastDiffShowNum(0)
+				if continueJumpNum >= 4:
+					thisJumpColor = True
 				
-				if not continueFourChop:
-					for i in range(4):
-						if len(last4record[i]) < continueNum:
+				for i in range(4):
+					tmpFourChopNum = betRecord.lastSameShowNum(i)
+					if tmpFourChopNum >= 4:
+						tmpFourChop = i
+						if thisFourChop != -1 and continueFourChopNum >= tmpFourChopNum:
 							continue
-						
-						sameColor = True
-						for j in range(continueNum):
-							if j == 0:
-								startColor = last4record[i][j][2]
-								if startColor == -1:
-									sameColor = False
-									break
-							elif startColor == last4record[i][j][2]:
-								continue
-							else:
-								sameColor = False
-								break
-						
-						if sameColor:
-							thisFourChop = i
-							break
+						else:
+							thisFourChop = tmpFourChop
+							continueFourChopNum = tmpFourChopNum
+				
+				if thisJumpColor and thisFourChop != -1:
+					if continueJumpNum >= continueFourChopNum:
+						thisFourChop = -1
+					else:
+						thisJumpColor = False
 		
 		return {'thisFourChop': thisFourChop, 'thisJumpColor': thisJumpColor}
 	
